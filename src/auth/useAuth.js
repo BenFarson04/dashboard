@@ -1,51 +1,108 @@
-import { useCallback, useEffect, useState } from 'react'
-import { msal, loginRequest } from './msalConfig'
+// Google auth hook using Google Identity Services (GIS).
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { GOOGLE_CLIENT_ID, GOOGLE_SCOPES } from './googleConfig'
+
+const STORE_KEY = 'pd.googleToken'
+const GIS_SRC = 'https://accounts.google.com/gsi/client'
+
+function loadGis() {
+  if (window.google?.accounts?.oauth2) return Promise.resolve()
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${GIS_SRC}"]`)
+    if (existing) { existing.addEventListener('load', () => resolve()); return }
+    const s = document.createElement('script')
+    s.src = GIS_SRC; s.async = true; s.defer = true
+    s.onload = () => resolve()
+    s.onerror = () => reject(new Error('Failed to load Google sign-in script'))
+    document.head.appendChild(s)
+  })
+}
+
+function readStored() {
+  try {
+    const raw = sessionStorage.getItem(STORE_KEY)
+    if (!raw) return null
+    const t = JSON.parse(raw)
+    if (!t.accessToken || !t.expiresAt || Date.now() > t.expiresAt) return null
+    return t
+  } catch { return null }
+}
 
 export function useAuth() {
   const [ready, setReady] = useState(false)
   const [account, setAccount] = useState(null)
   const [error, setError] = useState(null)
+  const tokenRef = useRef(readStored())
+  const clientRef = useRef(null)
 
   useEffect(() => {
     let cancelled = false
-    ;(async () => {
-      try {
-        await msal.initialize()
-        await msal.handleRedirectPromise()
-        const existing = msal.getAllAccounts()[0] || null
-        if (!cancelled) { setAccount(existing); setReady(true) }
-      } catch (e) {
-        if (!cancelled) { setError(e.message); setReady(true) }
-      }
-    })()
+    loadGis()
+      .then(() => {
+        if (cancelled) return
+        clientRef.current = window.google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: GOOGLE_SCOPES,
+          callback: () => {},
+        })
+        const stored = readStored()
+        if (stored) {
+          tokenRef.current = stored
+          fetchEmail(stored.accessToken).then(email => !cancelled && setAccount({ email, username: email }))
+        }
+        setReady(true)
+      })
+      .catch(e => { if (!cancelled) { setError(e.message); setReady(true) } })
     return () => { cancelled = true }
+  }, [])
+
+  const requestToken = useCallback((prompt = '') => {
+    return new Promise((resolve, reject) => {
+      const client = clientRef.current
+      if (!client) return reject(new Error('Google sign-in not ready yet'))
+      client.callback = (resp) => {
+        if (resp.error) return reject(new Error(resp.error))
+        const token = { accessToken: resp.access_token, expiresAt: Date.now() + (resp.expires_in - 60) * 1000 }
+        tokenRef.current = token
+        try { sessionStorage.setItem(STORE_KEY, JSON.stringify(token)) } catch { /* ignore */ }
+        resolve(token.accessToken)
+      }
+      try { client.requestAccessToken({ prompt }) } catch (e) { reject(e) }
+    })
   }, [])
 
   const signIn = useCallback(async () => {
     try {
-      const res = await msal.loginPopup(loginRequest)
-      msal.setActiveAccount(res.account)
-      setAccount(res.account)
+      const at = await requestToken('consent')
+      const email = await fetchEmail(at)
+      setAccount({ email, username: email })
     } catch (e) { setError(e.message) }
-  }, [])
+  }, [requestToken])
 
-  const signOut = useCallback(async () => {
-    const acc = msal.getActiveAccount() || msal.getAllAccounts()[0]
-    await msal.logoutPopup({ account: acc })
+  const signOut = useCallback(() => {
+    const at = tokenRef.current?.accessToken
+    if (at && window.google?.accounts?.oauth2) window.google.accounts.oauth2.revoke(at, () => {})
+    tokenRef.current = null
+    try { sessionStorage.removeItem(STORE_KEY) } catch { /* ignore */ }
     setAccount(null)
   }, [])
 
   const getToken = useCallback(async () => {
-    const acc = msal.getActiveAccount() || msal.getAllAccounts()[0]
-    if (!acc) throw new Error('Not signed in')
-    try {
-      const res = await msal.acquireTokenSilent({ ...loginRequest, account: acc })
-      return res.accessToken
-    } catch {
-      const res = await msal.acquireTokenPopup(loginRequest)
-      return res.accessToken
-    }
-  }, [])
+    const t = tokenRef.current
+    if (t && Date.now() < t.expiresAt) return t.accessToken
+    return requestToken('')
+  }, [requestToken])
 
   return { ready, account, error, signIn, signOut, getToken, isSignedIn: !!account }
+}
+
+async function fetchEmail(accessToken) {
+  try {
+    const res = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+    if (!res.ok) return 'Google account'
+    const d = await res.json()
+    return d.email || 'Google account'
+  } catch { return 'Google account' }
 }
