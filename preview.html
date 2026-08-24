@@ -1,0 +1,1724 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command Centre — Personal Dashboard (Preview)</title>
+  <!--
+    ZERO-INSTALL PREVIEW BUILD (mock data).
+    Auto-generated from src/ by scripts/build-preview.mjs — do not edit by hand.
+    JSX is PRE-COMPILED to plain JS, so no in-browser transpiler is needed.
+    Needs an internet connection for React, lucide and Tailwind (loaded from CDNs).
+    For real development use the Vite project:  npm install && npm run dev
+  -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" crossorigin></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+  <style>
+    * { scrollbar-width: thin; }
+    *::-webkit-scrollbar { width: 8px; height: 8px; }
+    *::-webkit-scrollbar-thumb { background: rgb(148 163 184 / .35); border-radius: 9999px; }
+    #status { position: fixed; inset: 0; display: grid; place-items: center; padding: 24px;
+              font: 500 14px system-ui, sans-serif; color: #475569; text-align: center; }
+    #status .box { max-width: 640px; }
+    #status pre { margin-top: 12px; text-align: left; white-space: pre-wrap; font-size: 12px;
+                  color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca;
+                  border-radius: 10px; padding: 12px; overflow: auto; max-height: 40vh; }
+  </style>
+</head>
+<body class="bg-slate-50">
+  <div id="root"></div>
+  <div id="status"><div class="box">Loading preview…<br/><span style="font-size:12px;color:#94a3b8">If this message stays, you are probably offline — the preview needs internet to load React &amp; Tailwind from a CDN.</span></div></div>
+
+  <script>
+    // Never fail silently: surface any load/runtime error on screen.
+    function showError(title, detail) {
+      var s = document.getElementById('status');
+      if (!s) return;
+      s.innerHTML = '<div class="box"><strong>' + title + '</strong>' +
+        '<pre>' + (detail || '') + '</pre>' +
+        '<div style="margin-top:10px;font-size:12px;color:#64748b">' +
+        'Tip: check your internet connection, or run the full app with <code>npm install</code> then <code>npm run dev</code>.</div></div>';
+    }
+    window.addEventListener('error', function (e) {
+      showError('The preview hit an error', (e && e.message ? e.message : '') + (e && e.filename ? '\n' + e.filename + ':' + e.lineno : ''));
+    });
+    // If the CDNs did not load, say so clearly.
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        if (!window.React || !window.ReactDOM) {
+          showError('Could not load React from the CDN', 'You appear to be offline or a network policy is blocking unpkg.com.\nUse the Vite project instead: npm install && npm run dev');
+        }
+      }, 1500);
+    });
+  </script>
+
+  <script>
+    try {
+      if (window.React && window.ReactDOM) {
+        var s = document.getElementById('status'); if (s) s.remove();
+const __M = {};
+__M["hooks/useLocalStorage"] = (function () {
+    const { useEffect, useState } = React;
+    // Persist a piece of state to localStorage. Used for settings, tasks and quick links
+    // so the mock app remembers user edits between browser sessions.
+    function useLocalStorage(key, initialValue) {
+        const [value, setValue] = useState(() => {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw != null ? JSON.parse(raw) : initialValue;
+            }
+            catch {
+                return initialValue;
+            }
+        });
+        useEffect(() => {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            }
+            catch { /* storage unavailable */ }
+        }, [key, value]);
+        return [value, setValue];
+    }
+    return { useLocalStorage };
+})();
+__M["utils"] = (function () {
+    // Small shared helpers. Kept dependency-free on purpose.
+    // Conditional className joiner (tiny clsx replacement).
+    function cn(...parts) {
+        return parts.flat().filter(Boolean).join(' ');
+    }
+    // --- Date / time helpers ---------------------------------------------------
+    function atToday(hours, minutes = 0, dayOffset = 0) {
+        const d = new Date();
+        d.setDate(d.getDate() + dayOffset);
+        d.setHours(hours, minutes, 0, 0);
+        return d;
+    }
+    function isSameDay(a, b) {
+        const x = new Date(a), y = new Date(b);
+        return x.getFullYear() === y.getFullYear() && x.getMonth() === y.getMonth() && x.getDate() === y.getDate();
+    }
+    function isToday(d) { return isSameDay(d, new Date()); }
+    function isPast(d) { return new Date(d).getTime() < Date.now(); }
+    function fmtTime(d) {
+        return new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+    function fmtDayLong(d = new Date()) {
+        return new Date(d).toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    function fmtDayShort(d) {
+        return new Date(d).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
+    }
+    // Human "time ago" / "in x" relative string.
+    function relTime(d) {
+        const diff = new Date(d).getTime() - Date.now();
+        const abs = Math.abs(diff);
+        const mins = Math.round(abs / 60000);
+        const hrs = Math.round(abs / 3600000);
+        const days = Math.round(abs / 86400000);
+        let label;
+        if (mins < 1)
+            label = 'just now';
+        else if (mins < 60)
+            label = `${mins}m`;
+        else if (hrs < 24)
+            label = `${hrs}h`;
+        else
+            label = `${days}d`;
+        if (label === 'just now')
+            return label;
+        return diff < 0 ? `${label} ago` : `in ${label}`;
+    }
+    function greetingFor(date = new Date()) {
+        const h = date.getHours();
+        if (h < 12)
+            return 'Good morning';
+        if (h < 18)
+            return 'Good afternoon';
+        return 'Good evening';
+    }
+    return { cn, atToday, isSameDay, isToday, isPast, fmtTime, fmtDayLong, fmtDayShort, relTime, greetingFor };
+})();
+__M["data/mockData"] = (function () {
+    // -----------------------------------------------------------------------------
+    // DEMONSTRATION DATA ONLY
+    // -----------------------------------------------------------------------------
+    // Everything in this file is fictional mock data used to make the first version
+    // of the dashboard fully functional without any live API credentials.
+    // It is deliberately isolated here so the service layer can swap it out for real
+    // Microsoft Graph / news / weather responses without touching the UI.
+    // -----------------------------------------------------------------------------
+    const { atToday } = __M["utils"];
+    const NEWS_TOPICS = [
+        { id: 'structural', label: 'Structural & civil engineering' },
+        { id: 'digital', label: 'Digital engineering' },
+        { id: 'ai', label: 'AI & software products' },
+        { id: 'energy', label: 'Energy & infrastructure' },
+        { id: 'finance', label: 'Finance & investing' },
+        { id: 'belfast', label: 'Belfast & Northern Ireland' },
+        { id: 'japan', label: 'Japan travel' },
+    ];
+    const EMAIL_CATEGORIES = [
+        { id: 'important', label: 'Important' },
+        { id: 'university', label: 'University/career' },
+        { id: 'travel', label: 'Travel' },
+        { id: 'finance', label: 'Finance' },
+        { id: 'personal', label: 'Personal' },
+        { id: 'other', label: 'Other' },
+    ];
+    // --- Calendar ---------------------------------------------------------------
+    const mockEvents = [
+        {
+            id: 'ev1', title: 'Team stand-up', start: atToday(9, 0), end: atToday(9, 15),
+            location: 'Microsoft Teams', online: true, category: 'Work', prep: false,
+            details: 'Daily sync. Share yesterday/today/blockers. No prep needed.',
+        },
+        {
+            id: 'ev2', title: 'Structures coordination — GSA model review', start: atToday(10, 0), end: atToday(11, 0),
+            location: 'Room 4.2', online: false, category: 'Work', prep: true,
+            details: 'Walk through the steel braced-frame GSA model and load takedowns before issue. Bring updated section sizes and the drawing register.',
+        },
+        {
+            id: 'ev3', title: 'Lunch with brother — Japan trip planning', start: atToday(13, 0), end: atToday(14, 0),
+            location: 'Chubby Cherub Deli, Belfast', online: false, category: 'Personal', prep: false,
+            details: 'Confirm Kanazawa + Takayama nights and finalise the Wanderlog food tiers.',
+        },
+        {
+            id: 'ev4', title: 'Pension options review call', start: atToday(15, 30), end: atToday(16, 0),
+            location: 'Phone', online: true, category: 'Finance', prep: true,
+            details: 'Aegon vs AJ Bell SIPP consolidation. Have current fund charges and transfer values to hand.',
+        },
+        {
+            id: 'ev5', title: 'Strength session', start: atToday(17, 30), end: atToday(18, 15),
+            location: 'Gym', online: false, category: 'Personal', prep: false,
+            details: 'Lower body. Eat pre-workout carbs ~1h before.',
+        },
+        // Upcoming (future days)
+        {
+            id: 'ev6', title: 'End-of-placement report review', start: atToday(11, 0, 1), end: atToday(12, 0, 1),
+            location: 'Microsoft Teams', online: true, category: 'University', prep: true,
+            details: 'QUB tutor review of the placement report draft.',
+        },
+        {
+            id: 'ev7', title: 'Clarendon Wharf design team meeting', start: atToday(9, 30, 2), end: atToday(10, 30, 2),
+            location: 'Room 2.1', online: false, category: 'Work', prep: false,
+            details: 'Coordination with architect on transfer structure.',
+        },
+        {
+            id: 'ev8', title: 'Junior hockey coaching', start: atToday(18, 0, 2), end: atToday(19, 30, 2),
+            location: 'Club pitch', online: false, category: 'Personal', prep: false, details: 'Weekly session.',
+        },
+    ];
+    // --- Email ------------------------------------------------------------------
+    const mockEmails = [
+        {
+            id: 'em1', sender: 'Ben McIlroy', senderEmail: 'b.mcilroy@example.com',
+            subject: 'GSA model review — bring load takedowns', preview: "Can you have the updated braced-frame model and the drawing register ready for the 10:00? Want to check the transfer level before we issue.",
+            received: atToday(8, 5), importance: 'high', category: 'important', unread: true,
+            reason: 'From your manager and references your 10:00 meeting today.',
+        },
+        {
+            id: 'em2', sender: 'AJ Bell', senderEmail: 'noreply@ajbell.example.com',
+            subject: 'Your SIPP transfer illustration is ready', preview: 'The illustration comparing your current Aegon arrangement with an AJ Bell SIPP is available to view in your account.',
+            received: atToday(7, 40), importance: 'high', category: 'finance', unread: true,
+            reason: 'Time-sensitive and linked to your 15:30 pension review call.',
+        },
+        {
+            id: 'em3', sender: 'QUB Placements Office', senderEmail: 'placements@qub.example.ac.uk',
+            subject: 'Placement report — submission deadline reminder', preview: 'A reminder that your end-of-placement report is due next week. Please ensure your industrial mentor has signed off.',
+            received: atToday(17, 10, -1), importance: 'medium', category: 'university', unread: true,
+            reason: 'Approaching university deadline that needs an action from you.',
+        },
+        {
+            id: 'em4', sender: 'Wanderlog', senderEmail: 'trips@wanderlog.example.com',
+            subject: 'Your brother shared “Japan 2027” with you', preview: 'You now have edit access to the Japan 2027 itinerary. 14 places have been added across Tokyo, Kanazawa and Kyoto.',
+            received: atToday(20, 30, -1), importance: 'low', category: 'travel', unread: false,
+            reason: 'Matches your Japan travel interests and active trip planning.',
+        },
+        {
+            id: 'em5', sender: 'Chase', senderEmail: 'hello@chase.example.com',
+            subject: 'Your saver account is now open', preview: 'Welcome — your linked saver is ready. Boosted rate applies for the first 12 months on balances up to the limit.',
+            received: atToday(9, 15, -1), importance: 'low', category: 'finance', unread: false,
+            reason: 'Relates to your recent savings account set-up.',
+        },
+        {
+            id: 'em6', sender: 'Arup IT', senderEmail: 'it@example.com',
+            subject: 'Scheduled VPN maintenance this weekend', preview: 'Remote access may be intermittent on Saturday between 08:00 and 11:00 while we apply updates.',
+            received: atToday(16, 0, -1), importance: 'low', category: 'other', unread: false,
+            reason: 'General notice — low priority, no action required.',
+        },
+        {
+            id: 'em7', sender: 'Autodesk', senderEmail: 'news@autodesk.example.com',
+            subject: 'Webinar: automating documentation with the Revit API', preview: 'Join our session on scripting repetitive documentation tasks — relevant to your drawing-register automation work.',
+            received: atToday(12, 0, -1), importance: 'medium', category: 'university', unread: true,
+            reason: 'Matches your interest in digital engineering and workflow automation.',
+        },
+    ];
+    // --- News (all fictional demo articles) ------------------------------------
+    const mockNews = [
+        { id: 'n1', source: 'The Structural Engineer', topic: 'structural',
+            headline: 'Revised guidance on imposed-load reduction factors for tall buildings',
+            description: 'Institution updates practical worked examples for multi-storey load takedowns and reduction factors.',
+            published: atToday(6, 30), reason: 'You are applying imposed-load reduction factors on a 22-storey design.',
+            url: 'https://example.com/demo/structural-load-reduction' },
+        { id: 'n2', source: 'NCE', topic: 'digital',
+            headline: 'Parametric-to-analysis workflows cut modelling time on braced frames',
+            description: 'Case studies show Grasshopper-to-GSA pipelines reducing manual re-modelling.',
+            published: atToday(5, 10), reason: 'Relevant to your Grasshopper + Oasys GSA workflow.',
+            url: 'https://example.com/demo/parametric-gsa' },
+        { id: 'n3', source: 'The Verge', topic: 'ai',
+            headline: 'New wave of AI agents targets repetitive engineering admin',
+            description: 'Vendors pitch task automation for document generation and register creation.',
+            published: atToday(22, 0, -1), reason: 'Matches your interest in AI agents for engineering admin.',
+            url: 'https://example.com/demo/ai-agents-admin' },
+        { id: 'n4', source: 'Reuters', topic: 'energy',
+            headline: 'Offshore wind pipeline expands with new grid-connection commitments',
+            description: 'Developers confirm timelines for several large offshore projects.',
+            published: atToday(21, 0, -1), reason: 'Relevant to your interest in energy & infrastructure careers.',
+            url: 'https://example.com/demo/offshore-wind' },
+        { id: 'n5', source: 'Financial Times', topic: 'finance',
+            headline: 'Platform fee comparison: SIPPs, ISAs and LISAs in 2027',
+            description: 'A look at how flat-fee vs percentage-fee platforms stack up for smaller portfolios.',
+            published: atToday(20, 0, -1), reason: 'Matches your ISA/LISA/SIPP and platform-fee research.',
+            url: 'https://example.com/demo/platform-fees' },
+        { id: 'n6', source: 'BBC News NI', topic: 'belfast',
+            headline: 'Belfast city-centre regeneration scheme reaches next design stage',
+            description: 'Waterside development moves forward with revised public-realm proposals.',
+            published: atToday(7, 45), reason: 'Local to Belfast and relevant to your project sectors.',
+            url: 'https://example.com/demo/belfast-regeneration' },
+        { id: 'n7', source: 'Japan Guide', topic: 'japan',
+            headline: 'Spring 2027 rail-pass changes: what regional travellers should know',
+            description: 'Updated coverage and pricing for regional passes ahead of the spring season.',
+            published: atToday(4, 30), reason: 'Useful for your March–April 2027 Japan itinerary.',
+            url: 'https://example.com/demo/japan-rail-pass' },
+        { id: 'n8', source: 'Dezeen', topic: 'structural',
+            headline: 'Mass-timber hybrid frames gain traction for mid-rise offices',
+            description: 'Designers report growing appetite for timber-steel hybrids on carbon grounds.',
+            published: atToday(23, 30, -2), reason: 'Structural engineering topic in your saved interests.',
+            url: 'https://example.com/demo/mass-timber' },
+    ];
+    // --- Weather (Belfast default) ----------------------------------------------
+    const mockWeather = {
+        location: 'Belfast',
+        current: { tempC: 14, condition: 'Light rain', rainProbability: 70, feelsLikeC: 12, windKph: 18 },
+        suggestion: 'Rain likely around your lunch walk — take a jacket and leave a bit early for the 13:00.',
+        forecast: [
+            { label: 'Now', tempC: 14, condition: 'Light rain', rain: 70 },
+            { label: '12:00', tempC: 15, condition: 'Showers', rain: 60 },
+            { label: '15:00', tempC: 16, condition: 'Cloudy', rain: 30 },
+            { label: '18:00', tempC: 14, condition: 'Clear', rain: 10 },
+            { label: '21:00', tempC: 12, condition: 'Clear', rain: 5 },
+        ],
+    };
+    // --- Tasks (seed data; persisted to localStorage after first load) ----------
+    const defaultTasks = [
+        { id: 't1', title: 'Prep GSA model + load takedowns for 10:00 review', due: atToday(9, 45), priority: 'high', category: 'Work', completed: false },
+        { id: 't2', title: 'Send placement report draft to mentor for sign-off', due: atToday(12, 0, -1), priority: 'high', category: 'University', completed: false },
+        { id: 't3', title: 'Compare Aegon vs AJ Bell SIPP charges before call', due: atToday(15, 0), priority: 'medium', category: 'Finance', completed: false },
+        { id: 't4', title: 'Add Kanazawa food tiers to Wanderlog', due: atToday(20, 0, 1), priority: 'low', category: 'Travel', completed: false },
+        { id: 't5', title: 'Grocery run — rice cakes, bananas, corn flakes', due: atToday(19, 0, 2), priority: 'low', category: 'Personal', completed: false },
+        { id: 't6', title: 'Update Section Studio member-check edge cases', due: null, priority: 'medium', category: 'Projects', completed: false },
+        { id: 't7', title: 'Book gym induction slot', due: atToday(9, 0, -2), priority: 'low', category: 'Personal', completed: true },
+    ];
+    // --- Quick links (seed data; persisted to localStorage) ---------------------
+    const defaultQuickLinks = [
+        { id: 'q1', label: 'Queen’s University Belfast', url: 'https://www.qub.ac.uk', group: 'University' },
+        { id: 'q2', label: 'Outlook Email', url: 'https://outlook.office.com/mail', group: 'Email' },
+        { id: 'q3', label: 'Outlook Calendar', url: 'https://outlook.office.com/calendar', group: 'Calendar' },
+        { id: 'q4', label: 'AJ Bell', url: 'https://www.ajbell.co.uk', group: 'Finance' },
+        { id: 'q5', label: 'Wanderlog — Japan 2027', url: 'https://wanderlog.com', group: 'Travel planning' },
+        { id: 'q6', label: 'MyFitnessPal', url: 'https://www.myfitnesspal.com', group: 'Fitness' },
+        { id: 'q7', label: 'Section Studio', url: 'https://github.com', group: 'Personal projects' },
+    ];
+    const defaultSettings = {
+        name: 'Ben',
+        greetingStyle: 'time', // 'time' | 'fixed'
+        fixedGreeting: 'Welcome back',
+        location: 'Belfast',
+        newsTopics: NEWS_TOPICS.map(t => t.id), // all enabled by default
+        emailCategories: EMAIL_CATEGORIES.map(c => c.id),
+        calendar: { showWeekends: true, twentyFourHour: true },
+        briefing: { includeCalendar: true, includeEmail: true, includeTasks: true, includeWeather: true, tone: 'concise' },
+        theme: 'light', // 'light' | 'dark'
+        cards: {
+            // visibility + order for the main dashboard grid
+            order: ['calendar', 'email', 'tasks', 'news', 'weather', 'quicklinks'],
+            visible: { calendar: true, email: true, tasks: true, news: true, weather: true, quicklinks: true },
+        },
+    };
+    // Where each data service currently stands. Drives the Settings "connections" view.
+    const connectionStatus = {
+        calendar: 'mock', // not_configured | mock | connected | error
+        email: 'mock',
+        news: 'mock',
+        weather: 'mock',
+        tasks: 'local', // tasks are genuinely local (localStorage), not mocked-remote
+    };
+    return { NEWS_TOPICS, EMAIL_CATEGORIES, mockEvents, mockEmails, mockNews, mockWeather, defaultTasks, defaultQuickLinks, defaultSettings, connectionStatus };
+})();
+__M["services/_helpers"] = (function () {
+    // Shared helpers for the mock service layer.
+    // Each service simulates async latency so the UI's loading/error/empty states are real.
+    const delay = (ms = 350) => new Promise(res => setTimeout(res, ms));
+    // Deterministic-ish random failure for demoing the error state (off by default).
+    function maybeFail(rate = 0) {
+        if (rate > 0 && Math.random() < rate) {
+            throw new Error('Mock service failure (demonstration of the error state).');
+        }
+    }
+    return { delay, maybeFail };
+})();
+__M["services/calendarService"] = (function () {
+    // Calendar data service.
+    // -----------------------------------------------------------------------------
+    // CURRENT: returns mock events.
+    // FUTURE:  replace getEvents() with a Microsoft Graph call, e.g.
+    //          GET /me/calendarView?startDateTime=...&endDateTime=...
+    //          using a read-only delegated token (scope: Calendars.Read).
+    //          Token acquisition must happen via MSAL; do NOT store secrets here.
+    // -----------------------------------------------------------------------------
+    const { mockEvents } = __M["data/mockData"];
+    const { delay, maybeFail } = __M["services/_helpers"];
+    const meta = { key: 'calendar', name: 'Calendar', source: 'mock' };
+    async function getEvents({ failRate = 0 } = {}) {
+        await delay(400);
+        maybeFail(failRate);
+        // Sorted chronologically so the UI can rely on order.
+        return [...mockEvents].sort((a, b) => new Date(a.start) - new Date(b.start));
+    }
+    return { meta, getEvents };
+})();
+__M["services/emailService"] = (function () {
+    // Email data service.
+    // -----------------------------------------------------------------------------
+    // CURRENT: returns a curated mock shortlist.
+    // FUTURE:  replace with Microsoft Graph, e.g. GET /me/messages?$top=25&$select=...
+    //          scored client-side (or in a backend) to produce a "relevant" shortlist.
+    //          Scope: Mail.Read (read-only delegated). Never send message content to
+    //          an AI service in this first version.
+    // -----------------------------------------------------------------------------
+    const { mockEmails } = __M["data/mockData"];
+    const { delay, maybeFail } = __M["services/_helpers"];
+    const meta = { key: 'email', name: 'Email', source: 'mock' };
+    async function getRelevantEmails({ failRate = 0 } = {}) {
+        await delay(500);
+        maybeFail(failRate);
+        return [...mockEmails].sort((a, b) => new Date(b.received) - new Date(a.received));
+    }
+    return { meta, getRelevantEmails };
+})();
+__M["services/newsService"] = (function () {
+    // News data service.
+    // -----------------------------------------------------------------------------
+    // CURRENT: returns fictional demo articles.
+    // FUTURE:  fetch from an RSS aggregator or news API (e.g. a small backend that
+    //          reads per-topic RSS feeds and normalises them to this shape). Keep the
+    //          returned object shape identical so the UI needs no changes.
+    // -----------------------------------------------------------------------------
+    const { mockNews } = __M["data/mockData"];
+    const { delay, maybeFail } = __M["services/_helpers"];
+    const meta = { key: 'news', name: 'News', source: 'mock' };
+    async function getNews({ topics = null, failRate = 0 } = {}) {
+        await delay(450);
+        maybeFail(failRate);
+        const items = [...mockNews].sort((a, b) => new Date(b.published) - new Date(a.published));
+        return topics ? items.filter(n => topics.includes(n.topic)) : items;
+    }
+    return { meta, getNews };
+})();
+__M["services/weatherService"] = (function () {
+    // Weather data service.
+    // -----------------------------------------------------------------------------
+    // CURRENT: returns mock Belfast weather.
+    // FUTURE:  call a weather API (e.g. Open-Meteo needs no key; OpenWeather needs one
+    //          via an env var + ideally a backend proxy). Map the response into the
+    //          same { location, current, suggestion, forecast[] } shape.
+    // -----------------------------------------------------------------------------
+    const { mockWeather } = __M["data/mockData"];
+    const { delay, maybeFail } = __M["services/_helpers"];
+    const meta = { key: 'weather', name: 'Weather', source: 'mock' };
+    async function getWeather({ location = 'Belfast', failRate = 0 } = {}) {
+        await delay(350);
+        maybeFail(failRate);
+        return { ...mockWeather, location };
+    }
+    return { meta, getWeather };
+})();
+__M["services/briefingService"] = (function () {
+    // Daily briefing generator.
+    // -----------------------------------------------------------------------------
+    // This is NOT hard-coded text: it derives a briefing from the live dashboard data
+    // (events, emails, tasks, weather) using simple rules. Each sentence carries the
+    // source items it was built from, so the UI can render "why am I seeing this?" and
+    // deep-link to the underlying records.
+    //
+    // FUTURE (optional): send this same structured summary — NOT raw email/calendar
+    // content — to an LLM to phrase it more naturally. Keep it behind a setting and a
+    // backend so no tokens/secrets live in the client.
+    // -----------------------------------------------------------------------------
+    const { isToday, isPast, fmtTime } = __M["utils"];
+    function generateBriefing({ events = [], emails = [], tasks = [], weather = null, prefs = {} }) {
+        const p = { includeCalendar: true, includeEmail: true, includeTasks: true, includeWeather: true, ...prefs };
+        const parts = [];
+        if (p.includeCalendar) {
+            const todays = events.filter(e => isToday(e.start));
+            const upcoming = todays.filter(e => !isPast(e.end || e.start));
+            const needsPrep = todays.filter(e => e.prep && !isPast(e.start));
+            if (todays.length === 0) {
+                parts.push({ text: 'You have no events scheduled today.', refs: [] });
+            }
+            else {
+                const next = upcoming[0];
+                let text = `You have ${todays.length} event${todays.length > 1 ? 's' : ''} today`;
+                if (next)
+                    text += `, next up ${next.title} at ${fmtTime(next.start)}`;
+                text += '.';
+                parts.push({ text, refs: todays.map(e => ({ type: 'event', id: e.id, label: e.title })) });
+                if (needsPrep.length) {
+                    parts.push({
+                        text: `Your ${fmtTime(needsPrep[0].start)} ${needsPrep[0].title} may need preparation.`,
+                        refs: needsPrep.map(e => ({ type: 'event', id: e.id, label: e.title })),
+                    });
+                }
+            }
+        }
+        if (p.includeEmail) {
+            const important = emails.filter(e => e.importance === 'high');
+            const unreadImportant = important.filter(e => e.unread);
+            if (important.length) {
+                parts.push({
+                    text: `${important.length} email${important.length > 1 ? 's appear' : ' appears'} important${unreadImportant.length ? ` (${unreadImportant.length} unread)` : ''}.`,
+                    refs: important.map(e => ({ type: 'email', id: e.id, label: `${e.sender}: ${e.subject}` })),
+                });
+            }
+        }
+        if (p.includeTasks) {
+            const overdue = tasks.filter(t => !t.completed && t.due && isPast(t.due));
+            const dueToday = tasks.filter(t => !t.completed && t.due && isToday(t.due) && !isPast(t.due));
+            if (overdue.length) {
+                parts.push({
+                    text: `${overdue.length} task${overdue.length > 1 ? 's are' : ' is'} overdue.`,
+                    refs: overdue.map(t => ({ type: 'task', id: t.id, label: t.title })),
+                });
+            }
+            else if (dueToday.length) {
+                parts.push({
+                    text: `${dueToday.length} task${dueToday.length > 1 ? 's are' : ' is'} due later today.`,
+                    refs: dueToday.map(t => ({ type: 'task', id: t.id, label: t.title })),
+                });
+            }
+        }
+        if (p.includeWeather && (weather === null || weather === void 0 ? void 0 : weather.current)) {
+            const c = weather.current;
+            if (c.rainProbability >= 50) {
+                parts.push({ text: `Rain is likely in ${weather.location} (${c.rainProbability}%) — plan for it.`, refs: [] });
+            }
+        }
+        return {
+            generatedAt: new Date(),
+            parts,
+            // Plain-text version for accessibility / copying.
+            text: parts.map(p => p.text).join(' '),
+        };
+    }
+    return { generateBriefing };
+})();
+__M["services"] = (function () {
+    // Central service registry.
+    // The UI imports data services from here, so switching a domain from mock to live
+    // only touches the corresponding *Service.js file — never the components.
+    const calendar = __M["services/calendarService"];
+    const email = __M["services/emailService"];
+    const news = __M["services/newsService"];
+    const weather = __M["services/weatherService"];
+    const { generateBriefing } = __M["services/briefingService"];
+    return { calendar, email, news, weather, generateBriefing };
+})();
+__M["context/AppContext"] = (function () {
+    const { createContext, useCallback, useContext, useEffect, useMemo, useState } = React;
+    const { useLocalStorage } = __M["hooks/useLocalStorage"];
+    const services = __M["services"];
+    const { generateBriefing } = __M["services"];
+    const { defaultSettings, defaultTasks, defaultQuickLinks, connectionStatus } = __M["data/mockData"];
+    const AppContext = createContext(null);
+    // Small factory for the {data, loading, error} shape shared by every remote-ish service.
+    const idle = () => ({ data: null, loading: true, error: null });
+    function AppProvider({ children }) {
+        // ---- Persisted, user-editable state -------------------------------------
+        const [settings, setSettings] = useLocalStorage('pd.settings', defaultSettings);
+        const [tasks, setTasks] = useLocalStorage('pd.tasks', defaultTasks);
+        const [quickLinks, setQuickLinks] = useLocalStorage('pd.quicklinks', defaultQuickLinks);
+        const [emailFeedback, setEmailFeedback] = useLocalStorage('pd.emailFeedback', {}); // id -> 'useful'|'not_relevant'|'dealt'
+        const [emailRead, setEmailRead] = useLocalStorage('pd.emailRead', {}); // id -> true
+        const [savedNews, setSavedNews] = useLocalStorage('pd.savedNews', []);
+        const [dismissedNews, setDismissedNews] = useLocalStorage('pd.dismissedNews', []);
+        // ---- Ephemeral UI state --------------------------------------------------
+        const [page, setPage] = useState('dashboard');
+        const [sidebarOpen, setSidebarOpen] = useState(true); // desktop collapse
+        const [mobileNavOpen, setMobileNavOpen] = useState(false); // mobile drawer
+        const [focus, setFocus] = useState(null); // {type,id} highlighted from briefing/deep-links
+        const [failRates, setFailRates] = useState({ calendar: 0, email: 0, news: 0, weather: 0 }); // error-state demo
+        // ---- Data services state -------------------------------------------------
+        const [calendar, setCalendar] = useState(idle);
+        const [emails, setEmails] = useState(idle);
+        const [news, setNews] = useState(idle);
+        const [weather, setWeather] = useState(idle);
+        // ---- Theme ---------------------------------------------------------------
+        useEffect(() => {
+            const root = document.documentElement;
+            if (settings.theme === 'dark')
+                root.classList.add('dark');
+            else
+                root.classList.remove('dark');
+        }, [settings.theme]);
+        const toggleTheme = useCallback(() => {
+            setSettings(s => ({ ...s, theme: s.theme === 'dark' ? 'light' : 'dark' }));
+        }, [setSettings]);
+        // ---- Loaders -------------------------------------------------------------
+        const loadCalendar = useCallback(async () => {
+            setCalendar(s => ({ ...s, loading: true, error: null }));
+            try {
+                setCalendar({ data: await services.calendar.getEvents({ failRate: failRates.calendar }), loading: false, error: null });
+            }
+            catch (e) {
+                setCalendar({ data: null, loading: false, error: e.message });
+            }
+        }, [failRates.calendar]);
+        const loadEmails = useCallback(async () => {
+            setEmails(s => ({ ...s, loading: true, error: null }));
+            try {
+                setEmails({ data: await services.email.getRelevantEmails({ failRate: failRates.email }), loading: false, error: null });
+            }
+            catch (e) {
+                setEmails({ data: null, loading: false, error: e.message });
+            }
+        }, [failRates.email]);
+        const loadNews = useCallback(async () => {
+            setNews(s => ({ ...s, loading: true, error: null }));
+            try {
+                setNews({ data: await services.news.getNews({ failRate: failRates.news }), loading: false, error: null });
+            }
+            catch (e) {
+                setNews({ data: null, loading: false, error: e.message });
+            }
+        }, [failRates.news]);
+        const loadWeather = useCallback(async () => {
+            setWeather(s => ({ ...s, loading: true, error: null }));
+            try {
+                setWeather({ data: await services.weather.getWeather({ location: settings.location, failRate: failRates.weather }), loading: false, error: null });
+            }
+            catch (e) {
+                setWeather({ data: null, loading: false, error: e.message });
+            }
+        }, [settings.location, failRates.weather]);
+        useEffect(() => { loadCalendar(); }, [loadCalendar]);
+        useEffect(() => { loadEmails(); }, [loadEmails]);
+        useEffect(() => { loadNews(); }, [loadNews]);
+        useEffect(() => { loadWeather(); }, [loadWeather]);
+        const refreshAll = useCallback(() => {
+            loadCalendar();
+            loadEmails();
+            loadNews();
+            loadWeather();
+        }, [loadCalendar, loadEmails, loadNews, loadWeather]);
+        // ---- Task actions --------------------------------------------------------
+        const addTask = useCallback((t) => setTasks(list => [
+            { id: 'u' + Date.now(), completed: false, priority: 'medium', category: 'Personal', due: null, ...t }, ...list,
+        ]), [setTasks]);
+        const updateTask = useCallback((id, patch) => setTasks(list => list.map(t => t.id === id ? { ...t, ...patch } : t)), [setTasks]);
+        const toggleTask = useCallback((id) => setTasks(list => list.map(t => t.id === id ? { ...t, completed: !t.completed } : t)), [setTasks]);
+        const deleteTask = useCallback((id) => setTasks(list => list.filter(t => t.id !== id)), [setTasks]);
+        // ---- Quick link actions --------------------------------------------------
+        const addLink = useCallback((l) => setQuickLinks(list => [...list, { id: 'l' + Date.now(), group: 'Other', ...l }]), [setQuickLinks]);
+        const updateLink = useCallback((id, patch) => setQuickLinks(list => list.map(l => l.id === id ? { ...l, ...patch } : l)), [setQuickLinks]);
+        const deleteLink = useCallback((id) => setQuickLinks(list => list.filter(l => l.id !== id)), [setQuickLinks]);
+        const moveLink = useCallback((id, dir) => setQuickLinks(list => {
+            const i = list.findIndex(l => l.id === id);
+            if (i < 0)
+                return list;
+            const j = dir === 'up' ? i - 1 : i + 1;
+            if (j < 0 || j >= list.length)
+                return list;
+            const copy = [...list];
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+            return copy;
+        }), [setQuickLinks]);
+        // ---- Email actions -------------------------------------------------------
+        const setEmailFeedbackFor = useCallback((id, value) => setEmailFeedback(m => ({ ...m, [id]: m[id] === value ? undefined : value })), [setEmailFeedback]);
+        const markEmailRead = useCallback((id) => setEmailRead(m => ({ ...m, [id]: true })), [setEmailRead]);
+        // ---- News actions --------------------------------------------------------
+        const toggleSaveNews = useCallback((id) => setSavedNews(list => list.includes(id) ? list.filter(x => x !== id) : [...list, id]), [setSavedNews]);
+        const dismissNews = useCallback((id) => setDismissedNews(list => list.includes(id) ? list : [...list, id]), [setDismissedNews]);
+        const restoreNews = useCallback((id) => setDismissedNews(list => list.filter(x => x !== id)), [setDismissedNews]);
+        // ---- Navigation / deep-linking ------------------------------------------
+        const goTo = useCallback((nextPage, focusItem = null) => {
+            setPage(nextPage);
+            setFocus(focusItem);
+            setMobileNavOpen(false);
+            if (focusItem)
+                setTimeout(() => setFocus(null), 2500); // auto-clear highlight
+        }, []);
+        // ---- Derived: enrich emails with local read/feedback state ---------------
+        const enrichedEmails = useMemo(() => {
+            if (!emails.data)
+                return emails.data;
+            return emails.data.map(e => ({
+                ...e,
+                unread: emailRead[e.id] ? false : e.unread,
+                feedback: emailFeedback[e.id] || null,
+            }));
+        }, [emails.data, emailRead, emailFeedback]);
+        // ---- Derived: daily briefing --------------------------------------------
+        const briefing = useMemo(() => generateBriefing({
+            events: calendar.data || [],
+            emails: enrichedEmails || [],
+            tasks,
+            weather: weather.data,
+            prefs: settings.briefing,
+        }), [calendar.data, enrichedEmails, tasks, weather.data, settings.briefing]);
+        const value = {
+            // state
+            settings, setSettings, tasks, quickLinks, savedNews, dismissedNews,
+            page, sidebarOpen, mobileNavOpen, focus, failRates, setFailRates,
+            connectionStatus,
+            // data
+            calendar, emails: { ...emails, data: enrichedEmails }, news, weather, briefing,
+            // theme + nav
+            toggleTheme, setSidebarOpen, setMobileNavOpen, goTo, setPage,
+            // refresh
+            refreshAll, loadCalendar, loadEmails, loadNews, loadWeather,
+            // tasks
+            addTask, updateTask, toggleTask, deleteTask,
+            // links
+            addLink, updateLink, deleteLink, moveLink,
+            // email
+            setEmailFeedbackFor, markEmailRead,
+            // news
+            toggleSaveNews, dismissNews, restoreNews,
+        };
+        return React.createElement(AppContext.Provider, { value: value }, children);
+    }
+    function useApp() {
+        const ctx = useContext(AppContext);
+        if (!ctx)
+            throw new Error('useApp must be used inside <AppProvider>');
+        return ctx;
+    }
+    return { AppProvider, useApp };
+})();
+__M["components/ui/Icon"] = (function () {
+    function Icon({ name, size = 18, className = '', ...rest }) {
+        let data = (typeof window !== 'undefined' && window.lucide && window.lucide.icons) ? window.lucide.icons[name] : null;
+        if (data && !Array.isArray(data) && Array.isArray(data.default))
+            data = data.default;
+        const children = Array.isArray(data)
+            ? data.map((node, i) => React.createElement(node[0], Object.assign({ key: i }, node[1])))
+            : null;
+        return React.createElement('svg', Object.assign({
+            xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24',
+            fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round',
+            className, 'aria-hidden': 'true',
+        }, rest), children);
+    }
+    return { Icon };
+})();
+__M["components/layout/Sidebar"] = (function () {
+    const { useApp } = __M["context/AppContext"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { cn } = __M["utils"];
+    const NAV = [
+        { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
+        { id: 'calendar', label: 'Calendar', icon: 'Calendar' },
+        { id: 'email', label: 'Email', icon: 'Mail' },
+        { id: 'tasks', label: 'Tasks', icon: 'CheckSquare' },
+        { id: 'news', label: 'News', icon: 'Newspaper' },
+        { id: 'settings', label: 'Settings', icon: 'Settings' },
+    ];
+    function NavList({ collapsed }) {
+        const { page, goTo } = useApp();
+        return (React.createElement("nav", { "aria-label": "Primary", className: "flex-1 space-y-1 px-2 py-3" }, NAV.map(item => {
+            const active = page === item.id;
+            return (React.createElement("button", { key: item.id, onClick: () => goTo(item.id), "aria-current": active ? 'page' : undefined, title: collapsed ? item.label : undefined, className: cn('flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600', collapsed && 'justify-center px-0', active
+                    ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300'
+                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800') },
+                React.createElement(Icon, { name: item.icon, size: 18, className: "shrink-0" }),
+                !collapsed && React.createElement("span", null, item.label)));
+        })));
+    }
+    function Brand({ collapsed }) {
+        return (React.createElement("div", { className: cn('flex h-14 items-center gap-2 border-b border-slate-100 px-4 dark:border-slate-800', collapsed && 'justify-center px-0') },
+            React.createElement("div", { className: "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white" },
+                React.createElement(Icon, { name: "Sparkles", size: 18 })),
+            !collapsed && React.createElement("span", { className: "text-sm font-semibold text-slate-800 dark:text-slate-100" }, "Command Centre")));
+    }
+    function Sidebar() {
+        const { sidebarOpen, setSidebarOpen, mobileNavOpen, setMobileNavOpen } = useApp();
+        const collapsed = !sidebarOpen;
+        return (React.createElement(React.Fragment, null,
+            React.createElement("aside", { className: cn('hidden shrink-0 flex-col border-r border-slate-200 bg-white transition-[width] duration-200 md:flex dark:border-slate-800 dark:bg-slate-900', collapsed ? 'w-[68px]' : 'w-60') },
+                React.createElement(Brand, { collapsed: collapsed }),
+                React.createElement(NavList, { collapsed: collapsed }),
+                React.createElement("div", { className: "border-t border-slate-100 p-2 dark:border-slate-800" },
+                    React.createElement("button", { onClick: () => setSidebarOpen(o => !o), "aria-label": collapsed ? 'Expand sidebar' : 'Collapse sidebar', className: cn('flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800', collapsed && 'justify-center px-0') },
+                        React.createElement(Icon, { name: collapsed ? 'ChevronRight' : 'ChevronLeft', size: 18 }),
+                        !collapsed && React.createElement("span", null, "Collapse")))),
+            mobileNavOpen && (React.createElement("div", { className: "fixed inset-0 z-40 md:hidden" },
+                React.createElement("div", { className: "absolute inset-0 bg-slate-900/40 backdrop-blur-sm", onClick: () => setMobileNavOpen(false), "aria-hidden": "true" }),
+                React.createElement("aside", { className: "relative z-10 flex h-full w-64 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900" },
+                    React.createElement(Brand, { collapsed: false }),
+                    React.createElement(NavList, { collapsed: false }))))));
+    }
+    return { Sidebar };
+})();
+__M["components/ui/primitives"] = (function () {
+    const { useEffect, useRef } = React;
+    const { cn } = __M["utils"];
+    const { Icon } = __M["components/ui/Icon"];
+    // -----------------------------------------------------------------------------
+    // Reusable, presentation-only building blocks. Restrained Notion/Microsoft feel:
+    // white cards, soft shadows, rounded corners, one accent colour (indigo).
+    // -----------------------------------------------------------------------------
+    function Card({ title, icon, action, children, className, bodyClassName, as: Tag = 'section', labelledBy }) {
+        return (React.createElement(Tag, { "aria-labelledby": labelledBy, className: cn('rounded-2xl border border-slate-200 bg-white shadow-sm', 'dark:border-slate-800 dark:bg-slate-900', className) },
+            (title || action) && (React.createElement("header", { className: "flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 dark:border-slate-800" },
+                React.createElement("div", { className: "flex items-center gap-2 min-w-0" },
+                    icon && React.createElement(Icon, { name: icon, size: 18, className: "shrink-0 text-slate-400" }),
+                    title && React.createElement("h2", { id: labelledBy, className: "truncate text-sm font-semibold text-slate-700 dark:text-slate-200" }, title)),
+                action && React.createElement("div", { className: "shrink-0" }, action))),
+            React.createElement("div", { className: cn('p-4', bodyClassName) }, children)));
+    }
+    const BTN = {
+        primary: 'bg-indigo-600 text-white hover:bg-indigo-500 focus-visible:outline-indigo-600',
+        subtle: 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700',
+        ghost: 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800',
+        danger: 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40',
+    };
+    function Button({ variant = 'subtle', size = 'md', icon, iconRight, children, className, ...props }) {
+        const sizes = size === 'sm' ? 'px-2.5 py-1.5 text-xs' : 'px-3 py-2 text-sm';
+        return (React.createElement("button", { className: cn('inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors', 'focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50', sizes, BTN[variant], className), ...props },
+            icon && React.createElement(Icon, { name: icon, size: size === 'sm' ? 14 : 16 }),
+            children,
+            iconRight && React.createElement(Icon, { name: iconRight, size: size === 'sm' ? 14 : 16 })));
+    }
+    function IconButton({ label, icon, active, className, ...props }) {
+        return (React.createElement("button", { "aria-label": label, title: label, className: cn('inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors', 'hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600', 'dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200', active && 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200', className), ...props },
+            React.createElement(Icon, { name: icon, size: 18 })));
+    }
+    const TONES = {
+        gray: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
+        blue: 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
+        green: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300',
+        amber: 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
+        red: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-300',
+        indigo: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300',
+    };
+    function Badge({ tone = 'gray', icon, children, className }) {
+        return (React.createElement("span", { className: cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium', TONES[tone], className) },
+            icon && React.createElement(Icon, { name: icon, size: 11 }),
+            children));
+    }
+    function Chip({ active, children, className, ...props }) {
+        return (React.createElement("button", { "aria-pressed": active, className: cn('rounded-full border px-3 py-1 text-xs font-medium transition-colors focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600', active
+                ? 'border-indigo-600 bg-indigo-600 text-white'
+                : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800', className), ...props }, children));
+    }
+    function Toggle({ checked, onChange, label, id }) {
+        return (React.createElement("button", { id: id, role: "switch", "aria-checked": checked, "aria-label": label, onClick: () => onChange(!checked), className: cn('relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600', checked ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700') },
+            React.createElement("span", { className: cn('inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform', checked ? 'translate-x-5' : 'translate-x-0.5') })));
+    }
+    function Spinner({ className }) {
+        return React.createElement(Icon, { name: "RefreshCw", className: cn('animate-spin text-slate-400', className) });
+    }
+    function Skeleton({ className }) {
+        return React.createElement("div", { className: cn('animate-pulse rounded-md bg-slate-100 dark:bg-slate-800', className) });
+    }
+    function EmptyState({ icon = 'Inbox', title, message, action }) {
+        return (React.createElement("div", { className: "flex flex-col items-center justify-center gap-2 py-8 text-center" },
+            React.createElement("div", { className: "flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-800" },
+                React.createElement(Icon, { name: icon, size: 20 })),
+            React.createElement("p", { className: "text-sm font-medium text-slate-700 dark:text-slate-200" }, title),
+            message && React.createElement("p", { className: "max-w-xs text-xs text-slate-500 dark:text-slate-400" }, message),
+            action && React.createElement("div", { className: "mt-1" }, action)));
+    }
+    function ErrorState({ message, onRetry }) {
+        return (React.createElement("div", { role: "alert", className: "flex flex-col items-center justify-center gap-2 py-8 text-center" },
+            React.createElement("div", { className: "flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-500 dark:bg-red-950/50" },
+                React.createElement(Icon, { name: "AlertTriangle", size: 20 })),
+            React.createElement("p", { className: "text-sm font-medium text-slate-700 dark:text-slate-200" }, "Something went wrong"),
+            React.createElement("p", { className: "max-w-xs text-xs text-slate-500 dark:text-slate-400" }, message),
+            onRetry && React.createElement(Button, { variant: "subtle", size: "sm", icon: "RefreshCw", onClick: onRetry, className: "mt-1" }, "Try again")));
+    }
+    // Declarative wrapper that handles the loading / error / empty / ready states.
+    function StateBoundary({ loading, error, empty, onRetry, skeleton, emptyProps, children }) {
+        if (loading)
+            return skeleton || React.createElement("div", { className: "space-y-2 py-2" }, [0, 1, 2].map(i => React.createElement(Skeleton, { key: i, className: "h-12 w-full" })));
+        if (error)
+            return React.createElement(ErrorState, { message: error, onRetry: onRetry });
+        if (empty)
+            return React.createElement(EmptyState, { ...emptyProps });
+        return children;
+    }
+    function Modal({ open, onClose, title, children, footer, labelledBy = 'modal-title' }) {
+        const ref = useRef(null);
+        useEffect(() => {
+            var _a;
+            if (!open)
+                return;
+            const onKey = (e) => { if (e.key === 'Escape')
+                onClose(); };
+            document.addEventListener('keydown', onKey);
+            (_a = ref.current) === null || _a === void 0 ? void 0 : _a.focus();
+            return () => document.removeEventListener('keydown', onKey);
+        }, [open, onClose]);
+        if (!open)
+            return null;
+        return (React.createElement("div", { className: "fixed inset-0 z-50 flex items-center justify-center p-4" },
+            React.createElement("div", { className: "absolute inset-0 bg-slate-900/40 backdrop-blur-sm", onClick: onClose, "aria-hidden": "true" }),
+            React.createElement("div", { ref: ref, tabIndex: -1, role: "dialog", "aria-modal": "true", "aria-labelledby": labelledBy, className: "relative z-10 w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-xl outline-none dark:border-slate-800 dark:bg-slate-900" },
+                React.createElement("header", { className: "flex items-center justify-between border-b border-slate-100 px-5 py-3 dark:border-slate-800" },
+                    React.createElement("h2", { id: labelledBy, className: "text-sm font-semibold text-slate-800 dark:text-slate-100" }, title),
+                    React.createElement(IconButton, { label: "Close dialog", icon: "X", onClick: onClose })),
+                React.createElement("div", { className: "max-h-[70vh] overflow-y-auto px-5 py-4" }, children),
+                footer && React.createElement("footer", { className: "flex justify-end gap-2 border-t border-slate-100 px-5 py-3 dark:border-slate-800" }, footer))));
+    }
+    // Shared form controls (used across Settings / task + link editors).
+    function Field({ label, children, hint, htmlFor }) {
+        return (React.createElement("div", { className: "space-y-1" },
+            label && React.createElement("label", { htmlFor: htmlFor, className: "block text-xs font-medium text-slate-600 dark:text-slate-300" }, label),
+            children,
+            hint && React.createElement("p", { className: "text-[11px] text-slate-400" }, hint)));
+    }
+    const inputClass = cn('w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400', 'focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20', 'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100');
+    return { Card, Button, IconButton, Badge, Chip, Toggle, Spinner, Skeleton, EmptyState, ErrorState, StateBoundary, Modal, Field, inputClass };
+})();
+__M["components/layout/Header"] = (function () {
+    const { useMemo, useRef, useState } = React;
+    const { useApp } = __M["context/AppContext"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { IconButton } = __M["components/ui/primitives"];
+    const { cn, fmtDayLong, greetingFor } = __M["utils"];
+    // Command bar: search across pages, tasks, emails, news and quick links, then jump.
+    function CommandBar() {
+        const { goTo, tasks, emails, news, quickLinks, settings } = useApp();
+        const [q, setQ] = useState('');
+        const [open, setOpen] = useState(false);
+        const [active, setActive] = useState(0);
+        const boxRef = useRef(null);
+        const results = useMemo(() => {
+            const term = q.trim().toLowerCase();
+            const pages = [
+                { type: 'page', id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
+                { type: 'page', id: 'calendar', label: 'Calendar', icon: 'Calendar' },
+                { type: 'page', id: 'email', label: 'Email', icon: 'Mail' },
+                { type: 'page', id: 'tasks', label: 'Tasks', icon: 'CheckSquare' },
+                { type: 'page', id: 'news', label: 'News', icon: 'Newspaper' },
+                { type: 'page', id: 'settings', label: 'Settings', icon: 'Settings' },
+            ];
+            if (!term)
+                return pages;
+            const match = (s) => s.toLowerCase().includes(term);
+            return [
+                ...pages.filter(p => match(p.label)),
+                ...tasks.filter(t => match(t.title)).slice(0, 4).map(t => ({ type: 'task', id: t.id, label: t.title, icon: 'CheckSquare', page: 'tasks' })),
+                ...(emails.data || []).filter(e => match(e.subject) || match(e.sender)).slice(0, 4).map(e => ({ type: 'email', id: e.id, label: `${e.sender}: ${e.subject}`, icon: 'Mail', page: 'email' })),
+                ...(news.data || []).filter(n => match(n.headline)).slice(0, 3).map(n => ({ type: 'news', id: n.id, label: n.headline, icon: 'Newspaper', page: 'news' })),
+                ...quickLinks.filter(l => match(l.label)).slice(0, 3).map(l => ({ type: 'link', id: l.id, label: l.label, icon: 'Link2', url: l.url })),
+            ].slice(0, 10);
+        }, [q, tasks, emails.data, news.data, quickLinks]);
+        const choose = (r) => {
+            if (!r)
+                return;
+            if (r.type === 'link' && r.url) {
+                window.open(r.url, '_blank', 'noopener');
+            }
+            else
+                goTo(r.page || r.id, r.type === 'page' ? null : { type: r.type, id: r.id });
+            setQ('');
+            setOpen(false);
+        };
+        const onKeyDown = (e) => {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setActive(a => Math.min(a + 1, results.length - 1));
+            }
+            else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setActive(a => Math.max(a - 1, 0));
+            }
+            else if (e.key === 'Enter') {
+                e.preventDefault();
+                choose(results[active]);
+            }
+            else if (e.key === 'Escape') {
+                setOpen(false);
+            }
+        };
+        return (React.createElement("div", { ref: boxRef, className: "relative w-full max-w-md" },
+            React.createElement("label", { htmlFor: "cmd", className: "sr-only" }, "Search or jump to a page"),
+            React.createElement("div", { className: "flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800" },
+                React.createElement(Icon, { name: "Search", size: 16, className: "text-slate-400" }),
+                React.createElement("input", { id: "cmd", type: "text", value: q, placeholder: "Search or jump to\u2026", onChange: (e) => { setQ(e.target.value); setOpen(true); setActive(0); }, onFocus: () => setOpen(true), onBlur: () => setTimeout(() => setOpen(false), 150), onKeyDown: onKeyDown, role: "combobox", "aria-expanded": open, "aria-controls": "cmd-results", "aria-autocomplete": "list", className: "w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none dark:text-slate-200" })),
+            open && results.length > 0 && (React.createElement("ul", { id: "cmd-results", role: "listbox", className: "absolute z-30 mt-1 max-h-80 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900" }, results.map((r, i) => (React.createElement("li", { key: r.type + r.id, role: "option", "aria-selected": i === active },
+                React.createElement("button", { onMouseDown: (e) => { e.preventDefault(); choose(r); }, onMouseEnter: () => setActive(i), className: cn('flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm', i === active ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-200' : 'text-slate-600 dark:text-slate-300') },
+                    React.createElement(Icon, { name: r.icon, size: 15, className: "shrink-0 text-slate-400" }),
+                    React.createElement("span", { className: "truncate" }, r.label),
+                    React.createElement("span", { className: "ml-auto shrink-0 text-[10px] uppercase tracking-wide text-slate-400" }, r.type)))))))));
+    }
+    function Header() {
+        var _a, _b;
+        const { settings, toggleTheme, refreshAll, setMobileNavOpen, goTo, calendar } = useApp();
+        const [spin, setSpin] = useState(false);
+        const dark = settings.theme === 'dark';
+        const greeting = settings.greetingStyle === 'fixed' ? settings.fixedGreeting : greetingFor();
+        const doRefresh = () => { setSpin(true); refreshAll(); setTimeout(() => setSpin(false), 700); };
+        return (React.createElement("header", { className: "sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80" },
+            React.createElement("div", { className: "flex items-center gap-3 px-4 py-2.5" },
+                React.createElement(IconButton, { label: "Open navigation", icon: "Menu", className: "md:hidden", onClick: () => setMobileNavOpen(true) }),
+                React.createElement("div", { className: "hidden min-w-0 sm:block" },
+                    React.createElement("p", { className: "truncate text-sm font-semibold text-slate-800 dark:text-slate-100" },
+                        greeting,
+                        ", ",
+                        settings.name),
+                    React.createElement("p", { className: "truncate text-xs text-slate-500 dark:text-slate-400" }, fmtDayLong())),
+                React.createElement("div", { className: "mx-auto flex-1 px-2 sm:px-4" },
+                    React.createElement(CommandBar, null)),
+                React.createElement("div", { className: "flex items-center gap-1" },
+                    React.createElement(IconButton, { label: "Refresh data", icon: "RefreshCw", onClick: doRefresh, className: spin ? 'animate-spin' : '' }),
+                    React.createElement(IconButton, { label: dark ? 'Switch to light mode' : 'Switch to dark mode', icon: dark ? 'Sun' : 'Moon', onClick: toggleTheme }),
+                    React.createElement(IconButton, { label: "Settings", icon: "Settings", onClick: () => goTo('settings') }),
+                    React.createElement("button", { onClick: () => goTo('settings'), "aria-label": "Profile and settings", className: "ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white" }, ((_b = (_a = settings.name) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.toUpperCase()) || 'U')))));
+    }
+    return { Header };
+})();
+__M["components/dashboard/DailyBriefing"] = (function () {
+    const { useState } = React;
+    const { useApp } = __M["context/AppContext"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { Button, Badge } = __M["components/ui/primitives"];
+    const { fmtTime, greetingFor } = __M["utils"];
+    const REF_PAGE = { event: 'calendar', email: 'email', task: 'tasks' };
+    function DailyBriefing() {
+        const { briefing, refreshAll, settings, goTo, calendar, emails, weather } = useApp();
+        const [showWhy, setShowWhy] = useState(false);
+        const loading = calendar.loading || emails.loading || weather.loading;
+        return (React.createElement("section", { "aria-labelledby": "briefing-title", className: "rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white p-5 shadow-sm dark:border-indigo-950/60 dark:from-indigo-950/40 dark:to-slate-900" },
+            React.createElement("div", { className: "flex items-start justify-between gap-3" },
+                React.createElement("div", { className: "flex items-center gap-2" },
+                    React.createElement("div", { className: "flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white" },
+                        React.createElement(Icon, { name: "Sparkles", size: 18 })),
+                    React.createElement("div", null,
+                        React.createElement("h2", { id: "briefing-title", className: "text-sm font-semibold text-slate-800 dark:text-slate-100" },
+                            greetingFor(),
+                            ", ",
+                            settings.name,
+                            " \u2014 here\u2019s your briefing"),
+                        React.createElement("p", { className: "text-[11px] text-slate-500 dark:text-slate-400" },
+                            "Generated ",
+                            fmtTime(briefing.generatedAt),
+                            " \u00B7 from your dashboard data"))),
+                React.createElement("div", { className: "flex items-center gap-1.5" },
+                    React.createElement(Badge, { tone: "amber", icon: "Info" }, "Mock data"),
+                    React.createElement(Button, { variant: "ghost", size: "sm", icon: "RefreshCw", onClick: refreshAll, "aria-label": "Regenerate briefing" }, "Regenerate"))),
+            React.createElement("div", { className: "mt-4" }, loading ? (React.createElement("p", { className: "text-sm text-slate-500 dark:text-slate-400" }, "Compiling your briefing\u2026")) : briefing.parts.length === 0 ? (React.createElement("p", { className: "text-sm text-slate-600 dark:text-slate-300" }, "Nothing urgent right now. Enjoy the quiet. \uD83C\uDF3F")) : (React.createElement("p", { className: "text-[15px] leading-relaxed text-slate-700 dark:text-slate-200" }, briefing.parts.map((part, i) => (React.createElement("span", { key: i },
+                part.text,
+                ' ',
+                part.refs.length > 0 && (React.createElement("span", { className: "mr-1 inline-flex flex-wrap gap-1 align-middle" }, part.refs.slice(0, 3).map(ref => (React.createElement("button", { key: ref.type + ref.id, onClick: () => goTo(REF_PAGE[ref.type] || 'dashboard', { type: ref.type, id: ref.id }), className: "inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-white/70 px-2 py-0.5 text-xs font-medium text-indigo-700 hover:bg-white dark:border-indigo-900 dark:bg-slate-900/60 dark:text-indigo-300", title: ref.label },
+                    React.createElement(Icon, { name: ref.type === 'event' ? 'Calendar' : ref.type === 'email' ? 'Mail' : 'CheckSquare', size: 11 }),
+                    React.createElement("span", { className: "max-w-[10rem] truncate" }, ref.label)))))))))))),
+            React.createElement("div", { className: "mt-4 flex items-center justify-between border-t border-indigo-100/70 pt-3 dark:border-indigo-950/60" },
+                React.createElement("button", { onClick: () => setShowWhy(v => !v), "aria-expanded": showWhy, className: "inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200" },
+                    React.createElement(Icon, { name: "HelpCircle", size: 14 }),
+                    "Why am I seeing this?")),
+            showWhy && (React.createElement("div", { className: "mt-2 rounded-xl bg-white/70 p-3 text-xs leading-relaxed text-slate-600 dark:bg-slate-900/60 dark:text-slate-300" },
+                "This briefing is ",
+                React.createElement("strong", null, "generated from your own dashboard data"),
+                " \u2014 today\u2019s calendar events, the relevant-email shortlist, your task list and the weather \u2014 using simple rules (event count, items flagged for preparation, high-importance emails, overdue tasks, rain likelihood). Nothing is sent to an external AI service in this version. In a future version an optional LLM step could rephrase this",
+                React.createElement("em", null, " structured"),
+                " summary more naturally, behind a setting and a secure backend."))));
+    }
+    return { DailyBriefing };
+})();
+__M["components/dashboard/CalendarCard"] = (function () {
+    const { useState } = React;
+    const { useApp } = __M["context/AppContext"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { Card, Badge, Button, StateBoundary, Modal, IconButton } = __M["components/ui/primitives"];
+    const { cn, fmtTime, fmtDayShort, isToday, isPast } = __M["utils"];
+    const CATEGORY_TONE = { Work: 'blue', Personal: 'green', Finance: 'amber', University: 'indigo' };
+    // Explicit (non-interpolated) classes so Tailwind keeps them in the build.
+    const CATEGORY_BAR = { Work: 'bg-blue-400', Personal: 'bg-emerald-400', Finance: 'bg-amber-400', University: 'bg-indigo-400' };
+    function EventRow({ ev, focused, onOpen }) {
+        const past = isPast(ev.end || ev.start);
+        return (React.createElement("li", { className: cn('group flex gap-3 rounded-xl border border-transparent p-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60', focused && 'ring-2 ring-indigo-500', past && 'opacity-60') },
+            React.createElement("div", { className: "flex w-12 shrink-0 flex-col items-center" },
+                React.createElement("span", { className: "text-xs font-semibold text-slate-700 dark:text-slate-200" }, fmtTime(ev.start)),
+                React.createElement("span", { className: "text-[10px] text-slate-400" }, fmtTime(ev.end))),
+            React.createElement("div", { className: cn('mt-1 w-1 shrink-0 rounded-full', CATEGORY_BAR[ev.category] || 'bg-slate-300'), "aria-hidden": "true" }),
+            React.createElement("div", { className: "min-w-0 flex-1" },
+                React.createElement("div", { className: "flex items-center gap-2" },
+                    React.createElement("p", { className: "truncate text-sm font-medium text-slate-800 dark:text-slate-100" }, ev.title),
+                    ev.prep && React.createElement(Badge, { tone: "amber", icon: "Flag" }, "Prep")),
+                React.createElement("div", { className: "mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500 dark:text-slate-400" },
+                    React.createElement("span", { className: "inline-flex items-center gap-1" },
+                        React.createElement(Icon, { name: ev.online ? 'Video' : 'MapPin', size: 12 }),
+                        ev.location),
+                    React.createElement(Badge, { tone: CATEGORY_TONE[ev.category] || 'gray' }, ev.category))),
+            React.createElement("button", { onClick: () => onOpen(ev), className: "self-center rounded-md px-2 py-1 text-xs font-medium text-indigo-600 opacity-0 hover:bg-indigo-50 focus:opacity-100 group-hover:opacity-100 dark:text-indigo-300 dark:hover:bg-indigo-950/40" }, "Details")));
+    }
+    function CalendarCard({ full = false }) {
+        const { calendar, loadCalendar, focus, goTo } = useApp();
+        const [detail, setDetail] = useState(null);
+        const events = calendar.data || [];
+        const today = events.filter(e => isToday(e.start));
+        const upcoming = events.filter(e => !isToday(e.start) && !isPast(e.start));
+        const action = (React.createElement(Button, { variant: "ghost", size: "sm", iconRight: "ArrowRight", onClick: () => goTo('calendar') }, full ? '' : 'Open'));
+        return (React.createElement(Card, { title: "Calendar", icon: "Calendar", labelledBy: "cal-title", action: !full ? action : undefined },
+            React.createElement(StateBoundary, { loading: calendar.loading, error: calendar.error, onRetry: loadCalendar, empty: !calendar.loading && !calendar.error && today.length === 0 && upcoming.length === 0, emptyProps: { icon: 'Calendar', title: 'No events', message: 'Your schedule is clear.' } },
+                React.createElement("div", { className: "space-y-4" },
+                    React.createElement("div", null,
+                        React.createElement("p", { className: "mb-1 px-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400" }, "Today"),
+                        today.length === 0 ? (React.createElement("p", { className: "px-2 py-3 text-sm text-slate-500 dark:text-slate-400" }, "No events today.")) : (React.createElement("ul", { className: "space-y-1" }, (full ? today : today.slice(0, 4)).map(ev => (React.createElement(EventRow, { key: ev.id, ev: ev, focused: (focus === null || focus === void 0 ? void 0 : focus.type) === 'event' && focus.id === ev.id, onOpen: setDetail })))))),
+                    (full || upcoming.length > 0) && (React.createElement("div", null,
+                        React.createElement("p", { className: "mb-1 px-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400" }, "Upcoming"),
+                        React.createElement("ul", { className: "space-y-1" }, (full ? upcoming : upcoming.slice(0, 2)).map(ev => (React.createElement("li", { key: ev.id, className: "flex items-center gap-3 rounded-xl p-2 hover:bg-slate-50 dark:hover:bg-slate-800/60" },
+                            React.createElement("span", { className: "w-12 shrink-0 text-center text-[11px] font-medium text-slate-500" }, fmtDayShort(ev.start)),
+                            React.createElement("span", { className: "w-10 shrink-0 text-xs text-slate-500" }, fmtTime(ev.start)),
+                            React.createElement("span", { className: "min-w-0 flex-1 truncate text-sm text-slate-700 dark:text-slate-200" }, ev.title),
+                            ev.prep && React.createElement(Badge, { tone: "amber", icon: "Flag" }, "Prep"),
+                            React.createElement("button", { onClick: () => setDetail(ev), className: "rounded-md px-2 py-1 text-xs text-indigo-600 hover:bg-indigo-50 dark:text-indigo-300 dark:hover:bg-indigo-950/40" }, "Details"))))))))),
+            React.createElement(Modal, { open: !!detail, onClose: () => setDetail(null), title: (detail === null || detail === void 0 ? void 0 : detail.title) || 'Event', footer: React.createElement(Button, { variant: "primary", size: "sm", icon: "ExternalLink" }, "Open in calendar") }, detail && (React.createElement("div", { className: "space-y-3 text-sm" },
+                React.createElement("div", { className: "flex flex-wrap gap-2" },
+                    React.createElement(Badge, { tone: CATEGORY_TONE[detail.category] || 'gray' }, detail.category),
+                    detail.prep && React.createElement(Badge, { tone: "amber", icon: "Flag" }, "Preparation needed"),
+                    React.createElement(Badge, { tone: "gray", icon: detail.online ? 'Video' : 'MapPin' }, detail.online ? 'Online' : 'In person')),
+                React.createElement("p", { className: "flex items-center gap-2 text-slate-600 dark:text-slate-300" },
+                    React.createElement(Icon, { name: "Clock", size: 15, className: "text-slate-400" }),
+                    fmtDayShort(detail.start),
+                    ", ",
+                    fmtTime(detail.start),
+                    "\u2013",
+                    fmtTime(detail.end)),
+                React.createElement("p", { className: "flex items-center gap-2 text-slate-600 dark:text-slate-300" },
+                    React.createElement(Icon, { name: detail.online ? 'Video' : 'MapPin', size: 15, className: "text-slate-400" }),
+                    detail.location),
+                React.createElement("p", { className: "text-slate-600 dark:text-slate-300" }, detail.details))))));
+    }
+    return { CalendarCard };
+})();
+__M["components/dashboard/EmailList"] = (function () {
+    const { useState } = React;
+    const { useApp } = __M["context/AppContext"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { Card, Badge, Button, Chip, StateBoundary, IconButton } = __M["components/ui/primitives"];
+    const { cn, relTime } = __M["utils"];
+    const { EMAIL_CATEGORIES } = __M["data/mockData"];
+    const IMPORTANCE = {
+        high: { tone: 'red', label: 'Important' },
+        medium: { tone: 'amber', label: 'Notable' },
+        low: { tone: 'gray', label: 'FYI' },
+    };
+    const FEEDBACK = [
+        { key: 'useful', icon: 'ThumbsUp', label: 'Useful' },
+        { key: 'not_relevant', icon: 'ThumbsDown', label: 'Not relevant' },
+        { key: 'dealt', icon: 'CircleCheck', label: 'Dealt with' },
+    ];
+    function EmailItem({ email, focused }) {
+        var _a;
+        const { setEmailFeedbackFor, markEmailRead } = useApp();
+        const [showWhy, setShowWhy] = useState(false);
+        const imp = IMPORTANCE[email.importance] || IMPORTANCE.low;
+        return (React.createElement("li", { className: cn('rounded-xl border p-3 transition-colors', focused ? 'border-indigo-400 ring-2 ring-indigo-500' : 'border-slate-100 dark:border-slate-800', email.unread ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/60 dark:bg-slate-900/40', email.feedback === 'not_relevant' && 'opacity-60') },
+            React.createElement("div", { className: "flex items-start gap-2" },
+                email.unread
+                    ? React.createElement("span", { className: "mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-500", "aria-label": "Unread" })
+                    : React.createElement("span", { className: "mt-1.5 h-2 w-2 shrink-0 rounded-full bg-transparent", "aria-hidden": "true" }),
+                React.createElement("div", { className: "min-w-0 flex-1" },
+                    React.createElement("div", { className: "flex items-center gap-2" },
+                        React.createElement("span", { className: cn('truncate text-sm', email.unread ? 'font-semibold text-slate-800 dark:text-slate-100' : 'font-medium text-slate-600 dark:text-slate-300') }, email.sender),
+                        React.createElement(Badge, { tone: imp.tone }, imp.label),
+                        React.createElement("span", { className: "ml-auto shrink-0 text-[11px] text-slate-400" }, relTime(email.received))),
+                    React.createElement("p", { className: cn('truncate text-sm', email.unread ? 'text-slate-700 dark:text-slate-200' : 'text-slate-500 dark:text-slate-400') }, email.subject),
+                    React.createElement("p", { className: "mt-0.5 line-clamp-2 text-xs text-slate-500 dark:text-slate-400" }, email.preview),
+                    React.createElement("div", { className: "mt-2 flex flex-wrap items-center gap-1.5" },
+                        React.createElement(Badge, { tone: "indigo", icon: "Filter" }, ((_a = EMAIL_CATEGORIES.find(c => c.id === email.category)) === null || _a === void 0 ? void 0 : _a.label) || email.category),
+                        React.createElement("button", { onClick: () => setShowWhy(v => !v), "aria-expanded": showWhy, className: "inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" },
+                            React.createElement(Icon, { name: "HelpCircle", size: 12 }),
+                            " Why selected"),
+                        React.createElement("a", { href: "#", onClick: (e) => { e.preventDefault(); markEmailRead(email.id); }, className: "ml-auto inline-flex items-center gap-1 text-[11px] font-medium text-indigo-600 hover:underline dark:text-indigo-300" },
+                            "Open ",
+                            React.createElement(Icon, { name: "ExternalLink", size: 11 }))),
+                    showWhy && (React.createElement("p", { className: "mt-2 rounded-lg bg-slate-50 px-2.5 py-1.5 text-[11px] text-slate-500 dark:bg-slate-800 dark:text-slate-400" }, email.reason)),
+                    React.createElement("div", { className: "mt-2 flex items-center gap-1 border-t border-slate-100 pt-2 dark:border-slate-800" },
+                        React.createElement("span", { className: "mr-1 text-[10px] uppercase tracking-wide text-slate-400" }, "Feedback"),
+                        FEEDBACK.map(f => (React.createElement("button", { key: f.key, onClick: () => setEmailFeedbackFor(email.id, f.key), "aria-pressed": email.feedback === f.key, "aria-label": f.label, title: f.label, className: cn('inline-flex h-7 items-center gap-1 rounded-md px-2 text-[11px] font-medium', email.feedback === f.key
+                                ? 'bg-indigo-600 text-white'
+                                : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800') },
+                            React.createElement(Icon, { name: f.icon, size: 12 }),
+                            " ",
+                            React.createElement("span", { className: "hidden sm:inline" }, f.label)))))))));
+    }
+    function EmailList({ full = false }) {
+        const { emails, loadEmails, focus, goTo, settings } = useApp();
+        const [filter, setFilter] = useState('all');
+        const all = emails.data || [];
+        const visibleCats = settings.emailCategories;
+        let list = all.filter(e => visibleCats.includes(e.category));
+        if (filter !== 'all')
+            list = list.filter(e => e.category === filter);
+        const shown = full ? list : list.slice(0, 4);
+        return (React.createElement(Card, { title: "Relevant emails", icon: "Mail", labelledBy: "email-title", action: !full && React.createElement(Button, { variant: "ghost", size: "sm", iconRight: "ArrowRight", onClick: () => goTo('email') }, "Open") },
+            full && (React.createElement("div", { className: "mb-3 flex flex-wrap gap-1.5" },
+                React.createElement(Chip, { active: filter === 'all', onClick: () => setFilter('all') }, "All"),
+                EMAIL_CATEGORIES.filter(c => visibleCats.includes(c.id)).map(c => (React.createElement(Chip, { key: c.id, active: filter === c.id, onClick: () => setFilter(c.id) }, c.label))))),
+            React.createElement(StateBoundary, { loading: emails.loading, error: emails.error, onRetry: loadEmails, empty: !emails.loading && !emails.error && shown.length === 0, emptyProps: { icon: 'Inbox', title: 'Nothing here', message: 'No emails match this filter.' } },
+                React.createElement("ul", { className: "space-y-2" }, shown.map(e => (React.createElement(EmailItem, { key: e.id, email: e, focused: (focus === null || focus === void 0 ? void 0 : focus.type) === 'email' && focus.id === e.id })))))));
+    }
+    return { EmailList };
+})();
+__M["components/dashboard/TasksPanel"] = (function () {
+    const { useMemo, useState } = React;
+    const { useApp } = __M["context/AppContext"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { Card, Badge, Button, IconButton, Modal, Field, inputClass, EmptyState } = __M["components/ui/primitives"];
+    const { cn, fmtDayShort, fmtTime, isToday, isPast } = __M["utils"];
+    const PRIORITY = {
+        high: { tone: 'red', label: 'High' },
+        medium: { tone: 'amber', label: 'Medium' },
+        low: { tone: 'gray', label: 'Low' },
+    };
+    const CATEGORIES = ['Work', 'University', 'Finance', 'Travel', 'Personal', 'Projects'];
+    function classify(t) {
+        if (t.completed)
+            return 'completed';
+        if (t.due && isPast(t.due))
+            return 'overdue';
+        if (t.due && isToday(t.due))
+            return 'today';
+        return 'upcoming';
+    }
+    function TaskRow({ task, onEdit }) {
+        var _a, _b;
+        const { toggleTask, deleteTask } = useApp();
+        const overdue = !task.completed && task.due && isPast(task.due);
+        return (React.createElement("li", { className: "group flex items-start gap-3 rounded-xl border border-slate-100 p-2.5 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/60" },
+            React.createElement("button", { onClick: () => toggleTask(task.id), role: "checkbox", "aria-checked": task.completed, "aria-label": task.completed ? 'Mark task incomplete' : 'Mark task complete', className: cn('mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border', task.completed ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-transparent hover:border-indigo-500 dark:border-slate-600') },
+                React.createElement(Icon, { name: "Check", size: 13 })),
+            React.createElement("div", { className: "min-w-0 flex-1" },
+                React.createElement("p", { className: cn('text-sm', task.completed ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100') }, task.title),
+                React.createElement("div", { className: "mt-1 flex flex-wrap items-center gap-1.5" },
+                    React.createElement(Badge, { tone: (_a = PRIORITY[task.priority]) === null || _a === void 0 ? void 0 : _a.tone }, (_b = PRIORITY[task.priority]) === null || _b === void 0 ? void 0 : _b.label),
+                    React.createElement(Badge, { tone: "gray" }, task.category),
+                    task.due && (React.createElement("span", { className: cn('inline-flex items-center gap-1 text-[11px]', overdue ? 'font-medium text-red-600 dark:text-red-400' : 'text-slate-400') },
+                        React.createElement(Icon, { name: "Clock", size: 11 }),
+                        " ",
+                        fmtDayShort(task.due),
+                        " ",
+                        fmtTime(task.due))))),
+            React.createElement("div", { className: "flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100" },
+                React.createElement(IconButton, { label: "Edit task", icon: "Pencil", onClick: () => onEdit(task), className: "h-7 w-7" }),
+                React.createElement(IconButton, { label: "Delete task", icon: "Trash2", onClick: () => deleteTask(task.id), className: "h-7 w-7" }))));
+    }
+    function TaskEditor({ open, onClose, task }) {
+        const { addTask, updateTask } = useApp();
+        const editing = !!task;
+        const [form, setForm] = useState(() => ({
+            title: (task === null || task === void 0 ? void 0 : task.title) || '', priority: (task === null || task === void 0 ? void 0 : task.priority) || 'medium',
+            category: (task === null || task === void 0 ? void 0 : task.category) || 'Personal',
+            due: (task === null || task === void 0 ? void 0 : task.due) ? new Date(task.due).toISOString().slice(0, 16) : '',
+        }));
+        const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+        const save = () => {
+            if (!form.title.trim())
+                return;
+            const payload = { title: form.title.trim(), priority: form.priority, category: form.category, due: form.due ? new Date(form.due).toISOString() : null };
+            if (editing)
+                updateTask(task.id, payload);
+            else
+                addTask(payload);
+            onClose();
+        };
+        return (React.createElement(Modal, { open: open, onClose: onClose, title: editing ? 'Edit task' : 'Add task', footer: React.createElement(React.Fragment, null,
+                React.createElement(Button, { variant: "ghost", size: "sm", onClick: onClose }, "Cancel"),
+                React.createElement(Button, { variant: "primary", size: "sm", icon: "Check", onClick: save }, editing ? 'Save' : 'Add task')) },
+            React.createElement("div", { className: "space-y-3" },
+                React.createElement(Field, { label: "Title", htmlFor: "t-title" },
+                    React.createElement("input", { id: "t-title", className: inputClass, value: form.title, autoFocus: true, onChange: e => set('title', e.target.value), onKeyDown: e => e.key === 'Enter' && save(), placeholder: "What needs doing?" })),
+                React.createElement("div", { className: "grid grid-cols-2 gap-3" },
+                    React.createElement(Field, { label: "Priority", htmlFor: "t-pri" },
+                        React.createElement("select", { id: "t-pri", className: inputClass, value: form.priority, onChange: e => set('priority', e.target.value) },
+                            React.createElement("option", { value: "high" }, "High"),
+                            React.createElement("option", { value: "medium" }, "Medium"),
+                            React.createElement("option", { value: "low" }, "Low"))),
+                    React.createElement(Field, { label: "Category", htmlFor: "t-cat" },
+                        React.createElement("select", { id: "t-cat", className: inputClass, value: form.category, onChange: e => set('category', e.target.value) }, CATEGORIES.map(c => React.createElement("option", { key: c, value: c }, c))))),
+                React.createElement(Field, { label: "Due date & time", htmlFor: "t-due", hint: "Leave empty for no due date." },
+                    React.createElement("input", { id: "t-due", type: "datetime-local", className: inputClass, value: form.due, onChange: e => set('due', e.target.value) })))));
+    }
+    function TasksPanel({ full = false }) {
+        const { tasks, goTo, focus } = useApp();
+        const [tab, setTab] = useState('today');
+        const [editing, setEditing] = useState(null); // task object
+        const [adding, setAdding] = useState(false);
+        const groups = useMemo(() => {
+            const g = { today: [], upcoming: [], overdue: [], completed: [] };
+            tasks.forEach(t => g[classify(t)].push(t));
+            return g;
+        }, [tasks]);
+        const TABS = [
+            { id: 'today', label: 'Today', count: groups.today.length },
+            { id: 'upcoming', label: 'Upcoming', count: groups.upcoming.length },
+            { id: 'overdue', label: 'Overdue', count: groups.overdue.length },
+            { id: 'completed', label: 'Completed', count: groups.completed.length },
+        ];
+        const list = groups[tab];
+        return (React.createElement(Card, { title: "Tasks", icon: "CheckSquare", labelledBy: "tasks-title", action: React.createElement(Button, { variant: "subtle", size: "sm", icon: "Plus", onClick: () => setAdding(true) }, "Add") },
+            React.createElement("div", { className: "mb-3 flex flex-wrap gap-1", role: "tablist", "aria-label": "Task groups" }, TABS.map(t => (React.createElement("button", { key: t.id, role: "tab", "aria-selected": tab === t.id, onClick: () => setTab(t.id), className: cn('inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium', tab === t.id ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/60') },
+                t.label,
+                React.createElement("span", { className: cn('rounded-full px-1.5 text-[10px]', t.id === 'overdue' && t.count > 0 ? 'bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300') }, t.count))))),
+            list.length === 0 ? (React.createElement(EmptyState, { icon: "CheckSquare", title: `No ${tab} tasks`, message: tab === 'today' ? 'Nothing due today.' : 'You’re all caught up here.', action: React.createElement(Button, { variant: "subtle", size: "sm", icon: "Plus", onClick: () => setAdding(true) }, "Add a task") })) : (React.createElement("ul", { className: "space-y-2" }, (full ? list : list.slice(0, 5)).map(t => (React.createElement(TaskRow, { key: t.id, task: t, onEdit: setEditing }))))),
+            !full && list.length > 5 && (React.createElement("button", { onClick: () => goTo('tasks'), className: "mt-2 text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-300" },
+                "View all ",
+                list.length,
+                " \u2192")),
+            adding && React.createElement(TaskEditor, { key: "add", open: true, onClose: () => setAdding(false), task: null }),
+            editing && React.createElement(TaskEditor, { key: editing.id, open: true, onClose: () => setEditing(null), task: editing })));
+    }
+    return { TasksPanel };
+})();
+__M["components/dashboard/NewsFeed"] = (function () {
+    const { useMemo, useState } = React;
+    const { useApp } = __M["context/AppContext"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { Card, Badge, Button, Chip, StateBoundary } = __M["components/ui/primitives"];
+    const { cn, relTime } = __M["utils"];
+    const { NEWS_TOPICS } = __M["data/mockData"];
+    function NewsItem({ item, saved, onSave, onDismiss }) {
+        const [showWhy, setShowWhy] = useState(false);
+        const topic = NEWS_TOPICS.find(t => t.id === item.topic);
+        return (React.createElement("li", { className: "rounded-xl border border-slate-100 p-3 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/40" },
+            React.createElement("div", { className: "flex items-center gap-2 text-[11px] text-slate-400" },
+                React.createElement("span", { className: "font-medium text-slate-500 dark:text-slate-400" }, item.source),
+                React.createElement("span", null, "\u00B7"),
+                React.createElement("span", null, relTime(item.published)),
+                React.createElement(Badge, { tone: "indigo", className: "ml-auto" }, (topic === null || topic === void 0 ? void 0 : topic.label) || item.topic)),
+            React.createElement("a", { href: item.url, target: "_blank", rel: "noopener noreferrer", className: "mt-1 block text-sm font-semibold text-slate-800 hover:text-indigo-600 dark:text-slate-100 dark:hover:text-indigo-300" }, item.headline),
+            React.createElement("p", { className: "mt-0.5 line-clamp-2 text-xs text-slate-500 dark:text-slate-400" }, item.description),
+            React.createElement("div", { className: "mt-2 flex items-center gap-1.5" },
+                React.createElement("button", { onClick: () => setShowWhy(v => !v), "aria-expanded": showWhy, className: "inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" },
+                    React.createElement(Icon, { name: "HelpCircle", size: 12 }),
+                    " Why this?"),
+                React.createElement("div", { className: "ml-auto flex gap-0.5" },
+                    React.createElement("button", { onClick: () => onSave(item.id), "aria-pressed": saved, "aria-label": saved ? 'Unsave article' : 'Save article', title: "Save", className: cn('inline-flex h-7 w-7 items-center justify-center rounded-md', saved ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800') },
+                        React.createElement(Icon, { name: saved ? 'BookmarkCheck' : 'Bookmark', size: 15 })),
+                    React.createElement("button", { onClick: () => onDismiss(item.id), "aria-label": "Dismiss article", title: "Dismiss", className: "inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" },
+                        React.createElement(Icon, { name: "X", size: 15 })),
+                    React.createElement("a", { href: item.url, target: "_blank", rel: "noopener noreferrer", "aria-label": "Open article", title: "Open", className: "inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" },
+                        React.createElement(Icon, { name: "ExternalLink", size: 15 })))),
+            showWhy && React.createElement("p", { className: "mt-2 rounded-lg bg-slate-50 px-2.5 py-1.5 text-[11px] text-slate-500 dark:bg-slate-800 dark:text-slate-400" }, item.reason)));
+    }
+    function NewsFeed({ full = false }) {
+        const { news, loadNews, savedNews, dismissedNews, toggleSaveNews, dismissNews, restoreNews, settings, goTo } = useApp();
+        const [active, setActive] = useState(() => settings.newsTopics);
+        const [savedOnly, setSavedOnly] = useState(false);
+        const items = useMemo(() => {
+            let list = (news.data || []).filter(n => !dismissedNews.includes(n.id));
+            list = list.filter(n => active.includes(n.topic));
+            if (savedOnly)
+                list = list.filter(n => savedNews.includes(n.id));
+            return list;
+        }, [news.data, dismissedNews, active, savedOnly, savedNews]);
+        const toggleTopic = (id) => setActive(a => a.includes(id) ? a.filter(x => x !== id) : [...a, id]);
+        return (React.createElement(Card, { title: "Personalised news", icon: "Newspaper", labelledBy: "news-title", action: !full
+                ? React.createElement(Button, { variant: "ghost", size: "sm", iconRight: "ArrowRight", onClick: () => goTo('news') }, "Open")
+                : React.createElement(Chip, { active: savedOnly, onClick: () => setSavedOnly(v => !v) }, "Saved only") },
+            React.createElement("p", { className: "mb-2 inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-700 dark:bg-amber-950/40 dark:text-amber-300" },
+                React.createElement(Icon, { name: "Info", size: 12 }),
+                " Demonstration articles \u2014 not current or genuine news."),
+            full && (React.createElement("div", { className: "mb-3 flex flex-wrap gap-1.5" }, NEWS_TOPICS.map(t => (React.createElement(Chip, { key: t.id, active: active.includes(t.id), onClick: () => toggleTopic(t.id) }, t.label))))),
+            React.createElement(StateBoundary, { loading: news.loading, error: news.error, onRetry: loadNews, empty: !news.loading && !news.error && items.length === 0, emptyProps: { icon: 'Newspaper', title: 'No articles', message: savedOnly ? 'You haven’t saved anything yet.' : 'No stories match your selected topics.' } },
+                React.createElement("ul", { className: "space-y-2" }, (full ? items : items.slice(0, 3)).map(n => (React.createElement(NewsItem, { key: n.id, item: n, saved: savedNews.includes(n.id), onSave: toggleSaveNews, onDismiss: dismissNews }))))),
+            full && dismissedNews.length > 0 && (React.createElement("div", { className: "mt-3 border-t border-slate-100 pt-2 dark:border-slate-800" },
+                React.createElement("p", { className: "mb-1 text-[11px] text-slate-400" },
+                    "Dismissed (",
+                    dismissedNews.length,
+                    ")"),
+                React.createElement("button", { onClick: () => dismissedNews.forEach(restoreNews), className: "text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-300" }, "Restore all dismissed")))));
+    }
+    return { NewsFeed };
+})();
+__M["components/dashboard/WeatherCard"] = (function () {
+    const { useApp } = __M["context/AppContext"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { Card, Badge, StateBoundary } = __M["components/ui/primitives"];
+    function conditionIcon(c = '') {
+        const s = c.toLowerCase();
+        if (s.includes('rain') || s.includes('shower'))
+            return 'CloudRain';
+        if (s.includes('cloud'))
+            return 'Cloud';
+        if (s.includes('wind'))
+            return 'Wind';
+        return 'Sun';
+    }
+    function WeatherCard() {
+        const { weather, loadWeather } = useApp();
+        const w = weather.data;
+        return (React.createElement(Card, { title: "Weather", icon: "CloudRain", labelledBy: "weather-title" },
+            React.createElement(StateBoundary, { loading: weather.loading, error: weather.error, onRetry: loadWeather }, w && (React.createElement("div", null,
+                React.createElement("div", { className: "flex items-center gap-3" },
+                    React.createElement(Icon, { name: conditionIcon(w.current.condition), size: 40, className: "text-indigo-500" }),
+                    React.createElement("div", null,
+                        React.createElement("p", { className: "text-3xl font-semibold text-slate-800 dark:text-slate-100" },
+                            w.current.tempC,
+                            "\u00B0"),
+                        React.createElement("p", { className: "text-xs text-slate-500 dark:text-slate-400" },
+                            w.current.condition,
+                            " \u00B7 ",
+                            w.location)),
+                    React.createElement("div", { className: "ml-auto space-y-1 text-right text-[11px] text-slate-500 dark:text-slate-400" },
+                        React.createElement(Badge, { tone: "blue", icon: "Umbrella" },
+                            w.current.rainProbability,
+                            "% rain"),
+                        React.createElement("p", null,
+                            "Feels ",
+                            w.current.feelsLikeC,
+                            "\u00B0 \u00B7 Wind ",
+                            w.current.windKph,
+                            " km/h"))),
+                React.createElement("p", { className: "mt-3 flex items-start gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300" },
+                    React.createElement(Icon, { name: "Info", size: 14, className: "mt-0.5 shrink-0 text-indigo-500" }),
+                    w.suggestion),
+                React.createElement("ul", { className: "mt-3 grid grid-cols-5 gap-1 text-center" }, w.forecast.map(f => (React.createElement("li", { key: f.label, className: "rounded-lg py-2 hover:bg-slate-50 dark:hover:bg-slate-800/60" },
+                    React.createElement("p", { className: "text-[11px] text-slate-400" }, f.label),
+                    React.createElement(Icon, { name: conditionIcon(f.condition), size: 18, className: "mx-auto my-1 text-slate-500" }),
+                    React.createElement("p", { className: "text-xs font-medium text-slate-700 dark:text-slate-200" },
+                        f.tempC,
+                        "\u00B0"),
+                    React.createElement("p", { className: "text-[10px] text-blue-500" },
+                        f.rain,
+                        "%"))))))))));
+    }
+    return { WeatherCard };
+})();
+__M["components/dashboard/QuickLinks"] = (function () {
+    const { useState } = React;
+    const { useApp } = __M["context/AppContext"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { Card, Button, IconButton, Modal, Field, inputClass } = __M["components/ui/primitives"];
+    const GROUP_ICON = {
+        University: 'GraduationCap', Email: 'Mail', Calendar: 'Calendar', Finance: 'PiggyBank',
+        'Travel planning': 'Plane', Fitness: 'Dumbbell', 'Personal projects': 'Globe', Other: 'Link2',
+    };
+    const GROUPS = ['University', 'Email', 'Calendar', 'Finance', 'Travel planning', 'Fitness', 'Personal projects', 'Other'];
+    function LinkEditor({ open, onClose, link }) {
+        const { addLink, updateLink } = useApp();
+        const editing = !!link;
+        const [form, setForm] = useState(() => ({ label: (link === null || link === void 0 ? void 0 : link.label) || '', url: (link === null || link === void 0 ? void 0 : link.url) || 'https://', group: (link === null || link === void 0 ? void 0 : link.group) || 'Other' }));
+        const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+        const save = () => {
+            if (!form.label.trim() || !form.url.trim())
+                return;
+            if (editing)
+                updateLink(link.id, form);
+            else
+                addLink(form);
+            onClose();
+        };
+        return (React.createElement(Modal, { open: open, onClose: onClose, title: editing ? 'Edit link' : 'Add link', footer: React.createElement(React.Fragment, null,
+                React.createElement(Button, { variant: "ghost", size: "sm", onClick: onClose }, "Cancel"),
+                React.createElement(Button, { variant: "primary", size: "sm", icon: "Check", onClick: save }, editing ? 'Save' : 'Add')) },
+            React.createElement("div", { className: "space-y-3" },
+                React.createElement(Field, { label: "Label", htmlFor: "l-label" },
+                    React.createElement("input", { id: "l-label", className: inputClass, value: form.label, autoFocus: true, onChange: e => set('label', e.target.value) })),
+                React.createElement(Field, { label: "URL", htmlFor: "l-url" },
+                    React.createElement("input", { id: "l-url", type: "url", className: inputClass, value: form.url, onChange: e => set('url', e.target.value) })),
+                React.createElement(Field, { label: "Group", htmlFor: "l-group" },
+                    React.createElement("select", { id: "l-group", className: inputClass, value: form.group, onChange: e => set('group', e.target.value) }, GROUPS.map(g => React.createElement("option", { key: g, value: g }, g)))))));
+    }
+    function QuickLinks() {
+        const { quickLinks, deleteLink, moveLink } = useApp();
+        const [manage, setManage] = useState(false);
+        const [editing, setEditing] = useState(null);
+        const [adding, setAdding] = useState(false);
+        return (React.createElement(Card, { title: "Quick links", icon: "Link2", labelledBy: "links-title", action: React.createElement("div", { className: "flex gap-1" },
+                React.createElement(Button, { variant: "ghost", size: "sm", icon: manage ? 'Check' : 'Pencil', onClick: () => setManage(m => !m) }, manage ? 'Done' : 'Edit'),
+                React.createElement(Button, { variant: "subtle", size: "sm", icon: "Plus", onClick: () => setAdding(true) }, "Add")) },
+            quickLinks.length === 0 ? (React.createElement("p", { className: "py-4 text-center text-sm text-slate-500" }, "No links yet \u2014 add your first one.")) : !manage ? (React.createElement("div", { className: "grid grid-cols-2 gap-2 sm:grid-cols-3" }, quickLinks.map(l => (React.createElement("a", { key: l.id, href: l.url, target: "_blank", rel: "noopener noreferrer", className: "flex items-center gap-2 rounded-xl border border-slate-100 px-3 py-2.5 text-sm text-slate-700 transition-colors hover:border-indigo-200 hover:bg-indigo-50/50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800" },
+                React.createElement(Icon, { name: GROUP_ICON[l.group] || 'Link2', size: 16, className: "shrink-0 text-indigo-500" }),
+                React.createElement("span", { className: "truncate" }, l.label)))))) : (React.createElement("ul", { className: "space-y-1.5" }, quickLinks.map((l, i) => (React.createElement("li", { key: l.id, className: "flex items-center gap-2 rounded-lg border border-slate-100 px-2 py-1.5 dark:border-slate-800" },
+                React.createElement(Icon, { name: GROUP_ICON[l.group] || 'Link2', size: 15, className: "shrink-0 text-slate-400" }),
+                React.createElement("div", { className: "min-w-0 flex-1" },
+                    React.createElement("p", { className: "truncate text-sm text-slate-700 dark:text-slate-200" }, l.label),
+                    React.createElement("p", { className: "truncate text-[11px] text-slate-400" }, l.group)),
+                React.createElement(IconButton, { label: "Move up", icon: "ChevronUp", className: "h-7 w-7", disabled: i === 0, onClick: () => moveLink(l.id, 'up') }),
+                React.createElement(IconButton, { label: "Move down", icon: "ChevronDown", className: "h-7 w-7", disabled: i === quickLinks.length - 1, onClick: () => moveLink(l.id, 'down') }),
+                React.createElement(IconButton, { label: "Edit link", icon: "Pencil", className: "h-7 w-7", onClick: () => setEditing(l) }),
+                React.createElement(IconButton, { label: "Delete link", icon: "Trash2", className: "h-7 w-7", onClick: () => deleteLink(l.id) })))))),
+            adding && React.createElement(LinkEditor, { key: "add", open: true, onClose: () => setAdding(false), link: null }),
+            editing && React.createElement(LinkEditor, { key: editing.id, open: true, onClose: () => setEditing(null), link: editing })));
+    }
+    return { QuickLinks };
+})();
+__M["pages/DashboardPage"] = (function () {
+    const { useApp } = __M["context/AppContext"];
+    const { DailyBriefing } = __M["components/dashboard/DailyBriefing"];
+    const { CalendarCard } = __M["components/dashboard/CalendarCard"];
+    const { EmailList } = __M["components/dashboard/EmailList"];
+    const { TasksPanel } = __M["components/dashboard/TasksPanel"];
+    const { NewsFeed } = __M["components/dashboard/NewsFeed"];
+    const { WeatherCard } = __M["components/dashboard/WeatherCard"];
+    const { QuickLinks } = __M["components/dashboard/QuickLinks"];
+    const CARDS = {
+        calendar: CalendarCard,
+        email: EmailList,
+        tasks: TasksPanel,
+        news: NewsFeed,
+        weather: WeatherCard,
+        quicklinks: QuickLinks,
+    };
+    function DashboardPage() {
+        const { settings } = useApp();
+        const order = settings.cards.order.filter(id => settings.cards.visible[id] && CARDS[id]);
+        return (React.createElement("div", { className: "space-y-4" },
+            React.createElement(DailyBriefing, null),
+            React.createElement("div", { className: "gap-4 [column-fill:_balance] md:columns-2 xl:columns-3" }, order.map(id => {
+                const Cmp = CARDS[id];
+                return (React.createElement("div", { key: id, className: "mb-4 break-inside-avoid" },
+                    React.createElement(Cmp, null)));
+            }))));
+    }
+    return { DashboardPage };
+})();
+__M["pages/PageShell"] = (function () {
+    const { Icon } = __M["components/ui/Icon"];
+    // Simple titled wrapper for the detail pages.
+    function PageShell({ icon, title, description, children, actions }) {
+        return (React.createElement("div", { className: "space-y-4" },
+            React.createElement("div", { className: "flex items-start justify-between gap-3" },
+                React.createElement("div", { className: "flex items-center gap-3" },
+                    React.createElement("div", { className: "flex h-10 w-10 items-center justify-center rounded-xl bg-white text-indigo-600 shadow-sm dark:bg-slate-900" },
+                        React.createElement(Icon, { name: icon, size: 20 })),
+                    React.createElement("div", null,
+                        React.createElement("h1", { className: "text-lg font-semibold text-slate-800 dark:text-slate-100" }, title),
+                        description && React.createElement("p", { className: "text-sm text-slate-500 dark:text-slate-400" }, description))),
+                actions),
+            children));
+    }
+    return { PageShell };
+})();
+__M["pages/CalendarPage"] = (function () {
+    const { PageShell } = __M["pages/PageShell"];
+    const { CalendarCard } = __M["components/dashboard/CalendarCard"];
+    function CalendarPage() {
+        return (React.createElement(PageShell, { icon: "Calendar", title: "Calendar", description: "Today\u2019s timeline and what\u2019s coming up." },
+            React.createElement("div", { className: "max-w-3xl" },
+                React.createElement(CalendarCard, { full: true }))));
+    }
+    return { CalendarPage };
+})();
+__M["pages/EmailPage"] = (function () {
+    const { PageShell } = __M["pages/PageShell"];
+    const { EmailList } = __M["components/dashboard/EmailList"];
+    function EmailPage() {
+        return (React.createElement(PageShell, { icon: "Mail", title: "Relevant emails", description: "A focused shortlist \u2014 not your whole inbox." },
+            React.createElement("div", { className: "max-w-3xl" },
+                React.createElement(EmailList, { full: true }))));
+    }
+    return { EmailPage };
+})();
+__M["pages/TasksPage"] = (function () {
+    const { PageShell } = __M["pages/PageShell"];
+    const { TasksPanel } = __M["components/dashboard/TasksPanel"];
+    function TasksPage() {
+        return (React.createElement(PageShell, { icon: "CheckSquare", title: "Tasks", description: "Everything to do, grouped by when it matters." },
+            React.createElement("div", { className: "max-w-3xl" },
+                React.createElement(TasksPanel, { full: true }))));
+    }
+    return { TasksPage };
+})();
+__M["pages/NewsPage"] = (function () {
+    const { PageShell } = __M["pages/PageShell"];
+    const { NewsFeed } = __M["components/dashboard/NewsFeed"];
+    function NewsPage() {
+        return (React.createElement(PageShell, { icon: "Newspaper", title: "Personalised news", description: "Filtered to the topics you care about." },
+            React.createElement("div", { className: "max-w-3xl" },
+                React.createElement(NewsFeed, { full: true }))));
+    }
+    return { NewsPage };
+})();
+__M["pages/SettingsPage"] = (function () {
+    const { useApp } = __M["context/AppContext"];
+    const { PageShell } = __M["pages/PageShell"];
+    const { Icon } = __M["components/ui/Icon"];
+    const { Card, Toggle, Chip, Button, IconButton, Badge, Field, inputClass } = __M["components/ui/primitives"];
+    const { NEWS_TOPICS, EMAIL_CATEGORIES, defaultSettings } = __M["data/mockData"];
+    const { cn } = __M["utils"];
+    const CARD_LABELS = {
+        calendar: 'Calendar', email: 'Relevant emails', tasks: 'Tasks',
+        news: 'News', weather: 'Weather', quicklinks: 'Quick links',
+    };
+    const CONN_LABEL = {
+        not_configured: { tone: 'gray', label: 'Not configured' },
+        mock: { tone: 'amber', label: 'Using mock data' },
+        local: { tone: 'blue', label: 'Local (this device)' },
+        connected: { tone: 'green', label: 'Connected' },
+        error: { tone: 'red', label: 'Connection error' },
+    };
+    function SettingRow({ title, hint, children }) {
+        return (React.createElement("div", { className: "flex items-center justify-between gap-4 py-2.5" },
+            React.createElement("div", { className: "min-w-0" },
+                React.createElement("p", { className: "text-sm font-medium text-slate-700 dark:text-slate-200" }, title),
+                hint && React.createElement("p", { className: "text-xs text-slate-500 dark:text-slate-400" }, hint)),
+            React.createElement("div", { className: "shrink-0" }, children)));
+    }
+    function SettingsPage() {
+        const { settings, setSettings, connectionStatus, failRates, setFailRates, toggleTheme } = useApp();
+        const patch = (p) => setSettings(s => ({ ...s, ...p }));
+        const patchCalendar = (p) => setSettings(s => ({ ...s, calendar: { ...s.calendar, ...p } }));
+        const patchBriefing = (p) => setSettings(s => ({ ...s, briefing: { ...s.briefing, ...p } }));
+        const toggleInList = (key, id) => setSettings(s => {
+            const list = s[key];
+            return { ...s, [key]: list.includes(id) ? list.filter(x => x !== id) : [...list, id] };
+        });
+        const toggleCardVisible = (id) => setSettings(s => ({ ...s, cards: { ...s.cards, visible: { ...s.cards.visible, [id]: !s.cards.visible[id] } } }));
+        const moveCard = (id, dir) => setSettings(s => {
+            const order = [...s.cards.order];
+            const i = order.indexOf(id);
+            const j = dir === 'up' ? i - 1 : i + 1;
+            if (j < 0 || j >= order.length)
+                return s;
+            [order[i], order[j]] = [order[j], order[i]];
+            return { ...s, cards: { ...s.cards, order } };
+        });
+        const resetAll = () => {
+            if (!confirm('Reset all settings, tasks and quick links to defaults? This clears saved data on this device.'))
+                return;
+            ['pd.settings', 'pd.tasks', 'pd.quicklinks', 'pd.emailFeedback', 'pd.emailRead', 'pd.savedNews', 'pd.dismissedNews'].forEach(k => localStorage.removeItem(k));
+            location.reload();
+        };
+        const services = ['calendar', 'email', 'news', 'weather', 'tasks'];
+        return (React.createElement(PageShell, { icon: "Settings", title: "Settings", description: "Personalise the dashboard. Changes are saved to this browser." },
+            React.createElement("div", { className: "grid gap-4 lg:grid-cols-2" },
+                React.createElement(Card, { title: "Profile & greeting", icon: "User" },
+                    React.createElement("div", { className: "space-y-3" },
+                        React.createElement(Field, { label: "Display name", htmlFor: "s-name" },
+                            React.createElement("input", { id: "s-name", className: inputClass, value: settings.name, onChange: e => patch({ name: e.target.value }) })),
+                        React.createElement(SettingRow, { title: "Time-based greeting", hint: "\u201CGood morning/afternoon/evening\u201D." },
+                            React.createElement(Toggle, { checked: settings.greetingStyle === 'time', onChange: v => patch({ greetingStyle: v ? 'time' : 'fixed' }), label: "Time-based greeting" })),
+                        settings.greetingStyle === 'fixed' && (React.createElement(Field, { label: "Fixed greeting", htmlFor: "s-greet" },
+                            React.createElement("input", { id: "s-greet", className: inputClass, value: settings.fixedGreeting, onChange: e => patch({ fixedGreeting: e.target.value }) }))),
+                        React.createElement(Field, { label: "Location (weather)", htmlFor: "s-loc", hint: "Weather updates automatically when you change this." },
+                            React.createElement("input", { id: "s-loc", className: inputClass, value: settings.location, onChange: e => patch({ location: e.target.value }) })))),
+                React.createElement(Card, { title: "Appearance", icon: "Sun" },
+                    React.createElement(SettingRow, { title: "Dark mode", hint: "Switches the whole interface." },
+                        React.createElement(Toggle, { checked: settings.theme === 'dark', onChange: toggleTheme, label: "Dark mode" })),
+                    React.createElement("div", { className: "mt-2 border-t border-slate-100 pt-2 dark:border-slate-800" },
+                        React.createElement("p", { className: "mb-2 text-sm font-medium text-slate-700 dark:text-slate-200" }, "Calendar display"),
+                        React.createElement(SettingRow, { title: "24-hour time" },
+                            React.createElement(Toggle, { checked: settings.calendar.twentyFourHour, onChange: v => patchCalendar({ twentyFourHour: v }), label: "24-hour time" })),
+                        React.createElement(SettingRow, { title: "Show weekends" },
+                            React.createElement(Toggle, { checked: settings.calendar.showWeekends, onChange: v => patchCalendar({ showWeekends: v }), label: "Show weekends" })))),
+                React.createElement(Card, { title: "Preferred news topics", icon: "Newspaper" },
+                    React.createElement("p", { className: "mb-2 text-xs text-slate-500 dark:text-slate-400" }, "Used as your default selection in the news feed."),
+                    React.createElement("div", { className: "flex flex-wrap gap-1.5" }, NEWS_TOPICS.map(t => (React.createElement(Chip, { key: t.id, active: settings.newsTopics.includes(t.id), onClick: () => toggleInList('newsTopics', t.id) }, t.label))))),
+                React.createElement(Card, { title: "Email filtering categories", icon: "Filter" },
+                    React.createElement("p", { className: "mb-2 text-xs text-slate-500 dark:text-slate-400" }, "Which categories appear in the relevant-emails shortlist."),
+                    React.createElement("div", { className: "flex flex-wrap gap-1.5" }, EMAIL_CATEGORIES.map(c => (React.createElement(Chip, { key: c.id, active: settings.emailCategories.includes(c.id), onClick: () => toggleInList('emailCategories', c.id) }, c.label))))),
+                React.createElement(Card, { title: "Daily briefing", icon: "Sparkles" },
+                    React.createElement("p", { className: "mb-2 text-xs text-slate-500 dark:text-slate-400" }, "Choose what the briefing considers."),
+                    React.createElement(SettingRow, { title: "Include calendar" },
+                        React.createElement(Toggle, { checked: settings.briefing.includeCalendar, onChange: v => patchBriefing({ includeCalendar: v }), label: "Include calendar" })),
+                    React.createElement(SettingRow, { title: "Include email" },
+                        React.createElement(Toggle, { checked: settings.briefing.includeEmail, onChange: v => patchBriefing({ includeEmail: v }), label: "Include email" })),
+                    React.createElement(SettingRow, { title: "Include tasks" },
+                        React.createElement(Toggle, { checked: settings.briefing.includeTasks, onChange: v => patchBriefing({ includeTasks: v }), label: "Include tasks" })),
+                    React.createElement(SettingRow, { title: "Include weather" },
+                        React.createElement(Toggle, { checked: settings.briefing.includeWeather, onChange: v => patchBriefing({ includeWeather: v }), label: "Include weather" }))),
+                React.createElement(Card, { title: "Dashboard cards", icon: "LayoutDashboard" },
+                    React.createElement("p", { className: "mb-2 text-xs text-slate-500 dark:text-slate-400" }, "Toggle visibility and reorder your dashboard."),
+                    React.createElement("ul", { className: "space-y-1.5" }, settings.cards.order.map((id, i) => (React.createElement("li", { key: id, className: "flex items-center gap-2 rounded-lg border border-slate-100 px-2 py-1.5 dark:border-slate-800" },
+                        React.createElement(Icon, { name: "GripVertical", size: 15, className: "text-slate-300" }),
+                        React.createElement("span", { className: "flex-1 text-sm text-slate-700 dark:text-slate-200" }, CARD_LABELS[id]),
+                        React.createElement(IconButton, { label: "Move up", icon: "ChevronUp", className: "h-7 w-7", disabled: i === 0, onClick: () => moveCard(id, 'up') }),
+                        React.createElement(IconButton, { label: "Move down", icon: "ChevronDown", className: "h-7 w-7", disabled: i === settings.cards.order.length - 1, onClick: () => moveCard(id, 'down') }),
+                        React.createElement(Toggle, { checked: settings.cards.visible[id], onChange: () => toggleCardVisible(id), label: `Show ${CARD_LABELS[id]}` })))))),
+                React.createElement(Card, { title: "Connected services", icon: "Link2" },
+                    React.createElement("p", { className: "mb-2 text-xs text-slate-500 dark:text-slate-400" }, "Status of each data source in this first version."),
+                    React.createElement("ul", { className: "space-y-1.5" }, services.map(key => {
+                        const status = CONN_LABEL[connectionStatus[key]] || CONN_LABEL.not_configured;
+                        return (React.createElement("li", { key: key, className: "flex items-center justify-between gap-2 rounded-lg border border-slate-100 px-3 py-2 dark:border-slate-800" },
+                            React.createElement("span", { className: "text-sm capitalize text-slate-700 dark:text-slate-200" }, key),
+                            React.createElement(Badge, { tone: status.tone }, status.label)));
+                    })),
+                    React.createElement("p", { className: "mt-2 text-[11px] text-slate-400" }, "Connecting live Microsoft Graph / news / weather sources is covered in the project README.")),
+                React.createElement(Card, { title: "Data & privacy", icon: "Info" },
+                    React.createElement("ul", { className: "mb-3 space-y-1.5 text-xs text-slate-500 dark:text-slate-400" },
+                        React.createElement("li", { className: "flex gap-2" },
+                            React.createElement(Icon, { name: "Check", size: 14, className: "mt-0.5 text-emerald-500" }),
+                            " All data is mock or stored locally in your browser."),
+                        React.createElement("li", { className: "flex gap-2" },
+                            React.createElement(Icon, { name: "Check", size: 14, className: "mt-0.5 text-emerald-500" }),
+                            " No email or calendar content is sent to any AI service in this version."),
+                        React.createElement("li", { className: "flex gap-2" },
+                            React.createElement(Icon, { name: "Check", size: 14, className: "mt-0.5 text-emerald-500" }),
+                            " No credentials or tokens are stored in the app.")),
+                    React.createElement("div", { className: "mb-3 rounded-lg border border-slate-100 p-3 dark:border-slate-800" },
+                        React.createElement("p", { className: "mb-2 text-sm font-medium text-slate-700 dark:text-slate-200" }, "Demo error states"),
+                        React.createElement("p", { className: "mb-2 text-[11px] text-slate-400" }, "Force a service to fail so you can see the error UI."),
+                        React.createElement("div", { className: "flex flex-wrap gap-1.5" }, ['calendar', 'email', 'news', 'weather'].map(k => (React.createElement(Chip, { key: k, active: failRates[k] > 0, onClick: () => setFailRates(r => ({ ...r, [k]: r[k] > 0 ? 0 : 1 })) },
+                            k,
+                            " ",
+                            failRates[k] > 0 ? '✕' : ''))))),
+                    React.createElement(Button, { variant: "danger", size: "sm", icon: "Trash2", onClick: resetAll }, "Reset all data to defaults")))));
+    }
+    return { SettingsPage };
+})();
+__M["App"] = (function () {
+    const { AppProvider, useApp } = __M["context/AppContext"];
+    const { Sidebar } = __M["components/layout/Sidebar"];
+    const { Header } = __M["components/layout/Header"];
+    const { DashboardPage } = __M["pages/DashboardPage"];
+    const { CalendarPage } = __M["pages/CalendarPage"];
+    const { EmailPage } = __M["pages/EmailPage"];
+    const { TasksPage } = __M["pages/TasksPage"];
+    const { NewsPage } = __M["pages/NewsPage"];
+    const { SettingsPage } = __M["pages/SettingsPage"];
+    const PAGES = {
+        dashboard: DashboardPage,
+        calendar: CalendarPage,
+        email: EmailPage,
+        tasks: TasksPage,
+        news: NewsPage,
+        settings: SettingsPage,
+    };
+    function Shell() {
+        const { page } = useApp();
+        const Page = PAGES[page] || DashboardPage;
+        return (React.createElement("div", { className: "flex h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100" },
+            React.createElement("a", { href: "#main", className: "sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-indigo-600 focus:px-3 focus:py-2 focus:text-sm focus:text-white" }, "Skip to content"),
+            React.createElement(Sidebar, null),
+            React.createElement("div", { className: "flex min-w-0 flex-1 flex-col" },
+                React.createElement(Header, null),
+                React.createElement("main", { id: "main", tabIndex: -1, className: "flex-1 overflow-y-auto p-4 sm:p-6" },
+                    React.createElement("div", { className: "mx-auto max-w-7xl" },
+                        React.createElement(Page, null))))));
+    }
+    function App() {
+        return (React.createElement(AppProvider, null,
+            React.createElement(Shell, null)));
+    }
+    return { default: App };
+})();
+const App = __M['App'].default;
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+      }
+    } catch (err) {
+      showError('The preview failed to start', (err && err.stack) ? err.stack : String(err));
+    }
+  </script>
+</body>
+</html>
