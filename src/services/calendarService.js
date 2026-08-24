@@ -1,4 +1,5 @@
 // LIVE calendar service — Google Calendar API (read-only).
+// Reads events from ALL of the account's calendars (primary + subscribed, e.g. iCloud).
 import { CALENDAR_BASE } from '../auth/googleConfig'
 
 export const meta = { key: 'calendar', name: 'Calendar', source: 'google' }
@@ -13,20 +14,35 @@ function categorise(ev) {
 
 export async function getEvents({ getToken } = {}) {
   const token = await getToken()
+  const auth = { headers: { Authorization: `Bearer ${token}` } }
 
   const start = new Date(); start.setHours(0, 0, 0, 0)
   const end = new Date(); end.setDate(end.getDate() + 7); end.setHours(23, 59, 59, 999)
 
-  const url = `${CALENDAR_BASE}/calendars/primary/events`
-    + `?timeMin=${encodeURIComponent(start.toISOString())}`
-    + `&timeMax=${encodeURIComponent(end.toISOString())}`
-    + `&singleEvents=true&orderBy=startTime&maxResults=50`
+  // 1) List every calendar this account can see (primary + subscribed iCloud).
+  const listRes = await fetch(`${CALENDAR_BASE}/users/me/calendarList`, auth)
+  if (!listRes.ok) throw new Error(`Google Calendar error (${listRes.status})`)
+  const listData = await listRes.json()
+  const calendarIds = (listData.items || [])
+    .filter(c => c.selected !== false)
+    .map(c => c.id)
+  if (calendarIds.length === 0) calendarIds.push('primary')
 
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
-  if (!res.ok) throw new Error(`Google Calendar error (${res.status})`)
-  const data = await res.json()
+  // 2) Fetch this week's events from each calendar in parallel.
+  const perCalendar = await Promise.all(calendarIds.map(async id => {
+    const url = `${CALENDAR_BASE}/calendars/${encodeURIComponent(id)}/events`
+      + `?timeMin=${encodeURIComponent(start.toISOString())}`
+      + `&timeMax=${encodeURIComponent(end.toISOString())}`
+      + `&singleEvents=true&orderBy=startTime&maxResults=50`
+    const res = await fetch(url, auth)
+    if (!res.ok) return []
+    const data = await res.json()
+    return data.items || []
+  }))
 
-  return (data.items || [])
+  // 3) Flatten, normalise, sort.
+  return perCalendar
+    .flat()
     .filter(ev => ev.status !== 'cancelled')
     .map(ev => {
       const startISO = ev.start?.dateTime || ev.start?.date
@@ -45,4 +61,5 @@ export async function getEvents({ getToken } = {}) {
         webLink: ev.htmlLink,
       }
     })
+    .sort((a, b) => a.start - b.start)
 }
