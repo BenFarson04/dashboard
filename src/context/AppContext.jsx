@@ -58,10 +58,11 @@ export function AppProvider({ children }) {
   }, [isSignedIn, getToken])
 
   const loadEmails = useCallback(async () => {
+    if (!isSignedIn) { setEmails({ data: [], loading: false, error: null }); return }
     setEmails(s => ({ ...s, loading: true, error: null }))
-    try { setEmails({ data: await services.email.getRelevantEmails({ failRate: failRates.email }), loading: false, error: null }) }
+    try { setEmails({ data: await services.email.getRelevantEmails({ getToken }), loading: false, error: null }) }
     catch (e) { setEmails({ data: null, loading: false, error: e.message }) }
-  }, [failRates.email])
+  }, [isSignedIn, getToken])
 
   const loadNews = useCallback(async () => {
     setNews(s => ({ ...s, loading: true, error: null }))
