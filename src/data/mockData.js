@@ -216,9 +216,9 @@ export const defaultSettings = {
 
 // Where each data service currently stands. Drives the Settings "connections" view.
 export const connectionStatus = {
-  calendar: 'mock',   // not_configured | mock | connected | error
-  email: 'mock',
+  calendar: 'Connected',   // not_configured | mock | connected | error
+  email: 'Connected',
   news: 'mock',
-  weather: 'mock',
+  weather: 'Connected',
   tasks: 'local',     // tasks are genuinely local (localStorage), not mocked-remote
 }

@@ -90,7 +90,7 @@ function CommandBar() {
   )
 }
 
-// Microsoft sign-in / sign-out control.
+// Google sign-in / sign-out control.
 function AuthButton() {
   const { ready, isSignedIn, account, signIn, signOut } = useAuth()
   if (!ready) return null
@@ -109,7 +109,7 @@ function AuthButton() {
       className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-500"
     >
       <Icon name="User" size={14} />
-      <span className="hidden sm:inline">Sign in with Microsoft</span>
+      <span className="hidden sm:inline">Sign in with Google</span>
       <span className="sm:hidden">Sign in</span>
     </button>
   )
