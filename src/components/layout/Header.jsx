@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { useApp } from '../../context/AppContext'
+import { useAuth } from '../../auth/useAuth'
 import { Icon } from '../ui/Icon'
 import { IconButton } from '../ui/primitives'
 import { cn, fmtDayLong, greetingFor } from '../../utils'
@@ -89,6 +90,31 @@ function CommandBar() {
   )
 }
 
+// Microsoft sign-in / sign-out control.
+function AuthButton() {
+  const { ready, isSignedIn, account, signIn, signOut } = useAuth()
+  if (!ready) return null
+  return isSignedIn ? (
+    <button
+      onClick={signOut}
+      title={`Signed in as ${account?.username} — click to sign out`}
+      className="hidden items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 sm:inline-flex dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+    >
+      <Icon name="User" size={14} />
+      Sign out
+    </button>
+  ) : (
+    <button
+      onClick={signIn}
+      className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-500"
+    >
+      <Icon name="User" size={14} />
+      <span className="hidden sm:inline">Sign in with Microsoft</span>
+      <span className="sm:hidden">Sign in</span>
+    </button>
+  )
+}
+
 export function Header() {
   const { settings, toggleTheme, refreshAll, setMobileNavOpen, goTo, calendar } = useApp()
   const [spin, setSpin] = useState(false)
@@ -114,6 +140,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-1">
+          <AuthButton />
           <IconButton label="Refresh data" icon="RefreshCw" onClick={doRefresh} className={spin ? 'animate-spin' : ''} />
           <IconButton label={dark ? 'Switch to light mode' : 'Switch to dark mode'} icon={dark ? 'Sun' : 'Moon'} onClick={toggleTheme} />
           <IconButton label="Settings" icon="Settings" onClick={() => goTo('settings')} />
