@@ -5,6 +5,8 @@ import { generateBriefing } from '../services'
 import {
   defaultSettings, defaultTasks, defaultQuickLinks, connectionStatus,
 } from '../data/mockData'
+import { useAuth } from '../auth/useAuth'
+
 
 const AppContext = createContext(null)
 
@@ -13,6 +15,7 @@ const idle = () => ({ data: null, loading: true, error: null })
 
 export function AppProvider({ children }) {
   // ---- Persisted, user-editable state -------------------------------------
+  const { getToken, isSignedIn } = useAuth()
   const [settings, setSettings] = useLocalStorage('pd.settings', defaultSettings)
   const [tasks, setTasks] = useLocalStorage('pd.tasks', defaultTasks)
   const [quickLinks, setQuickLinks] = useLocalStorage('pd.quicklinks', defaultQuickLinks)
@@ -47,10 +50,12 @@ export function AppProvider({ children }) {
 
   // ---- Loaders -------------------------------------------------------------
   const loadCalendar = useCallback(async () => {
+    // Signed out → show an empty calendar rather than an error.
+    if (!isSignedIn) { setCalendar({ data: [], loading: false, error: null }); return }
     setCalendar(s => ({ ...s, loading: true, error: null }))
-    try { setCalendar({ data: await services.calendar.getEvents({ failRate: failRates.calendar }), loading: false, error: null }) }
+    try { setCalendar({ data: await services.calendar.getEvents({ getToken }), loading: false, error: null }) }
     catch (e) { setCalendar({ data: null, loading: false, error: e.message }) }
-  }, [failRates.calendar])
+  }, [isSignedIn, getToken])
 
   const loadEmails = useCallback(async () => {
     setEmails(s => ({ ...s, loading: true, error: null }))
