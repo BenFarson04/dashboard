@@ -135,13 +135,28 @@ export function AppProvider({ children }) {
   }, [emails.data, emailRead, emailFeedback])
 
   // ---- Derived: daily briefing --------------------------------------------
-  const briefing = useMemo(() => generateBriefing({
-    events: calendar.data || [],
-    emails: enrichedEmails || [],
+  const briefing = useMemo(() => {
+    const visibleNews = (news.data || []).filter(
+      article => !dismissedNews.includes(article.id)
+    )
+
+    return generateBriefing({
+      events: calendar.data || [],
+      emails: enrichedEmails || [],
+      tasks,
+      weather: weather.data,
+      news: visibleNews,
+      prefs: settings.briefing,
+    })
+  }, [
+    calendar.data,
+    enrichedEmails,
     tasks,
-    weather: weather.data,
-    prefs: settings.briefing,
-  }), [calendar.data, enrichedEmails, tasks, weather.data, settings.briefing])
+    weather.data,
+    news.data,
+    dismissedNews,
+    settings.briefing,
+  ])
 
   const value = {
     // state

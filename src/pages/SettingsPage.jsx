@@ -30,6 +30,7 @@ function SettingRow({ title, hint, children }) {
   )
 }
 
+
 export function SettingsPage() {
   const { settings, setSettings, connectionStatus, failRates, setFailRates, toggleTheme } = useApp()
 
@@ -122,6 +123,16 @@ export function SettingsPage() {
           <SettingRow title="Include email"><Toggle checked={settings.briefing.includeEmail} onChange={v => patchBriefing({ includeEmail: v })} label="Include email" /></SettingRow>
           <SettingRow title="Include tasks"><Toggle checked={settings.briefing.includeTasks} onChange={v => patchBriefing({ includeTasks: v })} label="Include tasks" /></SettingRow>
           <SettingRow title="Include weather"><Toggle checked={settings.briefing.includeWeather} onChange={v => patchBriefing({ includeWeather: v })} label="Include weather" /></SettingRow>
+          <SettingRow
+            title="Include news"
+            hint="Adds one relevant headline to the daily briefing."
+          >
+            <Toggle
+              checked={settings.briefing.includeNews ?? true}
+              onChange={v => patchBriefing({ includeNews: v })}
+              label="Include news"
+            />
+          </SettingRow>
         </Card>
 
         {/* Cards visibility + order */}

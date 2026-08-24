@@ -205,7 +205,7 @@ export const defaultSettings = {
   newsTopics: NEWS_TOPICS.map(t => t.id), // all enabled by default
   emailCategories: EMAIL_CATEGORIES.map(c => c.id),
   calendar: { showWeekends: true, twentyFourHour: true },
-  briefing: { includeCalendar: true, includeEmail: true, includeTasks: true, includeWeather: true, tone: 'concise' },
+  briefing: { includeCalendar: true, includeEmail: true, includeTasks: true, includeWeather: true, includeNews:true, tone: 'concise' },
   theme: 'light', // 'light' | 'dark'
   cards: {
     // visibility + order for the main dashboard grid

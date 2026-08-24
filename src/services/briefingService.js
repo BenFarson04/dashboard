@@ -1,79 +1,214 @@
 // Daily briefing generator.
-// -----------------------------------------------------------------------------
-// This is NOT hard-coded text: it derives a briefing from the live dashboard data
-// (events, emails, tasks, weather) using simple rules. Each sentence carries the
-// source items it was built from, so the UI can render "why am I seeing this?" and
-// deep-link to the underlying records.
 //
-// FUTURE (optional): send this same structured summary — NOT raw email/calendar
-// content — to an LLM to phrase it more naturally. Keep it behind a setting and a
-// backend so no tokens/secrets live in the client.
-// -----------------------------------------------------------------------------
+// This briefing is generated locally from the dashboard's calendar, email,
+// tasks, weather and news data. Nothing is sent to an external AI service.
+
 import { isToday, isPast, fmtTime } from '../utils'
 
-export function generateBriefing({ events = [], emails = [], tasks = [], weather = null, prefs = {} }) {
-  const p = { includeCalendar: true, includeEmail: true, includeTasks: true, includeWeather: true, ...prefs }
+export function generateBriefing({
+  events = [],
+  emails = [],
+  tasks = [],
+  weather = null,
+  news = [],
+  prefs = {},
+}) {
+  const p = {
+    includeCalendar: true,
+    includeEmail: true,
+    includeTasks: true,
+    includeWeather: true,
+    includeNews: true,
+    ...prefs,
+  }
+
   const parts = []
 
+  // ---------------------------------------------------------------------------
+  // CALENDAR
+  // ---------------------------------------------------------------------------
+
   if (p.includeCalendar) {
-    const todays = events.filter(e => isToday(e.start))
-    const upcoming = todays.filter(e => !isPast(e.end || e.start))
-    const needsPrep = todays.filter(e => e.prep && !isPast(e.start))
-    if (todays.length === 0) {
-      parts.push({ text: 'You have no events scheduled today.', refs: [] })
+    const todaysEvents = events.filter(event => isToday(event.start))
+
+    const upcomingEvents = todaysEvents.filter(event =>
+      !isPast(event.end || event.start)
+    )
+
+    const eventsNeedingPrep = upcomingEvents.filter(event => event.prep)
+
+    if (todaysEvents.length === 0) {
+      parts.push({
+        text: 'You have no events scheduled today.',
+        refs: [],
+      })
     } else {
-      const next = upcoming[0]
-      let text = `You have ${todays.length} event${todays.length > 1 ? 's' : ''} today`
-      if (next) text += `, next up ${next.title} at ${fmtTime(next.start)}`
+      const nextEvent = upcomingEvents[0]
+
+      let text = `You have ${todaysEvents.length} event${
+        todaysEvents.length === 1 ? '' : 's'
+      } today`
+
+      if (nextEvent) {
+        text += `, with ${nextEvent.title} next at ${fmtTime(nextEvent.start)}`
+      }
+
       text += '.'
-      parts.push({ text, refs: todays.map(e => ({ type: 'event', id: e.id, label: e.title })) })
-      if (needsPrep.length) {
+
+      parts.push({
+        text,
+        refs: todaysEvents.map(event => ({
+          type: 'event',
+          id: event.id,
+          label: event.title,
+        })),
+      })
+
+      if (eventsNeedingPrep.length > 0) {
+        const preparationEvent = eventsNeedingPrep[0]
+
         parts.push({
-          text: `Your ${fmtTime(needsPrep[0].start)} ${needsPrep[0].title} may need preparation.`,
-          refs: needsPrep.map(e => ({ type: 'event', id: e.id, label: e.title })),
+          text: `Your ${fmtTime(preparationEvent.start)} ${
+            preparationEvent.title
+          } may require some preparation.`,
+          refs: eventsNeedingPrep.map(event => ({
+            type: 'event',
+            id: event.id,
+            label: event.title,
+          })),
         })
       }
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // EMAIL
+  // ---------------------------------------------------------------------------
+
   if (p.includeEmail) {
-    const important = emails.filter(e => e.importance === 'high')
-    const unreadImportant = important.filter(e => e.unread)
-    if (important.length) {
+    const importantEmails = emails.filter(
+      email =>
+        email.importance === 'high' &&
+        email.feedback !== 'not_relevant' &&
+        email.feedback !== 'dealt'
+    )
+
+    const unreadImportantEmails = importantEmails.filter(email => email.unread)
+
+    if (importantEmails.length > 0) {
       parts.push({
-        text: `${important.length} email${important.length > 1 ? 's appear' : ' appears'} important${unreadImportant.length ? ` (${unreadImportant.length} unread)` : ''}.`,
-        refs: important.map(e => ({ type: 'email', id: e.id, label: `${e.sender}: ${e.subject}` })),
+        text: `${importantEmails.length} email${
+          importantEmails.length === 1 ? ' appears' : 's appear'
+        } important${
+          unreadImportantEmails.length > 0
+            ? `, including ${unreadImportantEmails.length} unread`
+            : ''
+        }.`,
+        refs: importantEmails.map(email => ({
+          type: 'email',
+          id: email.id,
+          label: `${email.sender}: ${email.subject}`,
+        })),
       })
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // TASKS
+  // ---------------------------------------------------------------------------
 
   if (p.includeTasks) {
-    const overdue = tasks.filter(t => !t.completed && t.due && isPast(t.due))
-    const dueToday = tasks.filter(t => !t.completed && t.due && isToday(t.due) && !isPast(t.due))
-    if (overdue.length) {
+    const overdueTasks = tasks.filter(
+      task => !task.completed && task.due && isPast(task.due)
+    )
+
+    const dueTodayTasks = tasks.filter(
+      task =>
+        !task.completed &&
+        task.due &&
+        isToday(task.due) &&
+        !isPast(task.due)
+    )
+
+    if (overdueTasks.length > 0) {
       parts.push({
-        text: `${overdue.length} task${overdue.length > 1 ? 's are' : ' is'} overdue.`,
-        refs: overdue.map(t => ({ type: 'task', id: t.id, label: t.title })),
+        text: `${overdueTasks.length} task${
+          overdueTasks.length === 1 ? ' is' : 's are'
+        } overdue.`,
+        refs: overdueTasks.map(task => ({
+          type: 'task',
+          id: task.id,
+          label: task.title,
+        })),
       })
-    } else if (dueToday.length) {
+    } else if (dueTodayTasks.length > 0) {
       parts.push({
-        text: `${dueToday.length} task${dueToday.length > 1 ? 's are' : ' is'} due later today.`,
-        refs: dueToday.map(t => ({ type: 'task', id: t.id, label: t.title })),
+        text: `${dueTodayTasks.length} task${
+          dueTodayTasks.length === 1 ? ' is' : 's are'
+        } due later today.`,
+        refs: dueTodayTasks.map(task => ({
+          type: 'task',
+          id: task.id,
+          label: task.title,
+        })),
       })
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // WEATHER
+  // ---------------------------------------------------------------------------
+
   if (p.includeWeather && weather?.current) {
-    const c = weather.current
-    if (c.rainProbability >= 50) {
-      parts.push({ text: `Rain is likely in ${weather.location} (${c.rainProbability}%) — plan for it.`, refs: [] })
+    const current = weather.current
+
+    if (current.rainProbability >= 60) {
+      parts.push({
+        text: `Rain is likely in ${weather.location} today, with a ${current.rainProbability}% chance.`,
+        refs: [],
+      })
+    } else if (current.rainProbability >= 30) {
+      parts.push({
+        text: `There is a moderate chance of rain in ${weather.location} today.`,
+        refs: [],
+      })
+    } else if (current.tempC <= 5) {
+      parts.push({
+        text: `It is cold in ${weather.location} today at around ${current.tempC}°C.`,
+        refs: [],
+      })
+    } else if (current.tempC >= 22) {
+      parts.push({
+        text: `It should be relatively warm in ${weather.location} today at around ${current.tempC}°C.`,
+        refs: [],
+      })
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // NEWS
+  // ---------------------------------------------------------------------------
+
+  if (p.includeNews && news.length > 0) {
+    // The news service should already return articles ordered by relevance/date.
+    // Use only one story in the daily briefing so the summary stays concise.
+    const topStory = news[0]
+
+    parts.push({
+      text: `Worth knowing: ${topStory.headline}.`,
+      refs: [
+        {
+          type: 'news',
+          id: topStory.id,
+          label: topStory.headline,
+        },
+      ],
+    })
   }
 
   return {
     generatedAt: new Date(),
     parts,
-    // Plain-text version for accessibility / copying.
-    text: parts.map(p => p.text).join(' '),
+    text: parts.map(part => part.text).join(' '),
   }
 }

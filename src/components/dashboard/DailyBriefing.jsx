@@ -4,7 +4,7 @@ import { Icon } from '../ui/Icon'
 import { Button, Badge } from '../ui/primitives'
 import { fmtTime, greetingFor } from '../../utils'
 
-const REF_PAGE = { event: 'calendar', email: 'email', task: 'tasks' }
+const REF_PAGE = { event: 'calendar', email: 'email', task: 'tasks', news: 'news'}
 
 export function DailyBriefing() {
   const { briefing, refreshAll, settings, goTo, calendar, emails, weather } = useApp()
@@ -56,7 +56,7 @@ export function DailyBriefing() {
                         className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-white/70 px-2 py-0.5 text-xs font-medium text-indigo-700 hover:bg-white dark:border-indigo-900 dark:bg-slate-900/60 dark:text-indigo-300"
                         title={ref.label}
                       >
-                        <Icon name={ref.type === 'event' ? 'Calendar' : ref.type === 'email' ? 'Mail' : 'CheckSquare'} size={11} />
+                        <Icon name={ref.type === 'event' ? 'Calendar' : ref.type === 'email' ? 'Mail' : ref.type ==='news' ? 'Newspaper' : 'CheckSquare'} size={11} />
                         <span className="max-w-[10rem] truncate">{ref.label}</span>
                       </button>
                     ))}
@@ -81,11 +81,11 @@ export function DailyBriefing() {
 
       {showWhy && (
         <div className="mt-2 rounded-xl bg-white/70 p-3 text-xs leading-relaxed text-slate-600 dark:bg-slate-900/60 dark:text-slate-300">
-          This briefing is <strong>generated from your own dashboard data</strong> — today’s calendar events, the
-          relevant-email shortlist, your task list and the weather — using simple rules (event count, items flagged
-          for preparation, high-importance emails, overdue tasks, rain likelihood). Nothing is sent to an external AI
-          service in this version. In a future version an optional LLM step could rephrase this
-          <em> structured</em> summary more naturally, behind a setting and a secure backend.
+          This briefing is generated locally from your calendar, relevant-email
+          shortlist, tasks, weather and selected news. Calendar, email and weather
+          use your connected services. News is currently demonstration content until
+          a live RSS or news source is connected. No email or calendar contents are
+          sent to an external AI service.
         </div>
       )}
     </section>
