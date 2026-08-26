@@ -87,8 +87,8 @@ scrape ordinary pages or store article text.
 Actions fetch enabled feeds concurrently with timeouts and partial-failure handling.
 Records are cleaned, validated, deduplicated, retained for 14 days, and capped at 250
 items. `news.json` stores schema version, generation time, feed successes/failures,
-counts, and the broad article pool. The browser applies the final 12-item limit only
-after local interest matching.
+counts, and the broad article pool. The browser matches the full snapshot locally and
+limits only the rendered dashboard preview.
 
 Interests are stored in `localStorage` under the existing settings record. Legacy
 `newsTopics` settings migrate to the recommended interests. Each interest can be added,
@@ -133,11 +133,11 @@ recommended interest or synonym group, update `RECOMMENDED_INTERESTS` or
 - **Emails** show a scored *shortlist* with importance + a per‑item reason; feedback
   controls (useful / not relevant / dealt with) persist to demonstrate preference
   learning. Read/unread and feedback are stored locally.
-- **News** uses BBC News NI (`belfast`), BBC Technology (`digital`) and BBC Business
-  (`finance`). Live snapshots are labelled live; snapshots retaining stories from a
+- **News** uses the generated snapshot and matches it against each active custom
+  interest. Live snapshots are labelled live; snapshots retaining stories from a
   failed feed refresh are labelled cached live. Demonstration content is used only
   when the deployed snapshot cannot be loaded.
-- **Settings** covers name/greeting, location, news topics, email categories, calendar
+- **Settings** covers name/greeting, location, news interests, email categories, calendar
   display, card visibility + ordering, theme, briefing preferences, connection status
   and a “force error” switch to preview error states.
 - **Belfast** is the default weather location (editable in Settings).

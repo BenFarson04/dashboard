@@ -36,21 +36,19 @@ async function fetchSnapshot() {
   return snapshot
 }
 
-export async function getNews({ topics = null, failRate = 0 } = {}) {
+export async function getNews({ failRate = 0 } = {}) {
   maybeFail(failRate)
 
   try {
     const snapshot = await fetchSnapshot()
-    const filtered = topics ? snapshot.items.filter(item => topics.includes(item.topic)) : snapshot.items
-    const items = sortNews(deduplicate(filtered.filter(usableItem))).slice(0, 12)
+    const items = sortNews(deduplicate(snapshot.items.filter(usableItem)))
     return { items, status: snapshot.status || 'live', metadata: snapshot }
   } catch (error) {
     console.error('Live news snapshot unavailable:', error.message)
     const items = sortNews(deduplicate(mockNews.filter(usableItem)))
-    const filtered = topics ? items.filter(item => topics.includes(item.topic)) : items
     return {
-      items: filtered.slice(0, 12),
-      status: filtered.length ? 'demonstration' : 'no-data',
+      items,
+      status: items.length ? 'demonstration' : 'no-data',
       metadata: { error: 'News is temporarily unavailable' },
     }
   }

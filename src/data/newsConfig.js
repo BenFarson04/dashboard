@@ -13,14 +13,24 @@ export const NEWS_FEEDS = [
 ]
 
 export const RECOMMENDED_INTERESTS = [
-  { id: 'structural-engineering', label: 'Structural engineering', terms: ['structural engineering', 'structural', 'civil engineering', 'bridge', 'concrete', 'steel frame', 'load bearing', 'eurocode', 'building structures'] },
+  { id: 'structural-engineering', label: 'Structural engineering', terms: ['structural engineering', 'civil engineering', 'bridge engineering', 'bridge scour', 'structural design', 'structural assessment', 'steel frame', 'load bearing', 'eurocode', 'building structures', 'geotechnical engineering'] },
   { id: 'digital-engineering', label: 'Digital engineering', terms: ['digital engineering', 'bim', 'computational design', 'parametric design', 'grasshopper', 'digital twin', 'engineering software'] },
-  { id: 'ai-software', label: 'AI and software', terms: ['artificial intelligence', 'machine learning', 'llm', 'coding agent', 'software development', 'developer tools', 'software'] },
+  { id: 'ai-software', label: 'AI and software', terms: ['artificial intelligence', 'machine learning', 'llm', 'coding agent', 'software development', 'developer tools', 'software products'] },
   { id: 'energy-infrastructure', label: 'Energy and infrastructure', terms: ['offshore wind', 'nuclear', 'grid', 'renewable energy', 'transport infrastructure', 'infrastructure'] },
-  { id: 'finance-investing', label: 'Finance and investing', terms: ['finance', 'markets', 'stocks', 'funds', 'isa', 'pension', 'interest rates', 'personal finance', 'investing'] },
+  { id: 'finance-investing', label: 'Finance and investing', terms: ['finance', 'markets', 'stocks', 'investment funds', 'isa', 'pension', 'interest rates', 'personal finance', 'investing'] },
   { id: 'belfast-ni', label: 'Belfast and Northern Ireland', terms: ['belfast', 'northern ireland', 'stormont', 'ni executive', 'derry', 'londonderry', 'newry'] },
-  { id: 'japan-travel', label: 'Japan travel', terms: ['japan', 'tokyo', 'kyoto', 'osaka', 'japanese tourism', 'shinkansen', 'japan travel'] },
+  { id: 'japan-travel', label: 'Japan travel', terms: ['japan travel', 'japan trip', 'tokyo travel', 'kyoto travel', 'osaka travel', 'japanese tourism', 'shinkansen'] },
 ]
+
+export const LEGACY_TOPIC_TO_INTEREST = {
+  structural: 'structural-engineering',
+  digital: 'digital-engineering',
+  ai: 'ai-software',
+  energy: 'energy-infrastructure',
+  finance: 'finance-investing',
+  belfast: 'belfast-ni',
+  japan: 'japan-travel',
+}
 
 export const INTEREST_SYNONYMS = {
   structural: ['structural engineering', 'civil engineering'],

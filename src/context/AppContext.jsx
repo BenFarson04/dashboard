@@ -3,7 +3,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage'
 import * as services from '../services'
 import { generateBriefing } from '../services'
 import { rankArticles } from '../services/newsRelevance'
-import { RECOMMENDED_INTERESTS } from '../data/newsConfig'
+import { LEGACY_TOPIC_TO_INTEREST, RECOMMENDED_INTERESTS } from '../data/newsConfig'
 import {
   defaultSettings, defaultTasks, defaultQuickLinks, connectionStatus,
 } from '../data/mockData'
@@ -42,9 +42,13 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     if (!Array.isArray(settings.interests)) {
+      const activeLegacyIds = new Set((settings.newsTopics || []).map(topic => LEGACY_TOPIC_TO_INTEREST[topic]).filter(Boolean))
       setSettings(s => ({
         ...s,
-        interests: RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: s.newsTopics ? s.newsTopics.includes(interest.id) : true })),
+        interests: RECOMMENDED_INTERESTS.map(interest => ({
+          ...interest,
+          active: s.newsTopics ? activeLegacyIds.has(interest.id) : true,
+        })),
       }))
     }
   }, [settings.interests, settings.newsTopics, setSettings])
@@ -157,7 +161,7 @@ export function AppProvider({ children }) {
       interests,
       null,
       newsFeedback,
-    ).slice(0, 5)
+    ).filter(article => article.relevanceScore >= 4).slice(0, 5)
 
     return generateBriefing({
       events: calendar.data || [],

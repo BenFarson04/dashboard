@@ -37,6 +37,7 @@ export function SettingsPage() {
   const { settings, setSettings, connectionStatus, failRates, setFailRates, toggleTheme } = useApp()
   const interests = settings.interests || RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true }))
   const [interestDraft, setInterestDraft] = useState('')
+  const [interestSearch, setInterestSearch] = useState('')
   const [editingInterest, setEditingInterest] = useState(null)
   const [interestError, setInterestError] = useState('')
 
@@ -55,9 +56,12 @@ export function SettingsPage() {
     if (label.length > 60) { setInterestError('Keep interests to 60 characters or fewer.'); return }
     const duplicate = interests.some(interest => interest.id !== editingInterest && interest.label.toLowerCase() === label.toLowerCase())
     if (duplicate) { setInterestError('That interest is already in your list.'); return }
-    setSettings(s => ({ ...s, interests: editingInterest
-      ? s.interests.map(interest => interest.id === editingInterest ? { ...interest, label } : interest)
-      : [...(s.interests || []), { id: `custom-${Date.now()}`, label, terms: [label], active: true }] }))
+    setSettings(s => {
+      const currentInterests = Array.isArray(s.interests) ? s.interests : interests
+      return { ...s, interests: editingInterest
+        ? currentInterests.map(interest => interest.id === editingInterest ? { ...interest, label, terms: interest.id.startsWith('custom-') ? [label] : interest.terms } : interest)
+        : [...currentInterests, { id: `custom-${Date.now()}`, label, terms: [label], active: true }] }
+    })
     setInterestDraft('')
     setEditingInterest(null)
     setInterestError('')
@@ -66,6 +70,7 @@ export function SettingsPage() {
   const updateInterest = (id, patch) => setSettings(s => ({ ...s, interests: s.interests.map(interest => interest.id === id ? { ...interest, ...patch } : interest) }))
   const removeInterest = id => setSettings(s => ({ ...s, interests: s.interests.filter(interest => interest.id !== id) }))
   const resetInterests = () => setSettings(s => ({ ...s, interests: RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true })) }))
+  const visibleInterests = interests.filter(interest => interest.label.toLowerCase().includes(interestSearch.trim().toLowerCase()))
 
   const toggleCardVisible = (id) => setSettings(s => ({ ...s, cards: { ...s.cards, visible: { ...s.cards.visible, [id]: !s.cards.visible[id] } } }))
   const moveCard = (id, dir) => setSettings(s => {
@@ -135,8 +140,15 @@ export function SettingsPage() {
             <Button type="button" icon={editingInterest ? 'Check' : 'Plus'} onClick={saveInterest}>{editingInterest ? 'Save' : 'Add'}</Button>
           </div>
           {interestError && <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">{interestError}</p>}
+          <input
+            className={`${inputClass} mt-2`}
+            value={interestSearch}
+            placeholder="Search interests"
+            aria-label="Search interests"
+            onChange={event => setInterestSearch(event.target.value)}
+          />
           <div className="mt-3 space-y-1.5">
-            {interests.map(interest => (
+            {visibleInterests.map(interest => (
               <div key={interest.id} className="flex items-center gap-2 rounded-lg border border-slate-100 px-2.5 py-2 dark:border-slate-800">
                 <Toggle checked={interest.active} onChange={active => updateInterest(interest.id, { active })} label={`Use ${interest.label}`} />
                 <span className="flex-1 text-sm text-slate-700 dark:text-slate-200">{interest.label}</span>
@@ -144,6 +156,7 @@ export function SettingsPage() {
                 <IconButton label={`Remove ${interest.label}`} icon="Trash2" onClick={() => removeInterest(interest.id)} />
               </div>
             ))}
+            {visibleInterests.length === 0 && <p className="py-2 text-xs text-slate-500 dark:text-slate-400">No interests found.</p>}
           </div>
           <div className="mt-3 flex items-center justify-between gap-3">
             <p className="text-[11px] text-slate-400">Use several interests at once; matching is deterministic and transparent.</p>

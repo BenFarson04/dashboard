@@ -9,16 +9,6 @@
 import { atToday } from '../utils'
 import { RECOMMENDED_INTERESTS } from './newsConfig'
 
-export const NEWS_TOPICS = [
-  { id: 'structural',   label: 'Structural & civil engineering' },
-  { id: 'digital',      label: 'Digital engineering' },
-  { id: 'ai',           label: 'AI & software products' },
-  { id: 'energy',       label: 'Energy & infrastructure' },
-  { id: 'finance',      label: 'Finance & investing' },
-  { id: 'belfast',      label: 'Belfast & Northern Ireland' },
-  { id: 'japan',        label: 'Japan travel' },
-]
-
 export const EMAIL_CATEGORIES = [
   { id: 'important',  label: 'Important' },
   { id: 'university', label: 'University/career' },
@@ -203,7 +193,6 @@ export const defaultSettings = {
   greetingStyle: 'time', // 'time' | 'fixed'
   fixedGreeting: 'Welcome back',
   location: 'Belfast',
-  newsTopics: NEWS_TOPICS.map(t => t.id), // all enabled by default
   interests: RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true })),
   emailCategories: EMAIL_CATEGORIES.map(c => c.id),
   calendar: { showWeekends: true, twentyFourHour: true },
