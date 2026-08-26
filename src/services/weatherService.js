@@ -49,6 +49,7 @@ export async function getWeather({ location = 'Belfast' } = {}) {
     + `&current=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m`
     + `&hourly=temperature_2m,precipitation_probability,weather_code`
     + `&timezone=auto&forecast_days=1`
+  console.log('Weather forecast request URL:', url)
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Weather fetch failed (${res.status})`)
   const d = await res.json()
