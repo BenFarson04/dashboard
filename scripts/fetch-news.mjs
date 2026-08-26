@@ -2,15 +2,14 @@ import Parser from 'rss-parser'
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { NEWS_FEEDS } from '../src/data/newsConfig.js'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const OUTPUT = resolve(ROOT, 'public/data/news.json')
+const MAX_SNAPSHOT_ITEMS = 250
+const RETENTION_DAYS = 14
 
-export const RSS_FEEDS = [
-  { url: 'https://feeds.bbci.co.uk/news/northern_ireland/rss.xml', topic: 'belfast', source: 'BBC News NI' },
-  { url: 'https://feeds.bbci.co.uk/news/technology/rss.xml', topic: 'digital', source: 'BBC Technology' },
-  { url: 'https://feeds.bbci.co.uk/news/business/rss.xml', topic: 'finance', source: 'BBC Business' },
-]
+export const RSS_FEEDS = NEWS_FEEDS
 
 const parser = new Parser({
   timeout: 15000,
@@ -41,25 +40,34 @@ function validDate(value) {
   return date && !Number.isNaN(date.getTime()) ? date.toISOString() : ''
 }
 
-function usableUrl(value) {
+function canonicalUrl(value, feedUrl) {
   try {
-    const protocol = new URL(value).protocol
-    return protocol === 'http:' || protocol === 'https:'
+    const url = new URL(value, feedUrl)
+    if (!['http:', 'https:'].includes(url.protocol)) return ''
+    url.hash = ''
+    for (const key of [...url.searchParams.keys()]) {
+      if (/^(utm_|ref$|source$|at_medium$|at_campaign$)/i.test(key)) url.searchParams.delete(key)
+    }
+    return url.toString()
   } catch {
-    return false
+    return ''
   }
 }
 
 export function normaliseItem(item, feed) {
   const headline = plainText(item.title)
-  const url = String(item.link || item.guid || '').trim()
-  if (!headline || !usableUrl(url)) return null
+  const url = canonicalUrl(String(item.link || item.guid || '').trim(), feed.url)
+  if (!headline || !url) return null
 
   const published = validDate(item.isoDate || item.pubDate)
   return {
     id: url,
     source: feed.source,
+    sourceId: feed.id,
+    sourceCategory: feed.category,
+    region: feed.region || null,
     topic: feed.topic,
+    tags: feed.defaultTags || [],
     headline,
     description: plainText(item.contentSnippet || item.content || item.description || ''),
     published,
@@ -82,7 +90,7 @@ function deduplicate(items) {
     if (!key || seen.has(key)) return false
     seen.add(key)
     return true
-  }).sort((a, b) => {
+  }).filter(item => !item.published || Date.parse(item.published) >= Date.now() - RETENTION_DAYS * 86400000).sort((a, b) => {
     const left = a.published ? Date.parse(a.published) : 0
     const right = b.published ? Date.parse(b.published) : 0
     return right - left
@@ -102,13 +110,14 @@ function readPrevious() {
 
 export async function generateNewsSnapshot() {
   const previous = readPrevious()
-  const results = await Promise.allSettled(RSS_FEEDS.map(fetchFeed))
+  const enabledFeeds = RSS_FEEDS.filter(feed => feed.enabled)
+  const results = await Promise.allSettled(enabledFeeds.map(fetchFeed))
   const successfulFeeds = []
   const failedFeeds = []
   const currentItems = []
 
   results.forEach((result, index) => {
-    const feed = RSS_FEEDS[index]
+    const feed = enabledFeeds[index]
     if (result.status === 'fulfilled') {
       successfulFeeds.push(feed.source)
       currentItems.push(...result.value.items)
@@ -118,19 +127,27 @@ export async function generateNewsSnapshot() {
     }
   })
 
-  const successfulTopics = new Set(successfulFeeds.map(source => RSS_FEEDS.find(feed => feed.source === source).topic))
+  const successfulSources = new Set(successfulFeeds)
   const previousItems = previous?.items || []
-  const retainedItems = previousItems.filter(item => !successfulTopics.has(item.topic))
+  const retainedItems = previousItems.filter(item => !successfulSources.has(item.source))
   // Keep the full snapshot. The browser filters by topic before its 12-item limit.
-  const items = deduplicate([...currentItems, ...retainedItems])
+  const items = deduplicate([...currentItems, ...retainedItems]).slice(0, MAX_SNAPSHOT_ITEMS)
 
   if (items.length === 0) throw new Error('No usable stories were returned and no previous snapshot is available')
 
+  const sourceCounts = items.reduce((counts, item) => {
+    counts[item.source] = (counts[item.source] || 0) + 1
+    return counts
+  }, {})
   return {
+    schemaVersion: 2,
     generatedAt: new Date().toISOString(),
     status: failedFeeds.length === 0 ? 'live' : 'stale',
     successfulFeeds,
     failedFeeds,
+    totalFetched: results.reduce((total, result) => total + (result.status === 'fulfilled' ? result.value.items.length : 0), 0),
+    totalAccepted: items.length,
+    sourceCounts,
     items,
   }
 }

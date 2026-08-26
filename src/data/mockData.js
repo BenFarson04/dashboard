@@ -7,6 +7,7 @@
 // Microsoft Graph / news / weather responses without touching the UI.
 // -----------------------------------------------------------------------------
 import { atToday } from '../utils'
+import { RECOMMENDED_INTERESTS } from './newsConfig'
 
 export const NEWS_TOPICS = [
   { id: 'structural',   label: 'Structural & civil engineering' },
@@ -203,6 +204,7 @@ export const defaultSettings = {
   fixedGreeting: 'Welcome back',
   location: 'Belfast',
   newsTopics: NEWS_TOPICS.map(t => t.id), // all enabled by default
+  interests: RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true })),
   emailCategories: EMAIL_CATEGORIES.map(c => c.id),
   calendar: { showWeekends: true, twentyFourHour: true },
   briefing: { includeCalendar: true, includeEmail: true, includeTasks: true, includeWeather: true, includeNews:true, tone: 'concise' },

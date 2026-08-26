@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { PageShell } from './PageShell'
 import { Icon } from '../components/ui/Icon'
 import { Card, Toggle, Chip, Button, IconButton, Badge, Field, inputClass } from '../components/ui/primitives'
-import { NEWS_TOPICS, EMAIL_CATEGORIES, defaultSettings } from '../data/mockData'
+import { EMAIL_CATEGORIES, defaultSettings } from '../data/mockData'
+import { RECOMMENDED_INTERESTS } from '../data/newsConfig'
 import { cn } from '../utils'
 
 const CARD_LABELS = {
@@ -33,6 +35,10 @@ function SettingRow({ title, hint, children }) {
 
 export function SettingsPage() {
   const { settings, setSettings, connectionStatus, failRates, setFailRates, toggleTheme } = useApp()
+  const interests = settings.interests || RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true }))
+  const [interestDraft, setInterestDraft] = useState('')
+  const [editingInterest, setEditingInterest] = useState(null)
+  const [interestError, setInterestError] = useState('')
 
   const patch = (p) => setSettings(s => ({ ...s, ...p }))
   const patchCalendar = (p) => setSettings(s => ({ ...s, calendar: { ...s.calendar, ...p } }))
@@ -42,6 +48,24 @@ export function SettingsPage() {
     const list = s[key]
     return { ...s, [key]: list.includes(id) ? list.filter(x => x !== id) : [...list, id] }
   })
+
+  const saveInterest = () => {
+    const label = interestDraft.trim().replace(/\s+/g, ' ')
+    if (!label) { setInterestError('Enter an interest first.'); return }
+    if (label.length > 60) { setInterestError('Keep interests to 60 characters or fewer.'); return }
+    const duplicate = interests.some(interest => interest.id !== editingInterest && interest.label.toLowerCase() === label.toLowerCase())
+    if (duplicate) { setInterestError('That interest is already in your list.'); return }
+    setSettings(s => ({ ...s, interests: editingInterest
+      ? s.interests.map(interest => interest.id === editingInterest ? { ...interest, label } : interest)
+      : [...(s.interests || []), { id: `custom-${Date.now()}`, label, terms: [label], active: true }] }))
+    setInterestDraft('')
+    setEditingInterest(null)
+    setInterestError('')
+  }
+
+  const updateInterest = (id, patch) => setSettings(s => ({ ...s, interests: s.interests.map(interest => interest.id === id ? { ...interest, ...patch } : interest) }))
+  const removeInterest = id => setSettings(s => ({ ...s, interests: s.interests.filter(interest => interest.id !== id) }))
+  const resetInterests = () => setSettings(s => ({ ...s, interests: RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true })) }))
 
   const toggleCardVisible = (id) => setSettings(s => ({ ...s, cards: { ...s.cards, visible: { ...s.cards.visible, [id]: !s.cards.visible[id] } } }))
   const moveCard = (id, dir) => setSettings(s => {
@@ -54,7 +78,7 @@ export function SettingsPage() {
 
   const resetAll = () => {
     if (!confirm('Reset all settings, tasks and quick links to defaults? This clears saved data on this device.')) return
-    ['pd.settings', 'pd.tasks', 'pd.quicklinks', 'pd.emailFeedback', 'pd.emailRead', 'pd.savedNews', 'pd.dismissedNews'].forEach(k => localStorage.removeItem(k))
+    ['pd.settings', 'pd.tasks', 'pd.quicklinks', 'pd.emailFeedback', 'pd.emailRead', 'pd.savedNews', 'pd.dismissedNews', 'pd.newsFeedback'].forEach(k => localStorage.removeItem(k))
     location.reload()
   }
 
@@ -96,13 +120,34 @@ export function SettingsPage() {
           </div>
         </Card>
 
-        {/* News topics */}
-        <Card title="Preferred news topics" icon="Newspaper">
-          <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">Used as your default selection in the news feed.</p>
-          <div className="flex flex-wrap gap-1.5">
-            {NEWS_TOPICS.map(t => (
-              <Chip key={t.id} active={settings.newsTopics.includes(t.id)} onClick={() => toggleInList('newsTopics', t.id)}>{t.label}</Chip>
+        {/* News interests */}
+        <Card title="News interests" icon="Newspaper">
+          <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">Interests are stored on this device and matched locally against the live article pool.</p>
+          <div className="flex gap-2">
+            <input
+              className={inputClass}
+              value={interestDraft}
+              maxLength={60}
+              placeholder="Add an interest"
+              onChange={event => setInterestDraft(event.target.value)}
+              onKeyDown={event => { if (event.key === 'Enter') saveInterest() }}
+            />
+            <Button type="button" icon={editingInterest ? 'Check' : 'Plus'} onClick={saveInterest}>{editingInterest ? 'Save' : 'Add'}</Button>
+          </div>
+          {interestError && <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">{interestError}</p>}
+          <div className="mt-3 space-y-1.5">
+            {interests.map(interest => (
+              <div key={interest.id} className="flex items-center gap-2 rounded-lg border border-slate-100 px-2.5 py-2 dark:border-slate-800">
+                <Toggle checked={interest.active} onChange={active => updateInterest(interest.id, { active })} label={`Use ${interest.label}`} />
+                <span className="flex-1 text-sm text-slate-700 dark:text-slate-200">{interest.label}</span>
+                <IconButton label={`Edit ${interest.label}`} icon="Pencil" onClick={() => { setEditingInterest(interest.id); setInterestDraft(interest.label) }} />
+                <IconButton label={`Remove ${interest.label}`} icon="Trash2" onClick={() => removeInterest(interest.id)} />
+              </div>
             ))}
+          </div>
+          <div className="mt-3 flex items-center justify-between gap-3">
+            <p className="text-[11px] text-slate-400">Use several interests at once; matching is deterministic and transparent.</p>
+            <Button type="button" variant="ghost" size="sm" onClick={resetInterests}>Reset recommended</Button>
           </div>
         </Card>
 

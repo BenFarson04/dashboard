@@ -74,6 +74,42 @@ src/
 The `scripts/fetch-news.mjs` build step fetches and normalizes the BBC feeds into
 `public/data/news.json` before Vite builds the site.
 
+## News intelligence
+
+The central registry in `src/data/newsConfig.js` contains only verified RSS/Atom
+sources with stable IDs, publication names, categories, language, region, trust tier,
+and broad default tags. Current sources are BBC News NI, BBC World, BBC Technology, BBC
+Business, BBC Science & Environment, The Guardian UK, The Guardian Technology, WIRED,
+New Civil Engineer, and Construction News. Utility Week was checked but rejected because
+the endpoint returned a 403 HTML page rather than a usable feed. The system does not
+scrape ordinary pages or store article text.
+
+Actions fetch enabled feeds concurrently with timeouts and partial-failure handling.
+Records are cleaned, validated, deduplicated, retained for 14 days, and capped at 250
+items. `news.json` stores schema version, generation time, feed successes/failures,
+counts, and the broad article pool. The browser applies the final 12-item limit only
+after local interest matching.
+
+Interests are stored in `localStorage` under the existing settings record. Legacy
+`newsTopics` settings migrate to the recommended interests. Each interest can be added,
+edited, activated, deactivated, or removed in Settings; exact duplicates are rejected.
+The deterministic classifier weights exact headline phrases above headline words,
+description terms, and weak source/tag context. It records matched terms, scores,
+matched interests, method, and version, and never labels a general feed as Belfast by
+source alone. Saved and dismissed article IDs remain local browser state.
+
+Classification is intentionally behind an adapter boundary in
+`src/services/classificationAdapter.js`. A future server-side or Actions enrichment
+step may add labels after deterministic classification, but must remain disabled by
+default, keep credentials off the client, and fall back to the deterministic result.
+
+To add a source, verify its URL returns RSS or Atom with `curl -L` and a representative
+parse in the agent environment, add its complete registry entry, then run
+`npm run news:refresh` and `npm run test:news`. Do not add guessed URLs, HTML pages, or
+feed-level narrow tags that the publication does not genuinely imply. To add a
+recommended interest or synonym group, update `RECOMMENDED_INTERESTS` or
+`INTEREST_SYNONYMS` in `src/data/newsConfig.js` and add a focused classifier assertion.
+
 **Key design decisions**
 
 - **Modular data layer.** Components never call mock data directly — they call services.
@@ -174,6 +210,11 @@ case where consent is refused (show the service as *Not configured* / *Connectio
 - `npm run news:refresh` — fetch the BBC feeds and update `public/data/news.json`.
 - `node scripts/build-preview.mjs` — regenerate the standalone `preview.html`.
 - `node scripts/validate.mjs` — syntax‑check every source file + the preview bundle.
+
+Run `npm run test:news` for deterministic relevance, false-positive, normalization,
+and unsafe-link checks. GitHub Actions refreshes on pushes to `main`, manual dispatch,
+and every three hours. Failed feeds retain their previous source stories; a failed
+refresh never deletes the last good snapshot.
 
 ## Live news pipeline
 

@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import * as services from '../services'
 import { generateBriefing } from '../services'
+import { rankArticles } from '../services/newsRelevance'
+import { RECOMMENDED_INTERESTS } from '../data/newsConfig'
 import {
   defaultSettings, defaultTasks, defaultQuickLinks, connectionStatus,
 } from '../data/mockData'
@@ -23,6 +25,7 @@ export function AppProvider({ children }) {
   const [emailRead, setEmailRead] = useLocalStorage('pd.emailRead', {})              // id -> true
   const [savedNews, setSavedNews] = useLocalStorage('pd.savedNews', [])
   const [dismissedNews, setDismissedNews] = useLocalStorage('pd.dismissedNews', [])
+  const [newsFeedback, setNewsFeedback] = useLocalStorage('pd.newsFeedback', {})
 
   // ---- Ephemeral UI state --------------------------------------------------
   const [page, setPage] = useState('dashboard')
@@ -36,6 +39,15 @@ export function AppProvider({ children }) {
   const [emails, setEmails] = useState(idle)
   const [news, setNews] = useState(() => ({ ...idle(), sourceStatus: 'no-data', metadata: null }))
   const [weather, setWeather] = useState(idle)
+
+  useEffect(() => {
+    if (!Array.isArray(settings.interests)) {
+      setSettings(s => ({
+        ...s,
+        interests: RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: s.newsTopics ? s.newsTopics.includes(interest.id) : true })),
+      }))
+    }
+  }, [settings.interests, settings.newsTopics, setSettings])
 
   // ---- Theme ---------------------------------------------------------------
   useEffect(() => {
@@ -139,9 +151,13 @@ export function AppProvider({ children }) {
 
   // ---- Derived: daily briefing --------------------------------------------
   const briefing = useMemo(() => {
-    const visibleNews = (news.data || []).filter(
-      article => !dismissedNews.includes(article.id)
-    )
+    const interests = settings.interests || RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true }))
+    const visibleNews = rankArticles(
+      (news.data || []).filter(article => !dismissedNews.includes(article.id) && newsFeedback[article.id] !== 'not_relevant'),
+      interests,
+      null,
+      newsFeedback,
+    ).slice(0, 5)
 
     return generateBriefing({
       events: calendar.data || [],
@@ -159,15 +175,24 @@ export function AppProvider({ children }) {
     news.data,
     dismissedNews,
     settings.briefing,
+    settings.interests,
+    newsFeedback,
   ])
+
+  const personalizedNews = useMemo(() => rankArticles(
+    news.data || [],
+    settings.interests || RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true })),
+    null,
+    newsFeedback,
+  ), [news.data, settings.interests, newsFeedback])
 
   const value = {
     // state
-    settings, setSettings, tasks, quickLinks, savedNews, dismissedNews,
+    settings, setSettings, tasks, quickLinks, savedNews, dismissedNews, newsFeedback,
     page, sidebarOpen, mobileNavOpen, focus, failRates, setFailRates,
     connectionStatus,
     // data
-    calendar, emails: { ...emails, data: enrichedEmails }, news, weather, briefing,
+    calendar, emails: { ...emails, data: enrichedEmails }, news: { ...news, data: personalizedNews }, weather, briefing,
     // theme + nav
     toggleTheme, setSidebarOpen, setMobileNavOpen, goTo, setPage,
     // refresh
@@ -180,6 +205,7 @@ export function AppProvider({ children }) {
     setEmailFeedbackFor, markEmailRead,
     // news
     toggleSaveNews, dismissNews, restoreNews,
+    setNewsFeedback: (id, value) => setNewsFeedback(current => ({ ...current, [id]: current[id] === value ? undefined : value })),
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
