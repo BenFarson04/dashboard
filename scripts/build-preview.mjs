@@ -54,6 +54,7 @@ const modules = files.map(file => {
   const dir = posix.dirname(relative(SRC, file).split('\\').join('/'))
   const isIcon = id === 'components/ui/Icon'
   let raw = isIcon ? `export ${PREVIEW_ICON.trim()}` : readFileSync(file, 'utf8')
+  raw = raw.replaceAll('import.meta.env.BASE_URL', "''")
   // Collapse multiline named imports (`import {\n a,\n b\n} from '...'`) onto one line
   // so the line-based transform below can handle them.
   raw = raw.replace(/import\s+\{[^}]*\}\s+from\s+['"][^'"]+['"]/g, m => m.replace(/\s*\n\s*/g, ' '))

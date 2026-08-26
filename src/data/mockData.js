@@ -218,7 +218,7 @@ export const defaultSettings = {
 export const connectionStatus = {
   calendar: 'Connected',   // not_configured | mock | connected | error
   email: 'Connected',
-  news: 'mock',
+  news: 'connected',
   weather: 'Connected',
   tasks: 'local',     // tasks are genuinely local (localStorage), not mocked-remote
 }

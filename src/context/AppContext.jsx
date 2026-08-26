@@ -34,7 +34,7 @@ export function AppProvider({ children }) {
   // ---- Data services state -------------------------------------------------
   const [calendar, setCalendar] = useState(idle)
   const [emails, setEmails] = useState(idle)
-  const [news, setNews] = useState(idle)
+  const [news, setNews] = useState(() => ({ ...idle(), sourceStatus: 'no-data', metadata: null }))
   const [weather, setWeather] = useState(idle)
 
   // ---- Theme ---------------------------------------------------------------
@@ -66,7 +66,10 @@ export function AppProvider({ children }) {
 
   const loadNews = useCallback(async () => {
     setNews(s => ({ ...s, loading: true, error: null }))
-    try { setNews({ data: await services.news.getNews({ failRate: failRates.news }), loading: false, error: null }) }
+    try {
+      const result = await services.news.getNews({ failRate: failRates.news })
+      setNews({ data: result.items, sourceStatus: result.status, metadata: result.metadata, loading: false, error: null })
+    }
     catch (e) { setNews({ data: null, loading: false, error: e.message }) }
   }, [failRates.news])
 

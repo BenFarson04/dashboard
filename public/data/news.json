@@ -1,0 +1,1042 @@
+{
+  "generatedAt": "2026-08-26T16:38:44.376Z",
+  "status": "live",
+  "successfulFeeds": [
+    "BBC News NI",
+    "BBC Technology",
+    "BBC Business"
+  ],
+  "failedFeeds": [],
+  "items": [
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cn07erp8nr8o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "'World feels less bright' - fans and musicians on island of Ireland mourn Dolly parting",
+      "description": "Irish country music artists Claudia Buckley and Máiréad Carlin have been among those to pay tribute to the late country music legend.",
+      "published": "2026-08-26T16:37:02.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cn07erp8nr8o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c5ye3g2v742o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Residents 'anxious' after Drumcree parade ruling - O'Neill",
+      "description": "Michelle O'Neill says residents from the mainly-nationalist Garvaghy Road at Drumcree are \"anxious\" at what she called \"triumphalism\" by unionist leaders following a court ruling over a contentious parade.",
+      "published": "2026-08-26T16:28:01.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c5ye3g2v742o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cm2q4vp4v16o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "'I just cried my eyes out' - passengers describe Tunisia flight ordeal",
+      "description": "On Wednesday, the airline was able to organise flights to return the stranded passengers to Belfast.",
+      "published": "2026-08-26T16:25:52.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cm2q4vp4v16o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c17jlngexy9o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Xbox boss 'thinking about affordability' of next-gen console",
+      "description": "In an exclusive interview with the BBC, Asha Sharma also discusses giving gamers digital versions of games they own.",
+      "published": "2026-08-26T15:38:49.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/c17jlngexy9o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/ckgvn6rk163o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Ex-council chief convicted of two charges over deleting email",
+      "description": "The charges Anne Donaghy was convicted of relate to an email she sent to the private email address of then-Democratic Unionist Party (DUP) leader Arlene Foster.",
+      "published": "2026-08-26T15:37:48.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/ckgvn6rk163o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c3v4knr4xn0o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Maura Higgins to fill Cilla Black's shoes as host of Blind Date reboot",
+      "description": "The Love Island and Traitors US TV personality will host a reboot of the popular dating show.",
+      "published": "2026-08-26T15:29:53.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c3v4knr4xn0o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c804rd7leppo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Reform proposes £30 tax rebate for HMRC phone delays",
+      "description": "People on hold to HMRC for more than 30 minutes would get a tax credit under plans announced by Robert Jenrick.",
+      "published": "2026-08-26T14:41:02.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c804rd7leppo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c804r3v9d3eo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Four men charged over Moygashel bonfire hate display",
+      "description": "All four men are to appear before Dungannon Magistrates' Court next month",
+      "published": "2026-08-26T14:26:09.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c804r3v9d3eo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cd68q3wynnqo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Meta agrees to pay up to $18bn to settle social media case",
+      "description": "The deal has been reached during a California federal court trial over claims brought by US states.",
+      "published": "2026-08-26T14:10:17.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/cd68q3wynnqo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c70ljwz9ddxo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Jersey earnings rise by 1.2% after inflation",
+      "description": "Statistics Jersey says the increase is \"slightly lower\" than the long-term annual average.",
+      "published": "2026-08-26T13:07:55.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c70ljwz9ddxo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/videos/ckdd22kyq81o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "BBC Newsline signed summary",
+      "description": "A signed summary of BBC Newsline.",
+      "published": "2026-08-26T12:30:30.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/videos/ckdd22kyq81o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c0e31p294j7o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Police officers hurt after patrol car rammed repeatedly",
+      "description": "Two men are arrested after the incident on the Glen Road in west Belfast.",
+      "published": "2026-08-26T11:25:15.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c0e31p294j7o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cpwl5yxg2j5o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Teenager charged with possession of bomb making supplies",
+      "description": "He is charged with possessing explosives in suspicious circumstances and possession of prohibited weapons.",
+      "published": "2026-08-26T11:11:21.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cpwl5yxg2j5o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cqjkl1xvgw5o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Household energy bills to hit three-year high as Ofgem announces 4% rise from October",
+      "description": "A household using a typical amount of gas and electricity will pay £60 a year more, regulator Ofgem says.",
+      "published": "2026-08-26T11:03:50.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cqjkl1xvgw5o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cq5xdvql94zo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "£100 heating oil payments to start in September",
+      "description": "Around 340,000 lower-income households are expected to qualify for the payment.",
+      "published": "2026-08-26T11:00:04.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cq5xdvql94zo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cdd29v8mp9jo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "What will the energy cap changes mean for my bills?",
+      "description": "The regulator Ofgem says the price cap will increase by 4% in October for millions of households.",
+      "published": "2026-08-26T10:52:02.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cdd29v8mp9jo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c0e31qdqrlyo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "'Ironing board' seats to be replaced on Thameslink",
+      "description": "Greater Thameslink Railway says these upgrades are part of the wider renationalisation plans.",
+      "published": "2026-08-26T10:30:53.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c0e31qdqrlyo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c046peqrg9xo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Why high energy bills look like they are here to stay",
+      "description": "The government is under pressure to support billpayers when domestic energy prices predicted to rise further.",
+      "published": "2026-08-26T10:10:33.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c046peqrg9xo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/videos/cly7nm72ne0o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Energy prices to rise to three-year high",
+      "description": "Energy bills for millions of households are expected to rise this winter to the highest level for three years",
+      "published": "2026-08-26T09:45:46.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/videos/cly7nm72ne0o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/sport/cricket/articles/cy9w3974p7qo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Who are the Dublin Guardians and Belfast Wolves?",
+      "description": "The Belfast Wolves and Dublin Guardians will play their first game of the European T20 Premier League in Voorburg on Thursday.",
+      "published": "2026-08-26T09:38:46.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/sport/cricket/articles/cy9w3974p7qo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cm27324jgg1o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Police officer sacked after starting sexual relationship with woman",
+      "description": "Police Ombudsman Jacqui Durkin says the former officer's behaviour has \"the potential to do serious damage to public trust\" in policing.",
+      "published": "2026-08-26T07:52:03.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cm27324jgg1o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/sport/football/articles/cwy0dp85688o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "The relationship between the Irish League and gambling",
+      "description": "From changing culture to investment and criticism, BBC Sport NI examines the Irish League's ever-changing relationship with gambling.",
+      "published": "2026-08-26T07:26:26.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/sport/football/articles/cwy0dp85688o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cx2z0ry8k47o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Teenage cyclist dies after hit-and-run collision",
+      "description": "A teenager has died after a hit-and-run collision in Nugentstown, County Meath in the Republic of Ireland.",
+      "published": "2026-08-26T07:13:58.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cx2z0ry8k47o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/crl6r66yjklo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "'Magical' and rare barn owl has bumper breeding season",
+      "description": "Ten chicks have been successfully reared by two breeding pairs at secret sites across Fermanagh.",
+      "published": "2026-08-26T05:43:05.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/crl6r66yjklo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c3053543qqyo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Trusts pay £200k each to consultants to reduce care package costs",
+      "description": "Liaison Care reviews high-cost care packages which are in place for vulnerable adults and elderly people in Northern Ireland.",
+      "published": "2026-08-26T05:34:47.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c3053543qqyo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c9w4jx2rvgro?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Why Tesla has been caught up in a massive car recall in China",
+      "description": "The country's biggest ever car recall affects more than four million vehicles made by Tesla, XPeng, Xiaomi and other firms.",
+      "published": "2026-08-26T03:33:59.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c9w4jx2rvgro?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cq5xel4v642o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Musk's rocket firm SpaceX to build $100bn launch facility",
+      "description": "It will be the firm's biggest site yet and aims to send rockets to space in 2029.",
+      "published": "2026-08-26T01:32:07.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cq5xel4v642o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/sounds/play/w3ct98hb?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "The Interview",
+      "description": "Maura Fogarty speaks to Joe Ngai from McKinsey China about business in the region",
+      "published": "2026-08-25T23:30:00.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/sounds/play/w3ct98hb?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c07ler8x9kpo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "AI gold rush draws crypto firms away from Bitcoin",
+      "description": "The price of Bitcoin has risen in August but is still far below its peak almost a year ago - and companies are refitting their mines.",
+      "published": "2026-08-25T23:11:02.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/c07ler8x9kpo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cjrg10j721jo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Firms scramble for battery power in Spain and Portugal",
+      "description": "After last year's massive power failure Spanish and Portuguese firms are buying battery back ups.",
+      "published": "2026-08-25T23:09:31.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cjrg10j721jo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cedjqx6zdl0o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Back to school: How parents can save on uniform costs",
+      "description": "From baby banks to supermarket deals, there are many ways parents can ease the back-to-school burden.",
+      "published": "2026-08-25T23:08:31.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cedjqx6zdl0o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/sounds/play/w3ct8jyb?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Tech Life",
+      "description": "The government agency that's encouraging high-risk and high-reward research.",
+      "published": "2026-08-25T20:00:00.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/sounds/play/w3ct8jyb?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c74kj48ezkxo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Man charged with possession of Semtex near Irish border granted bail",
+      "description": "Simon O'Donovan, 44, of Sperrin Road in Dublin 12 was granted bail during a hearing at the High Court.",
+      "published": "2026-08-25T17:20:34.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c74kj48ezkxo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c3eqjyeyglpo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "High Court quashes decision to restrict annual Drumcree parade",
+      "description": "The Parades Commission had banned the July parade from entering the mainly nationalist Garvaghy Road - a move which reflected every decision it has made since 1998.",
+      "published": "2026-08-25T17:02:08.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c3eqjyeyglpo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/czez5y3k56lo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "'We just want to get home' - dozens stranded in Tunisia after cancelled Belfast flight",
+      "description": "One man says he has spent more than £4,000 to get his family of five home after being told they may have to wait 10 days for another flight.",
+      "published": "2026-08-25T16:36:54.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/czez5y3k56lo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cvgy5211q9vo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "New bus safety laws 'will save lives' if implemented",
+      "description": "The Infrastructure Minister Liz Kimmins is to introduce laws, which if they get executive approval, would include banning overtaking buses when people are getting on or disembarking on 60mph rural roads.",
+      "published": "2026-08-25T16:28:40.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cvgy5211q9vo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cqxvj1zd4qjo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Who does Iran trade with and what could Trump's 'economic D-Day' mean?",
+      "description": "Iran is no stranger to US sanctions and has developed deep economic ties with several countries.",
+      "published": "2026-08-25T15:04:52.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cqxvj1zd4qjo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/ckgwjygdjj1o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Dáithí Mac Gabhann returns home after heart transplant",
+      "description": "After an eight-year wait, Dáithí Mac Gabhann received a transplant in July.",
+      "published": "2026-08-25T13:19:49.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/ckgwjygdjj1o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cnvly73jrrdo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "More than 70,000 social and affordable homes to be built across England over 10 years",
+      "description": "Funding has been granted to Greater Manchester, the West Midlands and West Yorkshire as well as £6bn for London.",
+      "published": "2026-08-25T12:10:13.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cnvly73jrrdo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/clyl8964x7zo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Gregory Campbell under investigation for alleged spending breach",
+      "description": "The watchdog's investigation concerns the MP’s spending against their Office Costs budget.",
+      "published": "2026-08-25T11:44:23.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/clyl8964x7zo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c8d3p2g2p05o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "OnlyFans owner was paid over $700m before his death",
+      "description": "The site hosts a range of subscription-based content from cooking to fitness videos, but it is best known for pornography.",
+      "published": "2026-08-25T10:09:00.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c8d3p2g2p05o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cvgyevzn4zzo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Hosepipe ban extended in some parts of Republic of Ireland",
+      "description": "The hosepipe ban in the Republic of Ireland is being lifted in 13 counties on Wednesday but extended in the rest of the country.",
+      "published": "2026-08-25T08:37:18.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cvgyevzn4zzo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c0qxew81y83o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Iran says it is 'fully prepared' to counter widened US economic sanctions",
+      "description": "The US calls its latest sanctions on Iran an \"economic D-Day\", but Tehran says it has a plan to address them.",
+      "published": "2026-08-25T08:08:26.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c0qxew81y83o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cj06818jgzlo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Burnham refuses to rule out tax rises in autumn Budget",
+      "description": "Experts have warned that he and Chancellor John Healey will have little room to manoeuvre in their first Budget.",
+      "published": "2026-08-25T06:40:33.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cj06818jgzlo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cm2g6mmjjzdo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Drought leaves 'barely any apples' to make cider",
+      "description": "Some orchards are harvesting just a 10th of their usual crop, and facing an uncertain future.",
+      "published": "2026-08-25T05:08:37.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cm2g6mmjjzdo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c20vl4vm2pno?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Songs created by AI banned from Australia's music charts",
+      "description": "The move comes weeks after a DJ admitted using AI to remix a Madonna song that topped the Australian charts.",
+      "published": "2026-08-25T04:54:01.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/c20vl4vm2pno?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c93vpd60654o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "US-Canada trade war escalates as Trump threatens tariff hike on vehicles",
+      "description": "Mark Carney accused Trump of wanting to \"destroy\" Canada's auto industry, and said he would only resume trade talks if the US comes with the \"right attitude\".",
+      "published": "2026-08-25T02:51:53.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c93vpd60654o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c05rj80ve56o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "How Canada could hit back to hurt the US economy - and Trump",
+      "description": "What leverage does Canada, which sells about 70% of its exports to the US, actually have in this spiralling trade dispute?",
+      "published": "2026-08-25T02:49:22.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c05rj80ve56o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c4g36yze692o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "'What you see is what you pay' - why some US restaurants are banning tips",
+      "description": "Tips are central to US dining culture but some eateries think that they are unfair.",
+      "published": "2026-08-24T23:04:17.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c4g36yze692o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cn74lxrv110o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "New 10p coin enters circulation - will you spot one?",
+      "description": "The coin has been designed to feature King Charles III and a Scottish grouse close to extinction.",
+      "published": "2026-08-24T23:03:42.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cn74lxrv110o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c8r6xy3ryndo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Manga-inspired theme park to be built near Paris",
+      "description": "The construction of three new parks was given the green light after a €6bn investment from Saudi Arabia.",
+      "published": "2026-08-24T19:57:55.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c8r6xy3ryndo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/crerd8l3pw5o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Graduate job vacancies drop by almost 50% in a year, survey suggests",
+      "description": "Job site Adzuna said the number of graduate vacancies was the lowest since 2016",
+      "published": "2026-08-24T16:50:47.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/crerd8l3pw5o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cx2zgjdd41lo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "'I love the whole spirit of the place': Kingfishr return to one of their favourite cities",
+      "description": "The Limerick indie-folk group will perform at Live at the Square in Ebrington on Monday evening.",
+      "published": "2026-08-24T16:47:49.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cx2zgjdd41lo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cwyz37zzp22o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Rail companies sued for £5m over oil spill caused by derailment",
+      "description": "More than 400,000 litres of fuel spilled in the area causing an \"environmental disaster\".",
+      "published": "2026-08-24T16:30:40.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cwyz37zzp22o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/ce308l1w5q5o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Sharing dangerous driving videos is 'truly reprehensible', PM says",
+      "description": "His comments come as the government urged TikTok and other social media firms to remove wrong-way driving videos.",
+      "published": "2026-08-24T16:03:24.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/ce308l1w5q5o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c17jg55krewo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Funding announced to secure future of landmark building",
+      "description": "The former Danske Bank building in Londonderry city centre was built between 1860 and 1879.",
+      "published": "2026-08-24T14:33:29.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c17jg55krewo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/videos/cx2zg9xzkzyo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Coin hidden in 1971 earns finder free pint of beer",
+      "description": "The card, discovered by Ellie Mead in Bicester, promised \"one pint best beer if penny returned\".",
+      "published": "2026-08-24T14:10:10.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/videos/cx2zg9xzkzyo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c70ljqk5kjqo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Twitch and Amazon face legal action over using livestreams to train AI",
+      "description": "The lawsuit alleges Twitch used streamers' videos to train AI without their permission or proper compensation.",
+      "published": "2026-08-24T13:09:44.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/c70ljqk5kjqo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c0qxen1900do?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Republic of Ireland net migration continues to fall from Ukraine war peak",
+      "description": "New figures show that ever since the Ukraine war, net migration to the Republic of Ireland has steadily decreased.",
+      "published": "2026-08-24T12:48:47.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c0qxen1900do?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cy0j0zz8l83o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "'Half my business will be gone' - firms in Canada and US fear trade war",
+      "description": "Business owners in both countries are navigating uncertainty and worry as the tit-for-tat import taxes ratchet up.",
+      "published": "2026-08-24T09:47:22.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cy0j0zz8l83o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c8xnxy89gv7o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Pubs and hotels could see business rates reformed after review",
+      "description": "The review of how rates are calculated in England and Wales could lead to reform of the system.",
+      "published": "2026-08-24T09:41:24.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c8xnxy89gv7o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cdeweewjdxno?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Shein aims for almost $27bn valuation in stock market debut",
+      "description": "The fast-fashion giant's shares are due to start trading in Hong Kong on 1 September.",
+      "published": "2026-08-24T07:00:53.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cdeweewjdxno?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cq89jpjeq7ko?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "'Don't ask me to print your ChatGPT birthday card': Hitting back at AI 'slop'",
+      "description": "As artificial intelligence becomes part of our everyday lives, there are some railing against cheaply produced material they say is empty and puts real artists' jobs at risk.",
+      "published": "2026-08-24T05:20:47.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cq89jpjeq7ko?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c05q318501yo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "'I didn't speak the Queen's English': Why people worry about their accents",
+      "description": "A survey on attitudes towards accents suggests that so-called \"accent bias\" is still an issue in many workplaces.",
+      "published": "2026-08-23T23:25:44.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c05q318501yo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cz647wlvg1do?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "How to get £2,000 to play computer games at university",
+      "description": "Roehampton University offers students a year;y scholarship to play esports alongside their studies.",
+      "published": "2026-08-23T23:23:55.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cz647wlvg1do?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cx2relp0210o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "I am now the boss of my pain - it no longer controls me",
+      "description": "Julie-Ann Walkden is among more than 100 patients who have completed a hands-on pain rehabilitation programme.",
+      "published": "2026-08-23T23:02:11.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cx2relp0210o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/sounds/play/w3ct8gg7?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Business Daily",
+      "description": "European governments and businesses are taking a tougher line on trade with China",
+      "published": "2026-08-23T20:30:00.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/sounds/play/w3ct8gg7?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c3ekgpdyv9po?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Crew honoured after 14 fishermen rescued from stricken boat",
+      "description": "The French fishing vessel Fastnet was stranded on rocks in County Kerry, having suffered engine failure while leaving Dingle Harbour.",
+      "published": "2026-08-23T05:38:23.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c3ekgpdyv9po?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/ckg376jexd1o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "'My skin makes me unique and I'm learning to embrace it'",
+      "description": "Laura Kelly, 28, was born with congenital melanocytic naevus (CMN) and underwent 14 operations as a baby.",
+      "published": "2026-08-23T05:35:54.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/ckg376jexd1o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c0ej0edzddjo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Fear and fallout three months on from Northern Ireland's race riots",
+      "description": "Northern Ireland saw consecutive nights of violence following a knife attack - but how are victims faring now?",
+      "published": "2026-08-22T23:01:54.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/c0ej0edzddjo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/videos/cy4k4d3lj21o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Robot horse and rider steal the spotlight at Chinese conference",
+      "description": "More than 300 companies are showcasing the latest advances in robotics at the five-day event in Beijing, China, organisers say.",
+      "published": "2026-08-22T12:47:28.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/videos/cy4k4d3lj21o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cwyeyl9l9y3o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Tributes paid to 'giant' of Irish traditional music scene",
+      "description": "Eithne Vallely, who was 81, was originally from Donegal, but had lived for decades in Armagh.",
+      "published": "2026-08-22T12:19:01.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cwyeyl9l9y3o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cp8702zl42no?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "What next for Ulster Unionist Party after turbulent week?",
+      "description": "From the outside looking in there is much to discuss, some of it not good from the party's point of view.",
+      "published": "2026-08-22T07:00:55.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cp8702zl42no?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cdx81qwnd8zo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "I was being treated for dehydration - when suddenly I couldn't move",
+      "description": "An MRI scan confirmed that Carmel McConnellogue had Functional Neurological Disorder (FND) while she was in hospital being treated for a separate condition.",
+      "published": "2026-08-22T06:00:51.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/cdx81qwnd8zo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cwyr0l45xjro?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "TikTok to pay $400m to US in one of largest child privacy settlements",
+      "description": "The deal stems from a 2024 lawsuit alleging TikTok and its parent company ByteDance collected \"vast amounts of data\" on millions of users under the age of 13.",
+      "published": "2026-08-21T22:36:12.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/cwyr0l45xjro?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/ckg65yx22eyo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Day marking victims of terrorist attacks recognises 'my brother's life mattered'",
+      "description": "The UK's first national day for victims and survivors of terrorism has been held in London.",
+      "published": "2026-08-21T20:30:32.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/ckg65yx22eyo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/videos/c4gjn4ezljno?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Watch: How does the US national debt affect consumers around the world?",
+      "description": "The debt has more than doubled in a decade to reach a milestone $40tn (£29.4tn), Treasury figures show.",
+      "published": "2026-08-21T20:28:12.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/videos/c4gjn4ezljno?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/czjlr0xzl92o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "Vigil held for four people injured in M9 crash",
+      "description": "It is believed the injured family were travelling to the airport to go on holiday when the crash happened.",
+      "published": "2026-08-21T19:13:50.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/news/articles/czjlr0xzl92o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cpq3w3v19veo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "How landscape gardening is being electrified",
+      "description": "The switch to quieter electric equipment is not going as fast as some would like.",
+      "published": "2026-08-20T23:12:38.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/cpq3w3v19veo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c3r05g378w4o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Is Vine back? Short-form video-sharing app Divine opens to public",
+      "description": "The app lets users create six-second looping videos and hosts more than two million classic videos.",
+      "published": "2026-08-20T16:58:37.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/c3r05g378w4o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/clyq011414eo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "UK business hit by 'daylight robbery' 1500% price hike for invoicing software",
+      "description": "Richard Haldenby says his average monthly bill for Harvest had risen from $130 (£95.50) to $2,110.",
+      "published": "2026-08-20T09:44:04.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/clyq011414eo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c0ej09nywdno?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "81,000 warning letters sent to crypto holders in HMRC tax crackdown",
+      "description": "According to a Freedom of Information (FOI) request the number of letters sent has almost tripled since 2024.",
+      "published": "2026-08-19T16:14:46.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/news/articles/c0ej09nywdno?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c20ydrndr0wo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "The critical tech staying safe by going underground",
+      "description": "The war in Ukraine has spurred people to consider putting vital infrastructure underground.",
+      "published": "2026-08-18T23:25:21.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c20ydrndr0wo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/sounds/play/w3ct8jy9?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Tech Life",
+      "description": "Vapour trails from aircraft contribute to warming in the atmosphere.",
+      "published": "2026-08-18T20:00:00.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/sounds/play/w3ct8jy9?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c9826zl0945o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Protein or pickled garlic? What's new in ice cream",
+      "description": "There's a constant battle in ice cream to come up with new flavours and to keep costs down.",
+      "published": "2026-08-14T21:20:19.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c9826zl0945o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cwymw4434v7o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Why Japanese firms are being so slow to use AI",
+      "description": "Japanese risk aversion and conservatism blamed for slow AI take-up by the country's business sector.",
+      "published": "2026-08-12T23:00:47.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cwymw4434v7o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c872r52x7jgo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Tokenomics: Why making AI pay is tricky",
+      "description": "Buyers of AI services are struggling to control costs and sellers are not sure how much to charge.",
+      "published": "2026-08-11T23:03:52.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c872r52x7jgo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/sounds/play/w3ct8jy8?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Tech Life",
+      "description": "For years, schools have posted photos of their pupils online. But could they be misused?",
+      "published": "2026-08-11T19:30:00.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/sounds/play/w3ct8jy8?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/czdmgmzll1ro?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "'I started in my 20s and made £8,000': Why women are often better investors than men",
+      "description": "Women can make higher returns but only about a quarter of UK women have investments, compared with about 40% of men.",
+      "published": "2026-08-10T23:32:10.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/czdmgmzll1ro?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cx2kgwrv6gvo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "'You could smell someone' who worked at Raleigh",
+      "description": "The company was more than just a employer. For years, it was part of the fabric of Nottingham.",
+      "published": "2026-08-10T05:10:15.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cx2kgwrv6gvo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cwyl6yz719jo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Why airlines are warning over lithium-ion batteries",
+      "description": "The airline industry wants passengers to be careful when travelling with lithium ion batteries.",
+      "published": "2026-08-06T23:04:40.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cwyl6yz719jo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c2lqvwewgp2o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Argos is getting a makeover - but can it attract new shoppers?",
+      "description": "The retailer has been around for 50 years but struggled to compete with newer rivals such as Amazon. Can its new owners turn it around?",
+      "published": "2026-08-06T23:03:48.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c2lqvwewgp2o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/sounds/play/w3ct8jy7?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Tech Life",
+      "description": "Electric power is one of several cleaner alternatives to traditional aviation fuel.",
+      "published": "2026-08-04T19:30:00.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/sounds/play/w3ct8jy7?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/iplayer/episode/m002zxt1?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Tech Now",
+      "description": "New technologies measuring forests and exclusive access to a hacker rehab programme.",
+      "published": "2026-08-01T01:00:12.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/iplayer/episode/m002zxt1?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/iplayer/episode/m002zn5l?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Tech Now",
+      "description": "Highlights from the Esports World Cup in Paris and how to build a gaming PC.",
+      "published": "2026-07-25T01:00:00.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/iplayer/episode/m002zn5l?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cn4nvn9w00no?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Why the UK is dithering over what to do about e-scooters",
+      "description": "Why is it taking so long for the government to regulate them, and what are the consequences of delay?",
+      "published": "2026-07-22T23:51:24.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cn4nvn9w00no?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/iplayer/episode/m002zc0w?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Tech Now",
+      "description": "Ammie Sekhon goes behind the scenes of WWE to see the tech that supports the show.",
+      "published": "2026-07-18T01:00:00.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/iplayer/episode/m002zc0w?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/iplayer/episode/m002z2l5?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Technology",
+      "topic": "digital",
+      "headline": "Tech Now",
+      "description": "Adrienne Murray has rare access to Microsoft's Quantum Lab in Denmark.",
+      "published": "2026-07-11T01:00:00.000Z",
+      "reason": "From BBC Technology",
+      "url": "https://www.bbc.co.uk/iplayer/episode/m002z2l5?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/c8e2yp1gg37o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "Why Gen Z are planning for life without a state pension",
+      "description": "Many younger people do not believe the state pension will exist when they are older",
+      "published": "2026-06-30T23:05:19.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/c8e2yp1gg37o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/iplayer/episode/m002yyhr?at_medium=RSS&at_campaign=rss",
+      "source": "BBC News NI",
+      "topic": "belfast",
+      "headline": "In Case You Missed It",
+      "description": "Fast-growing chickens are reshaping the poultry industry, and dividing opinion.",
+      "published": "2026-06-26T14:00:00.000Z",
+      "reason": "From BBC News NI",
+      "url": "https://www.bbc.co.uk/iplayer/episode/m002yyhr?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cwyk9exxp2qo?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "The furious dispute over what caused Air India flight 171 to crash",
+      "description": "The final conclusions of the investigation have yet to be published, although more could become apparent in the coming days.",
+      "published": "2026-06-10T23:10:11.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cwyk9exxp2qo?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cq5p59286v5o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "How the High Street became a window on our political instability",
+      "description": "High Streets have declined in recent years. What does this tell us about the UK?",
+      "published": "2026-06-07T23:00:04.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cq5p59286v5o?at_medium=RSS&at_campaign=rss"
+    },
+    {
+      "id": "https://www.bbc.co.uk/news/articles/cr5pp1m6z06o?at_medium=RSS&at_campaign=rss",
+      "source": "BBC Business",
+      "topic": "finance",
+      "headline": "The £5 coffee that tells a story of global economic turmoil",
+      "description": "Coffees at some city centre outlets now cost £5. It's a story of tariffs, the climate, Gen Z cultural tastes, and savvy coffee farmers playing the market, writes Faisal Islam",
+      "published": "2026-05-28T06:44:47.000Z",
+      "reason": "From BBC Business",
+      "url": "https://www.bbc.co.uk/news/articles/cr5pp1m6z06o?at_medium=RSS&at_campaign=rss"
+    }
+  ]
+}

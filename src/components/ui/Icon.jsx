@@ -7,7 +7,7 @@ import {
   Pencil, X, ExternalLink, Star, Info, CloudRain, Cloud, Wind, Umbrella,
   GripVertical, Check, Circle, CircleCheck, Flag, Sparkles, HelpCircle, Link2,
   Filter, ThumbsUp, ThumbsDown, ArrowRight, Bookmark, BookmarkCheck, Briefcase,
-  GraduationCap, Plane, PiggyBank, Dumbbell, Globe, Home, Eye,
+  GraduationCap, Plane, PiggyBank, Dumbbell, Globe, Home, Eye, Radio, Clock3,
 } from 'lucide-react'
 
 const MAP = {
@@ -17,7 +17,7 @@ const MAP = {
   Pencil, X, ExternalLink, Star, Info, CloudRain, Cloud, Wind, Umbrella,
   GripVertical, Check, Circle, CircleCheck, Flag, Sparkles, HelpCircle, Link2,
   Filter, ThumbsUp, ThumbsDown, ArrowRight, Bookmark, BookmarkCheck, Briefcase,
-  GraduationCap, Plane, PiggyBank, Dumbbell, Globe, Home, Eye,
+  GraduationCap, Plane, PiggyBank, Dumbbell, Globe, Home, Eye, Radio, Clock3,
 }
 
 export function Icon({ name, size = 18, className = '', ...rest }) {

@@ -4,9 +4,9 @@ A clean, modern personal command centre that brings together your **calendar, re
 emails, tasks, personalised news, weather, quick links** and an **AI‑style daily
 briefing** in one restrained, Notion/Microsoft‑style interface.
 
-> **First version — mock data.** Everything runs with no API keys. All remote data is
-> mock; tasks, quick links and settings persist in `localStorage`. The service layer is
-> built so mock sources can be swapped for live APIs **without redesigning the app**.
+> News is refreshed from BBC RSS feeds by GitHub Actions and deployed as a static JSON
+> snapshot. No news API key is required; tasks, quick links and settings persist in
+> `localStorage`.
 
 ---
 
@@ -48,7 +48,7 @@ src/
     index.js               Registry the UI imports from
     calendarService.js     getEvents()        → Microsoft Graph later
     emailService.js        getRelevantEmails() → Microsoft Graph later
-    newsService.js         getNews()           → RSS / news API later
+    newsService.js         getNews()           → deployed RSS snapshot
     weatherService.js      getWeather()        → weather API later
     briefingService.js     generateBriefing()  → derives briefing from data (rules)
     _helpers.js            async delay + error simulation
@@ -71,11 +71,15 @@ src/
   pages/                   DashboardPage, Calendar/Email/Tasks/News/Settings pages
 ```
 
+The `scripts/fetch-news.mjs` build step fetches and normalizes the BBC feeds into
+`public/data/news.json` before Vite builds the site.
+
 **Key design decisions**
 
 - **Modular data layer.** Components never call mock data directly — they call services.
-  Each service returns a fixed shape and simulates latency, so loading/error/empty
-  states are real. Going live means editing one `*Service.js` file.
+  News is fetched outside the browser, normalized by `scripts/fetch-news.mjs`, and
+  served from the app's own `data/news.json` path. This avoids RSS CORS and proxy
+  availability issues on GitHub Pages.
 - **The briefing is generated, not hard‑coded.** `briefingService.generateBriefing()`
   derives sentences from today’s events, the email shortlist, tasks and weather, and
   attaches the **source items** behind each sentence (powering “Why am I seeing this?”
@@ -93,7 +97,10 @@ src/
 - **Emails** show a scored *shortlist* with importance + a per‑item reason; feedback
   controls (useful / not relevant / dealt with) persist to demonstrate preference
   learning. Read/unread and feedback are stored locally.
-- **News** items are clearly labelled **demonstration content** (not real/current).
+- **News** uses BBC News NI (`belfast`), BBC Technology (`digital`) and BBC Business
+  (`finance`). Live snapshots are labelled live; snapshots retaining stories from a
+  failed feed refresh are labelled cached live. Demonstration content is used only
+  when the deployed snapshot cannot be loaded.
 - **Settings** covers name/greeting, location, news topics, email categories, calendar
   display, card visibility + ordering, theme, briefing preferences, connection status
   and a “force error” switch to preview error states.
@@ -164,5 +171,21 @@ case where consent is refused (show the service as *Not configured* / *Connectio
 
 ## Scripts
 - `npm run dev` / `npm run build` / `npm run preview` — Vite.
+- `npm run news:refresh` — fetch the BBC feeds and update `public/data/news.json`.
 - `node scripts/build-preview.mjs` — regenerate the standalone `preview.html`.
 - `node scripts/validate.mjs` — syntax‑check every source file + the preview bundle.
+
+## Live news pipeline
+
+GitHub Actions runs the news refresh on pushes to `main`, on manual workflow dispatch,
+and every three hours. The deploy job then builds and publishes the generated JSON with
+the app. To refresh manually, open **Actions → Deploy to GitHub Pages → Run workflow**.
+
+The sources and topic IDs are deliberately explicit in `scripts/fetch-news.mjs`:
+BBC News NI → `belfast`, BBC Technology → `digital`, and BBC Business → `finance`.
+Each item is validated, stripped to plain text, deduplicated by URL, sorted by date, and
+filtered before the app applies its 12-item limit. A failed feed retains its previous
+topic stories and marks the snapshot stale. If the snapshot cannot be loaded at all,
+the app uses clearly labelled demonstration data. Add or remove a feed only by changing
+the `RSS_FEEDS` configuration and its matching topic ID/source, then run the refresh
+script and build locally.
