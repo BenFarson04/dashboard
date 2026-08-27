@@ -166,17 +166,6 @@ export const mockWeather = {
   ],
 }
 
-// --- Tasks (seed data; persisted to localStorage after first load) ----------
-export const defaultTasks = [
-  { id: 't1', title: 'Prep GSA model + load takedowns for 10:00 review', due: atToday(9, 45), priority: 'high', category: 'Work', completed: false },
-  { id: 't2', title: 'Send placement report draft to mentor for sign-off', due: atToday(12, 0, -1), priority: 'high', category: 'University', completed: false },
-  { id: 't3', title: 'Compare Aegon vs AJ Bell SIPP charges before call', due: atToday(15, 0), priority: 'medium', category: 'Finance', completed: false },
-  { id: 't4', title: 'Add Kanazawa food tiers to Wanderlog', due: atToday(20, 0, 1), priority: 'low', category: 'Travel', completed: false },
-  { id: 't5', title: 'Grocery run — rice cakes, bananas, corn flakes', due: atToday(19, 0, 2), priority: 'low', category: 'Personal', completed: false },
-  { id: 't6', title: 'Update Section Studio member-check edge cases', due: null, priority: 'medium', category: 'Projects', completed: false },
-  { id: 't7', title: 'Book gym induction slot', due: atToday(9, 0, -2), priority: 'low', category: 'Personal', completed: true },
-]
-
 // --- Quick links (seed data; persisted to localStorage) ---------------------
 export const defaultQuickLinks = [
   { id: 'q1', label: 'Queen’s University Belfast', url: 'https://www.qub.ac.uk', group: 'University' },

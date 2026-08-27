@@ -1,5 +1,6 @@
 // Deterministic briefing generation. This module never calls an AI service.
 import { isSameDay, fmtTime } from '../utils/index.js'
+import { getTaskCategory, isCompleted, sortTasks, TASK_STATUS } from './taskService.js'
 
 export function getBriefingMode(now = new Date()) {
   const hour = new Date(now).getHours()
@@ -34,21 +35,25 @@ function emailSummary(emails, mode, now) {
 }
 
 function taskSummary(tasks, mode, now) {
-  const outstanding = tasks.filter(task => !task.completed)
-  const overdue = outstanding.filter(task => task.due && new Date(task.due) < new Date(now))
-  const highPriority = outstanding.filter(task => task.priority === 'high')
+  const outstanding = tasks.filter(task => !isCompleted(task) && getTaskCategory(task, now) !== 'unscheduled')
+  const overdue = sortTasks(outstanding.filter(task => getTaskCategory(task, now) === TASK_STATUS.OVERDUE), TASK_STATUS.OVERDUE)
+  const due = sortTasks(outstanding.filter(task => getTaskCategory(task, now) === TASK_STATUS.DUE), TASK_STATUS.DUE)
+  const highPriorityDue = due.filter(task => task.priority === 'high')
+  const dueSoon = due.filter(task => new Date(task.dueDate ?? task.due) - new Date(now) <= 2 * 86400000)
   const longRunning = outstanding.filter(task => task.createdAt && new Date(now) - new Date(task.createdAt) > 7 * 86400000)
-  const completedRecently = tasks.filter(task => task.completed && task.completedAt && new Date(now) - new Date(task.completedAt) < 86400000)
+  const completedRecently = tasks.filter(task => isCompleted(task) && task.completedAt && new Date(now) - new Date(task.completedAt) < 86400000)
   if (!outstanding.length && !completedRecently.length) return { text: '', refs: [] }
   const details = []
   if (overdue.length) details.push(plural(overdue.length, 'overdue item'))
-  if (mode === 'morning' && highPriority.length) details.push(plural(highPriority.length, 'high-priority task'))
+  if (highPriorityDue.length) details.push(plural(highPriorityDue.length, 'high-priority task'))
+  if (dueSoon.length) details.push(plural(dueSoon.length, 'task due soon'))
   if (mode === 'evening' && longRunning.length) details.push(plural(longRunning.length, 'long-running task'))
   let text = outstanding.length ? `You have ${plural(outstanding.length, 'outstanding task')}` : 'Your outstanding task list is clear'
   if (details.length) text += outstanding.length ? `, including ${details.join(' and ')}.` : `, with ${details.join(' and ')}.`
   else text += '.'
   if (completedRecently.length) text += ` You completed ${plural(completedRecently.length, 'task')} recently.`
-  return { text, refs: [...overdue, ...highPriority, ...longRunning].slice(0, 3).map(task => ref('task', task)) }
+  const focused = [...overdue, ...highPriorityDue, ...dueSoon, ...longRunning]
+  return { text, refs: focused.filter((task, index) => focused.findIndex(item => item.id === task.id) === index).slice(0, 3).map(task => ref('task', task)) }
 }
 
 function calendarSummary(events, mode, now) {

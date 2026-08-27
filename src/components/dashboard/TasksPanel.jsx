@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useApp } from '../../context/AppContext'
 import { Icon } from '../ui/Icon'
 import { Card, Badge, Button, IconButton, Modal, Field, inputClass, EmptyState } from '../ui/primitives'
-import { cn, fmtDayShort, fmtTime, isToday, isPast } from '../../utils'
+import { cn, fmtDayShort, fmtTime } from '../../utils'
+import { getTaskCategory, groupTasks, TASK_STATUS } from '../../services/taskService'
 
 const PRIORITY = {
   high:   { tone: 'red', label: 'High' },
@@ -10,37 +11,32 @@ const PRIORITY = {
   low:    { tone: 'gray', label: 'Low' },
 }
 const CATEGORIES = ['Work', 'University', 'Finance', 'Travel', 'Personal', 'Projects']
-
-function classify(t) {
-  if (t.completed) return 'completed'
-  if (t.due && isPast(t.due)) return 'overdue'
-  if (t.due && isToday(t.due)) return 'today'
-  return 'upcoming'
-}
+const CATEGORY_LABELS = { overdue: 'Overdue', due: 'Due', completed: 'Completed', unscheduled: 'No due date' }
 
 function TaskRow({ task, onEdit }) {
   const { toggleTask, deleteTask } = useApp()
-  const overdue = !task.completed && task.due && isPast(task.due)
+  const completed = task.status === TASK_STATUS.COMPLETED
+  const overdue = getTaskCategory(task) === TASK_STATUS.OVERDUE
   return (
     <li className="group flex items-start gap-3 rounded-xl border border-slate-100 p-2.5 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/60">
       <button
         onClick={() => toggleTask(task.id)}
         role="checkbox"
-        aria-checked={task.completed}
-        aria-label={task.completed ? 'Mark task incomplete' : 'Mark task complete'}
+        aria-checked={completed}
+        aria-label={completed ? 'Mark task incomplete' : 'Mark task complete'}
         className={cn('mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border',
-          task.completed ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-transparent hover:border-indigo-500 dark:border-slate-600')}
+          completed ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-transparent hover:border-indigo-500 dark:border-slate-600')}
       >
         <Icon name="Check" size={13} />
       </button>
       <div className="min-w-0 flex-1">
-        <p className={cn('text-sm', task.completed ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100')}>{task.title}</p>
+        <p className={cn('text-sm', completed ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-slate-100')}>{task.title}</p>
         <div className="mt-1 flex flex-wrap items-center gap-1.5">
           <Badge tone={PRIORITY[task.priority]?.tone}>{PRIORITY[task.priority]?.label}</Badge>
           <Badge tone="gray">{task.category}</Badge>
-          {task.due && (
+          {task.dueDate && (
             <span className={cn('inline-flex items-center gap-1 text-[11px]', overdue ? 'font-medium text-red-600 dark:text-red-400' : 'text-slate-400')}>
-              <Icon name="Clock" size={11} /> {fmtDayShort(task.due)} {fmtTime(task.due)}
+              <Icon name="Clock" size={11} /> {fmtDayShort(task.dueDate)} {fmtTime(task.dueDate)}
             </span>
           )}
         </div>
@@ -59,13 +55,14 @@ function TaskEditor({ open, onClose, task }) {
   const [form, setForm] = useState(() => ({
     title: task?.title || '', priority: task?.priority || 'medium',
     category: task?.category || 'Personal',
-    due: task?.due ? new Date(task.due).toISOString().slice(0, 16) : '',
+    description: task?.description || '',
+    dueDate: task?.dueDate ? new Date(task.dueDate).toISOString().slice(0, 16) : '',
   }))
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
   const save = () => {
     if (!form.title.trim()) return
-    const payload = { title: form.title.trim(), priority: form.priority, category: form.category, due: form.due ? new Date(form.due).toISOString() : null }
+    const payload = { title: form.title.trim(), description: form.description.trim(), priority: form.priority, category: form.category, dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : null }
     if (editing) updateTask(task.id, payload); else addTask(payload)
     onClose()
   }
@@ -77,6 +74,9 @@ function TaskEditor({ open, onClose, task }) {
         <Field label="Title" htmlFor="t-title">
           <input id="t-title" className={inputClass} value={form.title} autoFocus
             onChange={e => set('title', e.target.value)} onKeyDown={e => e.key === 'Enter' && save()} placeholder="What needs doing?" />
+        </Field>
+        <Field label="Description" htmlFor="t-description">
+          <textarea id="t-description" className={inputClass} rows="2" value={form.description} onChange={e => set('description', e.target.value)} />
         </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Priority" htmlFor="t-pri">
@@ -91,7 +91,7 @@ function TaskEditor({ open, onClose, task }) {
           </Field>
         </div>
         <Field label="Due date & time" htmlFor="t-due" hint="Leave empty for no due date.">
-          <input id="t-due" type="datetime-local" className={inputClass} value={form.due} onChange={e => set('due', e.target.value)} />
+          <input id="t-due" type="datetime-local" className={inputClass} value={form.dueDate} onChange={e => set('dueDate', e.target.value)} />
         </Field>
       </div>
     </Modal>
@@ -99,24 +99,21 @@ function TaskEditor({ open, onClose, task }) {
 }
 
 export function TasksPanel({ full = false }) {
-  const { tasks, goTo, focus } = useApp()
-  const [tab, setTab] = useState('today')
+  const { tasks, goTo } = useApp()
+  const [tab, setTab] = useState('due')
   const [editing, setEditing] = useState(null)   // task object
   const [adding, setAdding] = useState(false)
 
   const groups = useMemo(() => {
-    const g = { today: [], upcoming: [], overdue: [], completed: [] }
-    tasks.forEach(t => g[classify(t)].push(t))
-    return g
+    return groupTasks(tasks)
   }, [tasks])
 
   const TABS = [
-    { id: 'today', label: 'Today', count: groups.today.length },
-    { id: 'upcoming', label: 'Upcoming', count: groups.upcoming.length },
     { id: 'overdue', label: 'Overdue', count: groups.overdue.length },
+    { id: 'due', label: 'Due', count: groups.due.length },
     { id: 'completed', label: 'Completed', count: groups.completed.length },
   ]
-  const list = groups[tab]
+  const list = full && tab === 'due' ? [...groups.due, ...groups.unscheduled] : full ? groups[tab] : [...groups.overdue, ...groups.due]
 
   return (
     <Card title="Tasks" icon="CheckSquare" labelledBy="tasks-title"
@@ -133,13 +130,18 @@ export function TasksPanel({ full = false }) {
       </div>
 
       {list.length === 0 ? (
-        <EmptyState icon="CheckSquare" title={`No ${tab} tasks`}
-          message={tab === 'today' ? 'Nothing due today.' : 'You’re all caught up here.'}
+        <EmptyState icon="CheckSquare" title={tasks.length ? `No ${tab} tasks` : 'No tasks yet'}
+          message={tasks.length ? 'You’re all caught up here.' : 'Create a task to keep track of what matters.'}
           action={<Button variant="subtle" size="sm" icon="Plus" onClick={() => setAdding(true)}>Add a task</Button>} />
       ) : (
         <ul className="space-y-2">
-          {(full ? list : list.slice(0, 5)).map(t => (
-            <TaskRow key={t.id} task={t} onEdit={setEditing} />
+          {(full ? list : list.slice(0, 5)).map((t, index, visibleList) => (
+            <Fragment key={t.id}>
+              {(index === 0 || getTaskCategory(t) !== getTaskCategory(visibleList[index - 1])) && (
+                <li className="px-1 pt-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{CATEGORY_LABELS[getTaskCategory(t)]}</li>
+              )}
+              <TaskRow task={t} onEdit={setEditing} />
+            </Fragment>
           ))}
         </ul>
       )}

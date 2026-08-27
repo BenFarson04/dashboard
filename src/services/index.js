@@ -6,6 +6,7 @@ import * as email from './emailService'
 import * as unifiedEmail from './unifiedEmailService'
 import * as news from './newsService'
 import * as weather from './weatherService'
+import * as task from './taskService'
 import { generateBriefing } from './briefingService'
 
-export { calendar, email, unifiedEmail, news, weather, generateBriefing }
+export { calendar, email, unifiedEmail, news, weather, task, generateBriefing }

@@ -5,8 +5,9 @@ import { generateBriefing } from '../services'
 import { rankArticles } from '../services/newsRelevance'
 import { LEGACY_TOPIC_TO_INTEREST, RECOMMENDED_INTERESTS } from '../data/newsConfig'
 import {
-  defaultSettings, defaultTasks, defaultQuickLinks, connectionStatus,
+  defaultSettings, defaultQuickLinks, connectionStatus,
 } from '../data/mockData'
+import { TASK_STORAGE_KEY, createTask, migrateTasks, setTaskCompleted, updateTask as updatePersistedTask } from '../services/taskService'
 import { useAuth } from '../auth/useAuth'
 import { useMicrosoftAuth } from '../auth/useMicrosoftAuth'
 
@@ -21,7 +22,7 @@ export function AppProvider({ children }) {
   const { getToken, isSignedIn: gmailConnected, account: gmailAccount, ready: gmailReady, error: gmailError, signIn: gmailSignIn, signOut: gmailSignOut } = useAuth()
   const qubAuth = useMicrosoftAuth()
   const [settings, setSettings] = useLocalStorage('pd.settings', defaultSettings)
-  const [tasks, setTasks] = useLocalStorage('pd.tasks', defaultTasks)
+  const [tasks, setTasks] = useLocalStorage(TASK_STORAGE_KEY, [], migrateTasks)
   const [quickLinks, setQuickLinks] = useLocalStorage('pd.quicklinks', defaultQuickLinks)
   const [emailFeedback, setEmailFeedback] = useLocalStorage('pd.emailFeedback', {}) // id -> 'useful'|'not_relevant'|'dealt'
   const [emailRead, setEmailRead] = useLocalStorage('pd.emailRead', {})              // id -> true
@@ -110,11 +111,12 @@ export function AppProvider({ children }) {
   }, [loadCalendar, loadEmails, loadNews, loadWeather])
 
   // ---- Task actions --------------------------------------------------------
-  const addTask = useCallback((t) => setTasks(list => [
-    { id: 'u' + Date.now(), completed: false, priority: 'medium', category: 'Personal', due: null, ...t }, ...list,
-  ]), [setTasks])
-  const updateTask = useCallback((id, patch) => setTasks(list => list.map(t => t.id === id ? { ...t, ...patch } : t)), [setTasks])
-  const toggleTask = useCallback((id) => setTasks(list => list.map(t => t.id === id ? { ...t, completed: !t.completed } : t)), [setTasks])
+  const addTask = useCallback((t) => setTasks(list => [createTask(t), ...list]), [setTasks])
+  const updateTask = useCallback((id, patch) => setTasks(list => list.map(t => t.id === id ? updatePersistedTask(t, patch) : t)), [setTasks])
+  const toggleTask = useCallback((id) => setTasks(list => list.map(t => {
+    if (t.id !== id) return t
+    return setTaskCompleted(t, t.status !== 'completed')
+  })), [setTasks])
   const deleteTask = useCallback((id) => setTasks(list => list.filter(t => t.id !== id)), [setTasks])
 
   // ---- Quick link actions --------------------------------------------------
