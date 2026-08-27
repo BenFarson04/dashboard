@@ -136,7 +136,9 @@ recommended interest or synonym group, update `RECOMMENDED_INTERESTS` or
 - **News** uses the generated snapshot and matches it against each active custom
   interest. Live snapshots are labelled live; snapshots retaining stories from a
   failed feed refresh are labelled cached live. Demonstration content is used only
-  when the deployed snapshot cannot be loaded.
+  when the deployed snapshot cannot be loaded. Articles can be saved for a persistent
+  local reading list or pinned; the News page provides Recent News, Saved News, and
+  Pinned News views, while pinned articles stay first in the dashboard widget.
 - **Settings** covers name/greeting, location, news interests, email categories, calendar
   display, card visibility + ordering, theme, briefing preferences, connection status
   and a “force error” switch to preview error states.

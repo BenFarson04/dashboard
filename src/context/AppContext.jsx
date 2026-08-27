@@ -12,6 +12,7 @@ import { useAuth } from '../auth/useAuth'
 import { useMicrosoftAuth } from '../auth/useMicrosoftAuth'
 import { useSpotifyAuth } from '../auth/useSpotifyAuth'
 import { ONEDRIVE_SCOPES } from '../auth/microsoftConfig'
+import { articleStateRecord, mergeNewsState, normalizeNewsState, toggleNewsState } from '../services/newsState'
 
 
 const AppContext = createContext(null)
@@ -44,7 +45,8 @@ export function AppProvider({ children }) {
   )
   const [emailFeedback, setEmailFeedback] = useLocalStorage('pd.emailFeedback', {}) // id -> 'useful'|'not_relevant'|'dealt'
   const [emailRead, setEmailRead] = useLocalStorage('pd.emailRead', {})              // id -> true
-  const [savedNews, setSavedNews] = useLocalStorage('pd.savedNews', [])
+  const [savedNews, setSavedNews] = useLocalStorage('pd.savedNews', [], value => normalizeNewsState(value, 'savedAt'))
+  const [pinnedNews, setPinnedNews] = useLocalStorage('pd.pinnedNews', [], value => normalizeNewsState(value, 'pinnedAt'))
   const [dismissedNews, setDismissedNews] = useLocalStorage('pd.dismissedNews', [])
   const [newsFeedback, setNewsFeedback] = useLocalStorage('pd.newsFeedback', {})
 
@@ -89,6 +91,12 @@ export function AppProvider({ children }) {
       })
     }
   }, [settings.cards, setSettings])
+
+  useEffect(() => {
+    if (!news.data?.length) return
+    setSavedNews(records => mergeNewsState(records, news.data, 'savedAt'))
+    setPinnedNews(records => mergeNewsState(records, news.data, 'pinnedAt'))
+  }, [news.data, setSavedNews, setPinnedNews])
 
   // ---- Theme ---------------------------------------------------------------
   useEffect(() => {
@@ -230,8 +238,10 @@ export function AppProvider({ children }) {
   const markEmailRead = useCallback((email) => setEmailRead(m => ({ ...m, [email.id]: true })), [setEmailRead])
 
   // ---- News actions --------------------------------------------------------
-  const toggleSaveNews = useCallback((id) =>
-    setSavedNews(list => list.includes(id) ? list.filter(x => x !== id) : [...list, id]), [setSavedNews])
+  const toggleSaveNews = useCallback((article) =>
+    setSavedNews(list => toggleNewsState(list, article, 'savedAt')), [setSavedNews])
+  const togglePinNews = useCallback((article) =>
+    setPinnedNews(list => toggleNewsState(list, article, 'pinnedAt')), [setPinnedNews])
   const dismissNews = useCallback((id) =>
     setDismissedNews(list => list.includes(id) ? list : [...list, id]), [setDismissedNews])
   const restoreNews = useCallback((id) =>
@@ -283,16 +293,23 @@ export function AppProvider({ children }) {
     newsFeedback,
   ])
 
-  const personalizedNews = useMemo(() => rankArticles(
-    news.data || [],
-    settings.interests || RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true })),
-    null,
-    newsFeedback,
-  ), [news.data, settings.interests, newsFeedback])
+  const personalizedNews = useMemo(() => {
+    const ranked = rankArticles(
+      news.data || [],
+      settings.interests || RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true })),
+      null,
+      newsFeedback,
+    )
+    const retained = new Map(ranked.map(article => [article.id, article]))
+    ;[...savedNews, ...pinnedNews].forEach(record => {
+      if (!retained.has(record.id)) retained.set(record.id, record)
+    })
+    return [...retained.values()]
+  }, [news.data, settings.interests, newsFeedback, savedNews, pinnedNews])
 
   const value = {
     // state
-    settings, setSettings, tasks, quickLinks, savedNews, dismissedNews, newsFeedback,
+    settings, setSettings, tasks, quickLinks, savedNews, pinnedNews, dismissedNews, newsFeedback,
     page, sidebarOpen, mobileNavOpen, focus, failRates, setFailRates,
     connectionStatus: {
       ...connectionStatus,
@@ -319,7 +336,7 @@ export function AppProvider({ children }) {
     // email
     setEmailFeedbackFor, markEmailRead,
     // news
-    toggleSaveNews, dismissNews, restoreNews,
+    toggleSaveNews, togglePinNews, dismissNews, restoreNews,
     setNewsFeedback: (id, value) => setNewsFeedback(current => ({ ...current, [id]: current[id] === value ? undefined : value })),
   }
 

@@ -108,7 +108,7 @@ export function SettingsPage() {
 
   const resetAll = () => {
     if (!confirm('Reset all settings, tasks and quick links to defaults? This clears saved data on this device.')) return
-    ['pd.settings', 'pd.tasks', 'pd.quicklinks', 'pd.emailFeedback', 'pd.emailRead', 'pd.savedNews', 'pd.dismissedNews', 'pd.newsFeedback', 'pd.spotifyMeta'].forEach(k => localStorage.removeItem(k))
+    ['pd.settings', 'pd.tasks', 'pd.quicklinks', 'pd.emailFeedback', 'pd.emailRead', 'pd.savedNews', 'pd.pinnedNews', 'pd.dismissedNews', 'pd.newsFeedback', 'pd.spotifyMeta'].forEach(k => localStorage.removeItem(k))
     location.reload()
   }
 
