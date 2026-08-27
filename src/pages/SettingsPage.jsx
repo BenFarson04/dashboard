@@ -9,7 +9,7 @@ import { cn } from '../utils'
 
 const CARD_LABELS = {
   calendar: 'Calendar', email: 'Relevant emails', tasks: 'Tasks',
-  news: 'News', weather: 'Weather', podcasts: 'Podcast updates', fund: 'Fund tracker', quicklinks: 'Quick links',
+  news: 'News', weather: 'Weather', podcasts: 'Podcast updates', quicklinks: 'Quick links',
 }
 
 const CONN_LABEL = {
@@ -108,7 +108,7 @@ export function SettingsPage() {
 
   const resetAll = () => {
     if (!confirm('Reset all settings, tasks and quick links to defaults? This clears saved data on this device.')) return
-    ['pd.settings', 'pd.tasks', 'pd.quicklinks', 'pd.emailFeedback', 'pd.emailRead', 'pd.savedNews', 'pd.pinnedNews', 'pd.dismissedNews', 'pd.newsFeedback', 'pd.spotifyMeta', 'pd.fundTimeframe'].forEach(k => localStorage.removeItem(k))
+    ['pd.settings', 'pd.tasks', 'pd.quicklinks', 'pd.emailFeedback', 'pd.emailRead', 'pd.savedNews', 'pd.pinnedNews', 'pd.dismissedNews', 'pd.newsFeedback', 'pd.spotifyMeta'].forEach(k => localStorage.removeItem(k))
     location.reload()
   }
 

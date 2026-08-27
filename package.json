@@ -15,7 +15,6 @@
     "test:briefing": "node scripts/briefing-tests.mjs",
     "test:tasks": "node scripts/task-tests.mjs",
     "test:podcasts": "node scripts/podcast-tests.mjs",
-    "test:fund": "node scripts/fund-tests.mjs",
     "test:settings": "node scripts/settings-tests.mjs",
     "preview": "vite preview"
   },

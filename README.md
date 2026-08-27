@@ -144,17 +144,6 @@ recommended interest or synonym group, update `RECOMMENDED_INTERESTS` or
   and a “force error” switch to preview error states.
 - **Belfast** is the default weather location (editable in Settings).
 
-### Fund Tracker
-
-The optional Fund Tracker card displays only verified daily observations supplied by
-`VITE_FUND_DATA_URL`. The endpoint must return JSON with `verificationStatus: "verified"`,
-exact fund metadata (`name`, `shareClass`, `quoteUnit`, and optionally `launchDate`),
-and dated `observations` containing `date` (`YYYY-MM-DD`) and `price`. The card never
-uses demonstration prices, fills missing market days, mixes quote units, or requests
-data again when its local timeframe selector changes. It labels price movement as
-price movement, not total return. Without a configured verified endpoint the card
-shows a configuration state.
-
 ---
 
 ## Multi-provider email

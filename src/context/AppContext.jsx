@@ -65,7 +65,6 @@ export function AppProvider({ children }) {
   const [weather, setWeather] = useState(idle)
   const [spotify, setSpotify] = useState(() => ({ ...idle(), loading: false, now: Date.now(), refreshedAt: null }))
   const [oneDrive, setOneDrive] = useState(() => ({ ...idle(), loading: false }))
-  const [fund, setFund] = useState(idle)
   const [oneDriveEnabled, setOneDriveEnabled] = useState(false)
   const oneDriveRequest = useRef(0)
   const [spotifyMeta, setSpotifyMeta] = useLocalStorage('pd.spotifyMeta', { lastRefresh: null })
@@ -139,12 +138,6 @@ export function AppProvider({ children }) {
     catch (e) { setWeather({ data: null, loading: false, error: e.message }) }
   }, [settings.location, failRates.weather])
 
-  const loadFund = useCallback(async () => {
-    setFund(s => ({ ...s, loading: true, error: null }))
-    try { setFund({ data: await services.fund.getFundData(), loading: false, error: null }) }
-    catch (error) { setFund({ data: null, loading: false, error: error.message }) }
-  }, [])
-
   const loadPodcasts = useCallback(async () => {
     if (!spotifyAuth.isConnected) return
     setSpotify(s => ({ ...s, loading: true, error: null }))
@@ -203,7 +196,6 @@ export function AppProvider({ children }) {
   useEffect(() => { loadEmails() }, [loadEmails])
   useEffect(() => { loadNews() }, [loadNews])
   useEffect(() => { loadWeather() }, [loadWeather])
-  useEffect(() => { loadFund() }, [loadFund])
   useEffect(() => { loadPodcasts() }, [loadPodcasts])
   useEffect(() => { loadOneDrive() }, [loadOneDrive])
   useEffect(() => {
@@ -211,8 +203,8 @@ export function AppProvider({ children }) {
   }, [qubAuth.isConnected, disconnectOneDrive])
 
   const refreshAll = useCallback(() => {
-    loadCalendar(); loadEmails(); loadNews(); loadWeather(); loadFund(); loadPodcasts(); loadOneDrive()
-  }, [loadCalendar, loadEmails, loadNews, loadWeather, loadFund, loadPodcasts, loadOneDrive])
+    loadCalendar(); loadEmails(); loadNews(); loadWeather(); loadPodcasts(); loadOneDrive()
+  }, [loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts, loadOneDrive])
 
   // ---- Task actions --------------------------------------------------------
   const addTask = useCallback((t) => setTasks(list => [createTask(t), ...list]), [setTasks])
@@ -326,11 +318,11 @@ export function AppProvider({ children }) {
     },
     spotify: { ...spotify, ...spotifyMeta, ...spotifyAuth, error: spotifyAuth.error || spotify.error, connected: spotifyAuth.isConnected },
     // data
-    calendar, emails: { ...emails, data: enrichedEmails }, news: { ...news, data: personalizedNews }, weather, fund, briefing,
+    calendar, emails: { ...emails, data: enrichedEmails }, news: { ...news, data: personalizedNews }, weather, briefing,
     // theme + nav
     toggleTheme, setSidebarOpen, setMobileNavOpen, goTo, setPage,
     // refresh
-    refreshAll, loadCalendar, loadEmails, loadNews, loadWeather, loadFund, loadPodcasts, loadOneDrive,
+    refreshAll, loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts, loadOneDrive,
     oneDrive, oneDriveEnabled, enableOneDrive, disconnectOneDrive, searchOneDrive,
     // tasks
     addTask, updateTask, toggleTask, deleteTask,
