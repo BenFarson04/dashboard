@@ -22,7 +22,7 @@ const CARDS = {
 
 export function DashboardPage() {
   const { settings } = useApp()
-  const order = settings.cards.order.filter(id => settings.cards.visible[id] && CARDS[id])
+  const order = settings.cards.order.filter(id => settings.cards.visible[id] !== false && CARDS[id])
 
   return (
     <div className="space-y-4">

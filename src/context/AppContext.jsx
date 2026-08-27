@@ -13,6 +13,7 @@ import { useMicrosoftAuth } from '../auth/useMicrosoftAuth'
 import { useSpotifyAuth } from '../auth/useSpotifyAuth'
 import { ONEDRIVE_SCOPES } from '../auth/microsoftConfig'
 import { articleStateRecord, mergeNewsState, normalizeNewsState, toggleNewsState } from '../services/newsState'
+import { migrateDashboardSettings } from '../services/settingsService'
 
 
 const AppContext = createContext(null)
@@ -83,16 +84,8 @@ export function AppProvider({ children }) {
   }, [settings.interests, settings.newsTopics, setSettings])
 
   useEffect(() => {
-    if (!settings.cards?.order?.includes('podcasts') || !settings.cards?.order?.includes('fund')) {
-      setSettings(s => {
-        const quickLinksIndex = s.cards.order.indexOf('quicklinks')
-        const order = [...s.cards.order]
-        const insertAt = quickLinksIndex < 0 ? order.length : order.indexOf('podcasts') >= 0 ? quickLinksIndex : quickLinksIndex
-        if (!order.includes('podcasts')) order.splice(insertAt, 0, 'podcasts')
-        if (!order.includes('fund')) order.splice(order.indexOf('quicklinks') < 0 ? order.length : order.indexOf('quicklinks'), 0, 'fund')
-        return { ...s, cards: { ...s.cards, order, visible: { ...s.cards.visible, podcasts: true, fund: true } } }
-      })
-    }
+    const migrated = migrateDashboardSettings(settings)
+    if (migrated !== settings) setSettings(migrated)
   }, [settings.cards, setSettings])
 
   useEffect(() => {
