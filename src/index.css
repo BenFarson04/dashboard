@@ -4,16 +4,49 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
+  --page-bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-inset: #f8f9fc;
+  --surface-interactive: #f1f3f9;
+  --border-subtle: #e5e7ef;
+  --border-strong: #cbd1df;
+  --text-primary: #172033;
+  --text-secondary: #536078;
+  --text-muted: #8791a5;
+  --accent: #4f46c7;
+  --accent-hover: #4338aa;
+  --shadow-card: 0 1px 2px rgb(25 32 52 / 0.04), 0 10px 28px rgb(25 32 52 / 0.05);
+  --shadow-float: 0 18px 42px rgb(25 32 52 / 0.12), 0 4px 12px rgb(25 32 52 / 0.06);
+  --radius-card: 16px;
+  --radius-control: 10px;
   --motion-fast: 120ms;
   --motion-medium: 180ms;
   --motion-slow: 240ms;
-  --surface-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.04);
-  --surface-shadow-hover: 0 8px 20px rgb(15 23 42 / 0.08), 0 2px 5px rgb(15 23 42 / 0.05);
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dark {
+  color-scheme: dark;
+  --page-bg: #10131b;
+  --surface: #181c27;
+  --surface-raised: #1d2230;
+  --surface-inset: #141822;
+  --surface-interactive: #252b3a;
+  --border-subtle: #2a3141;
+  --border-strong: #414b60;
+  --text-primary: #f3f5fa;
+  --text-secondary: #b2bbcc;
+  --text-muted: #7f8ba1;
+  --accent: #818cf8;
+  --accent-hover: #a5b4fc;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.22), 0 12px 30px rgb(0 0 0 / 0.16);
+  --shadow-float: 0 20px 44px rgb(0 0 0 / 0.35), 0 4px 14px rgb(0 0 0 / 0.22);
 }
 
 html {
-  transition: background-color var(--motion-slow) ease, color var(--motion-slow) ease;
+  transition: background-color var(--motion-slow) var(--ease-standard), color var(--motion-slow) var(--ease-standard);
 }
 
 button:not(:disabled),
@@ -22,13 +55,12 @@ a[href] {
 }
 
 .interactive-card {
-  box-shadow: var(--surface-shadow);
-  transition: border-color var(--motion-medium) ease, box-shadow var(--motion-medium) ease, transform var(--motion-medium) ease, background-color var(--motion-medium) ease;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--motion-medium) var(--ease-standard), box-shadow var(--motion-medium) var(--ease-standard), transform var(--motion-medium) var(--ease-standard), background-color var(--motion-medium) var(--ease-standard);
 }
 
-.interactive-card:hover {
-  border-color: rgb(148 163 184 / 0.55);
-  box-shadow: var(--surface-shadow-hover);
+.interactive-card:has(button:hover, a:hover) {
+  border-color: var(--border-strong);
 }
 
 .interactive-row {
@@ -53,15 +85,28 @@ a[href] {
   cursor: not-allowed;
 }
 
-.dark {
-  --surface-shadow: 0 1px 2px rgb(0 0 0 / 0.18), 0 1px 3px rgb(0 0 0 / 0.16);
-  --surface-shadow-hover: 0 8px 20px rgb(0 0 0 / 0.24), 0 2px 5px rgb(0 0 0 / 0.2);
+.page-enter {
+  animation: page-enter 360ms var(--ease-standard) both;
+}
+
+.skeleton-pulse {
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 html, body, #root { height: 100%; }
 body { margin: 0; }
 
-/* Subtle, restrained scrollbars to match the Notion/Microsoft feel. */
+/* Subtle, restrained scrollbars to keep long work lists unobtrusive. */
 * { scrollbar-width: thin; }
 *::-webkit-scrollbar { width: 8px; height: 8px; }
 *::-webkit-scrollbar-thumb { background: rgb(148 163 184 / 0.35); border-radius: 9999px; }

@@ -125,22 +125,22 @@ export function Header() {
   const doRefresh = () => { setSpin(true); refreshAll(); setTimeout(() => setSpin(false), 700) }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
-      <div className="flex items-center gap-3 px-4 py-2.5">
+    <header className="sticky top-0 z-20 border-b border-[var(--border-subtle)] bg-[var(--surface)]/90 backdrop-blur">
+      <div className="flex min-h-[68px] items-center gap-3 px-4 py-3 sm:px-6 xl:px-10">
         <IconButton label="Open navigation" icon="Menu" className="md:hidden" onClick={() => setMobileNavOpen(true)} />
 
         <div className="hidden min-w-0 sm:block">
-          <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+          <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
             {greeting}, {settings.name}
           </p>
-          <p className="truncate text-xs text-slate-500 dark:text-slate-400">{fmtDayLong()}</p>
+          <p className="truncate text-xs text-[var(--text-muted)]">{fmtDayLong()}</p>
         </div>
 
         <div className="mx-auto flex-1 px-2 sm:px-4">
           <CommandBar />
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           <AuthButton />
           <IconButton label="Refresh data" icon="RefreshCw" onClick={doRefresh} className={spin ? 'animate-spin' : ''} />
           <IconButton label={dark ? 'Switch to light mode' : 'Switch to dark mode'} icon={dark ? 'Sun' : 'Moon'} onClick={toggleTheme} />

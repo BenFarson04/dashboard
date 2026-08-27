@@ -43,11 +43,11 @@ function NavList({ collapsed }) {
 
 function Brand({ collapsed }) {
   return (
-    <div className={cn('flex h-14 items-center gap-2 border-b border-slate-100 px-4 dark:border-slate-800', collapsed && 'justify-center px-0')}>
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white">
+    <div className={cn('flex h-[68px] items-center gap-3 border-b border-[var(--border-subtle)] px-4', collapsed && 'justify-center px-0')}>
+    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/20">
         <Icon name="Sparkles" size={18} />
       </div>
-      {!collapsed && <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">Command Centre</span>}
+      {!collapsed && <span className="text-sm font-semibold tracking-tight text-[var(--text-primary)]">Command Centre</span>}
     </div>
   )
 }
@@ -61,13 +61,13 @@ export function Sidebar() {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          'hidden shrink-0 flex-col border-r border-slate-200 bg-white transition-[width] duration-200 md:flex dark:border-slate-800 dark:bg-slate-900',
+          'hidden shrink-0 flex-col border-r border-[var(--border-subtle)] bg-[var(--surface)] transition-[width] duration-200 md:flex',
           collapsed ? 'w-[68px]' : 'w-60',
         )}
       >
         <Brand collapsed={collapsed} />
         <NavList collapsed={collapsed} />
-        <div className="border-t border-slate-100 p-2 dark:border-slate-800">
+        <div className="border-t border-[var(--border-subtle)] p-2">
           <button
             onClick={() => setSidebarOpen(o => !o)}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -83,7 +83,7 @@ export function Sidebar() {
       {mobileNavOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setMobileNavOpen(false)} aria-hidden="true" />
-          <aside className="relative z-10 flex h-full w-64 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+          <aside className="relative z-10 flex h-full w-64 flex-col border-r border-[var(--border-subtle)] bg-[var(--surface)]">
             <Brand collapsed={false} />
             <NavList collapsed={false} />
           </aside>

@@ -23,15 +23,15 @@ function Shell() {
   const { page } = useApp()
   const Page = PAGES[page] || DashboardPage
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <div className="app-shell flex h-screen overflow-hidden bg-[var(--page-bg)] text-[var(--text-primary)]">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-indigo-600 focus:px-3 focus:py-2 focus:text-sm focus:text-white">
         Skip to content
       </a>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header />
-        <main id="main" tabIndex={-1} className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <div className="mx-auto max-w-7xl">
+        <main id="main" tabIndex={-1} className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-7 xl:px-10">
+          <div className="mx-auto w-full max-w-[1600px] page-enter">
             <Page />
           </div>
         </main>

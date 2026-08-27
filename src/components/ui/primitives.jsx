@@ -3,8 +3,7 @@ import { cn } from '../../utils'
 import { Icon } from './Icon'
 
 // -----------------------------------------------------------------------------
-// Reusable, presentation-only building blocks. Restrained Notion/Microsoft feel:
-// white cards, soft shadows, rounded corners, one accent colour (indigo).
+// Reusable, presentation-only building blocks for the command-centre surface.
 // -----------------------------------------------------------------------------
 
 export function Card({ title, icon, action, children, className, bodyClassName, as: Tag = 'section', labelledBy }) {
@@ -12,21 +11,20 @@ export function Card({ title, icon, action, children, className, bodyClassName, 
     <Tag
       aria-labelledby={labelledBy}
       className={cn(
-        'interactive-card rounded-2xl border border-slate-200 bg-white shadow-sm',
-        'dark:border-slate-800 dark:bg-slate-900',
+        'interactive-card rounded-[var(--radius-card)] border border-[var(--border-subtle)] bg-[var(--surface)]',
         className,
       )}
     >
       {(title || action) && (
-        <header className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+        <header className="flex items-center justify-between gap-3 border-b border-[var(--border-subtle)] px-5 py-4">
           <div className="flex items-center gap-2 min-w-0">
-            {icon && <Icon name={icon} size={18} className="shrink-0 text-slate-400" />}
-            {title && <h2 id={labelledBy} className="truncate text-sm font-semibold text-slate-700 dark:text-slate-200">{title}</h2>}
+            {icon && <Icon name={icon} size={18} className="shrink-0 text-indigo-500" />}
+            {title && <h2 id={labelledBy} className="truncate text-[15px] font-semibold text-[var(--text-primary)]">{title}</h2>}
           </div>
           {action && <div className="shrink-0">{action}</div>}
         </header>
       )}
-      <div className={cn('p-4', bodyClassName)}>{children}</div>
+      <div className={cn('p-5', bodyClassName)}>{children}</div>
     </Tag>
   )
 }
@@ -43,7 +41,7 @@ export function Button({ variant = 'subtle', size = 'md', icon, iconRight, child
   return (
     <button
       className={cn(
-        'interactive-button inline-flex items-center justify-center gap-1.5 rounded-lg font-medium',
+        'interactive-button inline-flex items-center justify-center gap-1.5 rounded-[var(--radius-control)] font-medium',
         'focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
         sizes, BTN[variant], className,
       )}
@@ -62,7 +60,7 @@ export function IconButton({ label, icon, active, className, ...props }) {
       aria-label={label}
       title={label}
       className={cn(
-        'interactive-button inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500',
+        'interactive-button inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-control)] text-slate-500',
         'hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
         'dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200',
         active && 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
@@ -134,12 +132,12 @@ export function Spinner({ className }) {
 }
 
 export function Skeleton({ className }) {
-  return <div className={cn('animate-pulse rounded-md bg-slate-100 dark:bg-slate-800', className)} />
+  return <div className={cn('skeleton-pulse rounded-md bg-slate-100 dark:bg-slate-800', className)} />
 }
 
 export function EmptyState({ icon = 'Inbox', title, message, action }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 py-8 text-center dark:border-slate-800">
+    <div className="flex flex-col items-center justify-center gap-2 rounded-xl bg-[var(--surface-inset)] px-4 py-8 text-center">
       <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-800">
         <Icon name={icon} size={20} />
       </div>
@@ -191,9 +189,9 @@ export function Modal({ open, onClose, title, children, footer, labelledBy = 'mo
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className="interactive-card relative z-10 w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-xl outline-none dark:border-slate-800 dark:bg-slate-900"
+        className="interactive-card relative z-10 w-full max-w-lg rounded-[var(--radius-card)] border border-[var(--border-subtle)] bg-[var(--surface-raised)] shadow-[var(--shadow-float)] outline-none"
       >
-        <header className="flex items-center justify-between border-b border-slate-100 px-5 py-3 dark:border-slate-800">
+        <header className="flex items-center justify-between border-b border-[var(--border-subtle)] px-5 py-4">
           <h2 id={labelledBy} className="text-sm font-semibold text-slate-800 dark:text-slate-100">{title}</h2>
           <IconButton label="Close dialog" icon="X" onClick={onClose} />
         </header>
@@ -216,7 +214,6 @@ export function Field({ label, children, hint, htmlFor }) {
 }
 
 export const inputClass = cn(
-  'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 transition-colors duration-150',
+  'w-full rounded-[var(--radius-control)] border border-[var(--border-subtle)] bg-[var(--surface-inset)] px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-slate-400 transition-colors duration-150',
   'focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20',
-  'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100',
 )
