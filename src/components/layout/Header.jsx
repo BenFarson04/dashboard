@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
 import { useApp } from '../../context/AppContext'
-import { useAuth } from '../../auth/useAuth'
 import { Icon } from '../ui/Icon'
 import { IconButton } from '../ui/primitives'
 import { cn, fmtDayLong, greetingFor } from '../../utils'
@@ -92,7 +91,8 @@ function CommandBar() {
 
 // Google sign-in / sign-out control.
 function AuthButton() {
-  const { ready, isSignedIn, account, signIn, signOut } = useAuth()
+  const { emailAccounts } = useApp()
+  const { ready, connected: isSignedIn, account, connect: signIn, disconnect: signOut } = emailAccounts.gmail
   if (!ready) return null
   return isSignedIn ? (
     <button

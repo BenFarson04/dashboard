@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext'
 import { Icon } from '../ui/Icon'
 import { Button, Badge } from '../ui/primitives'
 import { fmtTime, greetingFor } from '../../utils'
+import { EMAIL_PROVIDERS } from '../../services/emailModel'
 
 const REF_PAGE = { event: 'calendar', email: 'email', task: 'tasks', news: 'news'}
 
@@ -57,6 +58,7 @@ export function DailyBriefing() {
                         title={ref.label}
                       >
                         <Icon name={ref.type === 'event' ? 'Calendar' : ref.type === 'email' ? 'Mail' : ref.type ==='news' ? 'Newspaper' : 'CheckSquare'} size={11} />
+                        {ref.provider && <span className="shrink-0">{EMAIL_PROVIDERS[ref.provider]?.label || ref.provider}</span>}
                         <span className="max-w-[10rem] truncate">{ref.label}</span>
                       </button>
                     ))}

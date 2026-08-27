@@ -32,9 +32,34 @@ function SettingRow({ title, hint, children }) {
   )
 }
 
+function MailboxConnection({ label, email, connected, ready, configured = true, error, onConnect, onDisconnect, permission }) {
+  const status = error ? 'Action needed' : connected ? 'Connected' : !configured ? 'Not configured' : ready ? 'Disconnected' : 'Loading'
+  const errorMessage = typeof error === 'string' ? error : error?.message
+  const errorCode = typeof error === 'string' ? 'auth_error' : error?.code
+  return (
+    <div className="rounded-lg border border-slate-100 px-3 py-2.5 dark:border-slate-800">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{label}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{email || permission}</p>
+        </div>
+        <Badge tone={error ? 'red' : connected ? 'green' : 'gray'}>{status}</Badge>
+      </div>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <Button size="sm" icon={connected ? 'RefreshCw' : 'Link2'} onClick={onConnect} disabled={!ready} aria-label={`${connected ? 'Reconnect' : 'Connect'} ${label}`}>
+          {connected ? 'Reconnect' : 'Connect'}
+        </Button>
+        {connected && <Button size="sm" variant="ghost" icon="Unlink" onClick={onDisconnect} aria-label={`Disconnect ${label}`}>Disconnect</Button>}
+        <span className="text-[11px] text-slate-400">{permission}</span>
+      </div>
+      {error && <p role="alert" className="mt-2 text-xs text-red-600 dark:text-red-400">{errorMessage} ({errorCode})</p>}
+    </div>
+  )
+}
+
 
 export function SettingsPage() {
-  const { settings, setSettings, connectionStatus, failRates, setFailRates, toggleTheme } = useApp()
+  const { settings, setSettings, connectionStatus, emailAccounts, failRates, setFailRates, toggleTheme } = useApp()
   const interests = settings.interests || RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true }))
   const [interestDraft, setInterestDraft] = useState('')
   const [interestSearch, setInterestSearch] = useState('')
@@ -87,7 +112,7 @@ export function SettingsPage() {
     location.reload()
   }
 
-  const services = ['calendar', 'email', 'news', 'weather', 'tasks']
+  const services = ['calendar', 'news', 'weather', 'tasks']
 
   return (
     <PageShell icon="Settings" title="Settings" description="Personalise the dashboard. Changes are saved to this browser.">
@@ -211,7 +236,30 @@ export function SettingsPage() {
 
         {/* Connections */}
         <Card title="Connected services" icon="Link2">
-          <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">Status of each data source in this first version.</p>
+          <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">Each mailbox has independent authentication and connection controls.</p>
+          <div className="mb-3 space-y-2">
+            <MailboxConnection
+              label="Gmail"
+              email={emailAccounts.gmail.account?.email}
+              connected={emailAccounts.gmail.connected}
+              ready={emailAccounts.gmail.ready}
+              error={emailAccounts.gmail.error}
+              onConnect={emailAccounts.gmail.connect}
+              onDisconnect={emailAccounts.gmail.disconnect}
+              permission="Read-only Gmail access."
+            />
+            <MailboxConnection
+              label="QUB University Email"
+              email={emailAccounts.qub.accountEmail}
+              connected={emailAccounts.qub.isConnected}
+              ready={emailAccounts.qub.ready}
+              configured={emailAccounts.qub.configurationReady}
+              error={emailAccounts.qub.error}
+              onConnect={emailAccounts.qub.connect}
+              onDisconnect={emailAccounts.qub.disconnect}
+              permission="Read-only Microsoft Graph mailbox access."
+            />
+          </div>
           <ul className="space-y-1.5">
             {services.map(key => {
               const status = CONN_LABEL[connectionStatus[key]] || CONN_LABEL.not_configured
@@ -223,15 +271,15 @@ export function SettingsPage() {
               )
             })}
           </ul>
-          <p className="mt-2 text-[11px] text-slate-400">Connecting live Microsoft Graph / news / weather sources is covered in the project README.</p>
+          <p className="mt-2 text-[11px] text-slate-400">QUB access may require administrator approval from the university. This dashboard is not affiliated with Queen's University Belfast.</p>
         </Card>
 
         {/* Data & privacy */}
         <Card title="Data & privacy" icon="Info">
           <ul className="mb-3 space-y-1.5 text-xs text-slate-500 dark:text-slate-400">
-            <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> All data is mock or stored locally in your browser.</li>
-            <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> No email or calendar content is sent to any AI service in this version.</li>
-            <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> No credentials or tokens are stored in the app.</li>
+            <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> Live Gmail and QUB message metadata is held in memory for this session; task, settings and feedback preferences remain local.</li>
+            <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> No email or calendar content is sent to any AI service.</li>
+            <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> OAuth tokens are handled by the provider libraries; this app never reads or stores refresh tokens.</li>
           </ul>
           <div className="mb-3 rounded-lg border border-slate-100 p-3 dark:border-slate-800">
             <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-200">Demo error states</p>

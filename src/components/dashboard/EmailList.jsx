@@ -4,6 +4,7 @@ import { Icon } from '../ui/Icon'
 import { Card, Badge, Button, Chip, StateBoundary, IconButton } from '../ui/primitives'
 import { cn, relTime } from '../../utils'
 import { EMAIL_CATEGORIES } from '../../data/mockData'
+import { EMAIL_PROVIDERS } from '../../services/emailModel'
 
 const IMPORTANCE = {
   high:   { tone: 'red', label: 'Important' },
@@ -20,6 +21,7 @@ function EmailItem({ email, focused }) {
   const { setEmailFeedbackFor, markEmailRead } = useApp()
   const [showWhy, setShowWhy] = useState(false)
   const imp = IMPORTANCE[email.importance] || IMPORTANCE.low
+  const provider = EMAIL_PROVIDERS[email.provider] || { label: email.accountLabel || 'Email', tone: 'gray' }
 
   return (
     <li className={cn(
@@ -38,6 +40,7 @@ function EmailItem({ email, focused }) {
               {email.sender}
             </span>
             <Badge tone={imp.tone}>{imp.label}</Badge>
+            <Badge tone={provider.tone} className="shrink-0"><span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />{provider.label}</Badge>
             <span className="ml-auto shrink-0 text-[11px] text-slate-400">{relTime(email.received)}</span>
           </div>
           <p className={cn('truncate text-sm', email.unread ? 'text-slate-700 dark:text-slate-200' : 'text-slate-500 dark:text-slate-400')}>{email.subject}</p>
@@ -49,7 +52,7 @@ function EmailItem({ email, focused }) {
               className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
               <Icon name="HelpCircle" size={12} /> Why selected
             </button>
-            <a href="#" onClick={(e) => { e.preventDefault(); markEmailRead(email.id) }}
+            <a href={email.webUrl || '#'} target={email.webUrl ? '_blank' : undefined} rel={email.webUrl ? 'noreferrer' : undefined} onClick={(e) => { if (!email.webUrl) e.preventDefault(); markEmailRead(email) }}
               className="ml-auto inline-flex items-center gap-1 text-[11px] font-medium text-indigo-600 hover:underline dark:text-indigo-300">
               Open <Icon name="ExternalLink" size={11} />
             </a>
@@ -92,7 +95,8 @@ export function EmailList({ full = false }) {
   const all = emails.data || []
   const visibleCats = settings.emailCategories
   let list = all.filter(e => visibleCats.includes(e.category))
-  if (filter !== 'all') list = list.filter(e => e.category === filter)
+  if (filter === 'gmail' || filter === 'qub') list = list.filter(e => e.provider === filter)
+  else if (filter !== 'all') list = list.filter(e => e.category === filter)
   const shown = full ? list : list.slice(0, 4)
 
   return (
@@ -102,12 +106,22 @@ export function EmailList({ full = false }) {
     >
       {full && (
         <div className="mb-3 flex flex-wrap gap-1.5">
-          <Chip active={filter === 'all'} onClick={() => setFilter('all')}>All</Chip>
+          {['all', 'gmail', 'qub'].map(provider => (
+            <Chip key={provider} active={filter === provider} onClick={() => setFilter(provider)}>
+              {provider === 'all' ? `All (${all.length})` : `${EMAIL_PROVIDERS[provider].label} (${all.filter(email => email.provider === provider).length})`}
+            </Chip>
+          ))}
+          <span className="mx-1 h-6 w-px bg-slate-200 dark:bg-slate-700" aria-hidden="true" />
           {EMAIL_CATEGORIES.filter(c => visibleCats.includes(c.id)).map(c => (
             <Chip key={c.id} active={filter === c.id} onClick={() => setFilter(c.id)}>{c.label}</Chip>
           ))}
         </div>
       )}
+      {full && Object.entries(emails.providers || {}).filter(([, message]) => message).map(([provider, message]) => (
+        <p key={provider} role="alert" className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+          {EMAIL_PROVIDERS[provider]?.label || provider} unavailable: {message}
+        </p>
+      ))}
       <StateBoundary
         loading={emails.loading}
         error={emails.error}

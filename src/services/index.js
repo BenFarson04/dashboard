@@ -3,8 +3,9 @@
 // only touches the corresponding *Service.js file — never the components.
 import * as calendar from './calendarService'
 import * as email from './emailService'
+import * as unifiedEmail from './unifiedEmailService'
 import * as news from './newsService'
 import * as weather from './weatherService'
 import { generateBriefing } from './briefingService'
 
-export { calendar, email, news, weather, generateBriefing }
+export { calendar, email, unifiedEmail, news, weather, generateBriefing }

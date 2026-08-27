@@ -144,14 +144,93 @@ recommended interest or synonym group, update `RECOMMENDED_INTERESTS` or
 
 ---
 
-## Future integration plan (replacing the mock services)
+## Multi-provider email
+
+Email uses provider adapters behind `src/services/unifiedEmailService.js`. Gmail and
+Microsoft Graph each return the same normalized record, then the aggregator combines
+successful providers, ranks the combined set, applies the final eight-item display
+limit, and reports provider failures independently. Stable IDs are prefixed with the
+provider (`gmail:<id>` or `qub:<id>`), so feedback and read state cannot collide.
+
+The normalized model includes `id`, `provider`, `accountId`, `accountLabel`, sender
+name/address, subject, sanitized preview, received date, read/important flags,
+categories, relevance score/reasons, and an HTTPS-only `webUrl`. Gmail is marked with
+the text label `Gmail` and a green accent; QUB is marked `QUB` and blue. The full Email
+page filters All, Gmail, QUB, and the existing local categories. Markers also appear
+in daily briefing references. A failed provider leaves the other mailbox visible.
+
+Gmail keeps its existing Google Identity Services flow, but its access token is now
+held only in memory by the single app auth hook. The app does not persist Gmail tokens.
+Microsoft Authentication Library owns the Microsoft cache and silent acquisition; the
+app never reads refresh tokens or puts tokens in URLs. Disconnecting a mailbox clears
+the dashboard's connection state only. It does not sign out of the other provider or
+globally sign out of Microsoft. Use the browser/Microsoft account controls separately
+to clear the library cache or sign out globally.
+
+QUB uses the Microsoft `organizations` authority (work or school accounts), an SPA
+redirect, and an explicit account-selection popup. The implementation accepts only
+`bfarson01@qub.ac.uk`; a different account is not used to load mail. It requests:
+
+- `User.Read`: identify the selected delegated account.
+- `Mail.Read`: read the Inbox's sender, subject, body preview, date, read state,
+  importance, and web link. `Mail.ReadBasic` is insufficient because the current UI
+  intentionally displays `bodyPreview`; no full body or attachments are requested.
+
+No send, delete, move, archive, write, directory-wide, application, or tenant-wide
+permission is requested. Message data is fetched into memory and is not sent to an AI
+service. Local storage contains settings, tasks, and user feedback/read preferences;
+live message previews and bodies are not cached. Reset all data removes those local
+preferences, while disconnecting QUB removes only its in-memory dashboard connection.
+
+### Microsoft Entra setup
+
+The repository cannot register an application in QUB's tenant. Create or obtain a
+public Microsoft Entra app registration before testing live QUB mail:
+
+1. Register an application with supported account type **Accounts in any
+  organizational directory** (multitenant). Do not create a client secret.
+2. Add a **Single-page application** platform with these exact redirect URIs. The
+  deployed URI must use the repository's actual GitHub Pages path:
+  `http://localhost:5173/dashboard/` and
+  `https://<github-owner>.github.io/dashboard/`.
+3. Add delegated Microsoft Graph permissions `User.Read` and `Mail.Read`, then save.
+  QUB may require an administrator to grant consent; a successful identity login is
+  not proof that mailbox access is allowed.
+4. Set `VITE_MICROSOFT_CLIENT_ID` to the public Application (client) ID in a local
+  `.env.local` file. `.env.local` is ignored by git. For Pages, add the same value as
+  the GitHub Actions **repository variable** `VITE_MICROSOFT_CLIENT_ID`; it is an
+  identifier, not a secret. The existing Google variable is unchanged.
+5. Run `npm run dev`, open the dashboard, go to Settings, and connect QUB. Select the
+  intended account in the popup and verify that a real Inbox request succeeds.
+
+If the popup reports `AADSTS65001`, consent is required; approve the requested
+delegated permissions if permitted. `AADSTS90094`, `admin_consent_required`, a 403,
+or a message that the application is unverified/blocked means QUB policy requires an
+administrator or blocks external apps. The legitimate next step is to ask the QUB
+service desk/tenant administrator to review and approve the named app, or use an
+institution-approved app. Do not bypass the policy or use IMAP/password login. A
+cancelled popup, Conditional Access/MFA interruption, expired session, or silent
+acquisition failure is reported with its technical code and a reconnect action. If no
+client ID is configured, Settings shows a configuration state rather than a blank
+page.
+
+To remove consent, revoke the app from the Microsoft account's My Apps/consent page
+or ask the tenant administrator to revoke it. Clearing browser site data clears the
+MSAL browser cache; global Microsoft sign-out is a separate action.
+
+To add another provider, implement the adapter methods in the provider service,
+normalize into the shared model, register it in the unified aggregator, and add its
+connection state and marker to Settings. Keep tokens in that provider's maintained
+browser auth library and add synthetic tests before enabling it.
+
+## Existing calendar and future service integrations
 
 The UI won’t change — only the service files and an auth layer. Start **read‑only**.
 
 ### A. Microsoft identity / OAuth (MSAL)
-- Use **`@azure/msal-browser`** (+ `@azure/msal-react`) for delegated sign‑in with PKCE.
+- Use **`@azure/msal-browser`** for delegated sign‑in with PKCE.
 - Register an app in **Entra ID**. Client ID/tenant are not secrets; **never** put a
-  client secret in the browser. Use `VITE_MSAL_CLIENT_ID` / `VITE_MSAL_TENANT_ID`.
+  client secret in the browser. Use `VITE_MICROSOFT_CLIENT_ID` only.
 - Store tokens **in memory** via MSAL’s cache; do **not** hand‑roll `localStorage`
   token storage. Acquire tokens silently, falling back to popup/redirect.
 - **Keep accounts separated.** Employer (Arup), university (QUB) and personal accounts
@@ -201,7 +280,8 @@ case where consent is refused (show the service as *Not configured* / *Connectio
 ---
 
 ## Security posture (this version)
-- No credentials or tokens anywhere in the client.
+- No passwords, refresh tokens, client secrets, or private keys are stored in the client.
+- Provider libraries handle browser token caches; Gmail access tokens are memory-only.
 - No email/calendar data leaves the browser; nothing is sent to an AI service.
 - All persisted data is local to the browser and can be wiped from **Settings → Reset**.
 
@@ -210,6 +290,7 @@ case where consent is refused (show the service as *Not configured* / *Connectio
 - `npm run news:refresh` — fetch the BBC feeds and update `public/data/news.json`.
 - `node scripts/build-preview.mjs` — regenerate the standalone `preview.html`.
 - `node scripts/validate.mjs` — syntax‑check every source file + the preview bundle.
+- `npm run test:email` — synthetic multi-provider normalization, ranking, and partial-failure tests.
 
 Run `npm run test:news` for deterministic relevance, false-positive, normalization,
 and unsafe-link checks. GitHub Actions refreshes on pushes to `main`, manual dispatch,

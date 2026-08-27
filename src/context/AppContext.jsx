@@ -8,6 +8,7 @@ import {
   defaultSettings, defaultTasks, defaultQuickLinks, connectionStatus,
 } from '../data/mockData'
 import { useAuth } from '../auth/useAuth'
+import { useMicrosoftAuth } from '../auth/useMicrosoftAuth'
 
 
 const AppContext = createContext(null)
@@ -17,7 +18,8 @@ const idle = () => ({ data: null, loading: true, error: null })
 
 export function AppProvider({ children }) {
   // ---- Persisted, user-editable state -------------------------------------
-  const { getToken, isSignedIn } = useAuth()
+  const { getToken, isSignedIn: gmailConnected, account: gmailAccount, ready: gmailReady, error: gmailError, signIn: gmailSignIn, signOut: gmailSignOut } = useAuth()
+  const qubAuth = useMicrosoftAuth()
   const [settings, setSettings] = useLocalStorage('pd.settings', defaultSettings)
   const [tasks, setTasks] = useLocalStorage('pd.tasks', defaultTasks)
   const [quickLinks, setQuickLinks] = useLocalStorage('pd.quicklinks', defaultQuickLinks)
@@ -36,7 +38,7 @@ export function AppProvider({ children }) {
 
   // ---- Data services state -------------------------------------------------
   const [calendar, setCalendar] = useState(idle)
-  const [emails, setEmails] = useState(idle)
+  const [emails, setEmails] = useState(() => ({ ...idle(), providers: {} }))
   const [news, setNews] = useState(() => ({ ...idle(), sourceStatus: 'no-data', metadata: null }))
   const [weather, setWeather] = useState(idle)
 
@@ -67,18 +69,21 @@ export function AppProvider({ children }) {
   // ---- Loaders -------------------------------------------------------------
   const loadCalendar = useCallback(async () => {
     // Signed out → show an empty calendar rather than an error.
-    if (!isSignedIn) { setCalendar({ data: [], loading: false, error: null }); return }
+    if (!gmailConnected) { setCalendar({ data: [], loading: false, error: null }); return }
     setCalendar(s => ({ ...s, loading: true, error: null }))
     try { setCalendar({ data: await services.calendar.getEvents({ getToken }), loading: false, error: null }) }
     catch (e) { setCalendar({ data: null, loading: false, error: e.message }) }
-  }, [isSignedIn, getToken])
+  }, [gmailConnected, getToken])
 
   const loadEmails = useCallback(async () => {
-    if (!isSignedIn) { setEmails({ data: [], loading: false, error: null }); return }
     setEmails(s => ({ ...s, loading: true, error: null }))
-    try { setEmails({ data: await services.email.getRelevantEmails({ getToken }), loading: false, error: null }) }
-    catch (e) { setEmails({ data: null, loading: false, error: e.message }) }
-  }, [isSignedIn, getToken])
+    const result = await services.unifiedEmail.getMessages({
+      gmailConnected, getGmailToken: getToken,
+      qubConnected: qubAuth.isConnected, acquireQubAccess: qubAuth.acquireAccess, qubAccount: qubAuth.account,
+    })
+    const providerErrors = Object.fromEntries(Object.entries(result.providers).filter(([, error]) => error).map(([provider, error]) => [provider, error.message]))
+    setEmails({ data: result.data, loading: false, error: null, providers: providerErrors })
+  }, [gmailConnected, getToken, qubAuth.isConnected, qubAuth.acquireAccess, qubAuth.account])
 
   const loadNews = useCallback(async () => {
     setNews(s => ({ ...s, loading: true, error: null }))
@@ -125,9 +130,9 @@ export function AppProvider({ children }) {
   }), [setQuickLinks])
 
   // ---- Email actions -------------------------------------------------------
-  const setEmailFeedbackFor = useCallback((id, value) =>
-    setEmailFeedback(m => ({ ...m, [id]: m[id] === value ? undefined : value })), [setEmailFeedback])
-  const markEmailRead = useCallback((id) => setEmailRead(m => ({ ...m, [id]: true })), [setEmailRead])
+  const setEmailFeedbackFor = useCallback((email, value) =>
+    setEmailFeedback(m => ({ ...m, [email.id]: m[email.id] === value ? undefined : value })), [setEmailFeedback])
+  const markEmailRead = useCallback((email) => setEmailRead(m => ({ ...m, [email.id]: true })), [setEmailRead])
 
   // ---- News actions --------------------------------------------------------
   const toggleSaveNews = useCallback((id) =>
@@ -149,7 +154,7 @@ export function AppProvider({ children }) {
     return emails.data.map(e => ({
       ...e,
       unread: emailRead[e.id] ? false : e.unread,
-      feedback: emailFeedback[e.id] || null,
+      feedback: emailFeedback[e.id] || (e.provider === 'gmail' ? emailFeedback[e.providerMessageId] : null) || null,
     }))
   }, [emails.data, emailRead, emailFeedback])
 
@@ -194,7 +199,16 @@ export function AppProvider({ children }) {
     // state
     settings, setSettings, tasks, quickLinks, savedNews, dismissedNews, newsFeedback,
     page, sidebarOpen, mobileNavOpen, focus, failRates, setFailRates,
-    connectionStatus,
+    connectionStatus: {
+      ...connectionStatus,
+      email: gmailConnected || qubAuth.isConnected ? 'connected' : 'not_configured',
+      gmail: gmailConnected ? 'connected' : 'not_configured',
+      qub: qubAuth.error ? 'error' : qubAuth.isConnected ? 'connected' : qubAuth.configurationReady ? 'not_configured' : 'not_configured',
+    },
+    emailAccounts: {
+      gmail: { connected: gmailConnected, account: gmailAccount, ready: gmailReady, error: gmailError, connect: gmailSignIn, disconnect: gmailSignOut },
+      qub: qubAuth,
+    },
     // data
     calendar, emails: { ...emails, data: enrichedEmails }, news: { ...news, data: personalizedNews }, weather, briefing,
     // theme + nav

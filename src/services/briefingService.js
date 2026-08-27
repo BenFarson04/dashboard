@@ -107,6 +107,7 @@ export function generateBriefing({
         refs: importantEmails.map(email => ({
           type: 'email',
           id: email.id,
+          provider: email.provider,
           label: `${email.sender}: ${email.subject}`,
         })),
       })

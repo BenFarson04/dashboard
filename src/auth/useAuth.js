@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { GOOGLE_CLIENT_ID, GOOGLE_SCOPES } from './googleConfig'
 
-const STORE_KEY = 'pd.googleToken'
 const GIS_SRC = 'https://accounts.google.com/gsi/client'
 
 function loadGis() {
@@ -18,21 +17,11 @@ function loadGis() {
   })
 }
 
-function readStored() {
-  try {
-    const raw = sessionStorage.getItem(STORE_KEY)
-    if (!raw) return null
-    const t = JSON.parse(raw)
-    if (!t.accessToken || !t.expiresAt || Date.now() > t.expiresAt) return null
-    return t
-  } catch { return null }
-}
-
 export function useAuth() {
   const [ready, setReady] = useState(false)
   const [account, setAccount] = useState(null)
   const [error, setError] = useState(null)
-  const tokenRef = useRef(readStored())
+  const tokenRef = useRef(null)
   const clientRef = useRef(null)
 
   useEffect(() => {
@@ -45,11 +34,6 @@ export function useAuth() {
           scope: GOOGLE_SCOPES,
           callback: () => {},
         })
-        const stored = readStored()
-        if (stored) {
-          tokenRef.current = stored
-          fetchEmail(stored.accessToken).then(email => !cancelled && setAccount({ email, username: email }))
-        }
         setReady(true)
       })
       .catch(e => { if (!cancelled) { setError(e.message); setReady(true) } })
@@ -64,7 +48,6 @@ export function useAuth() {
         if (resp.error) return reject(new Error(resp.error))
         const token = { accessToken: resp.access_token, expiresAt: Date.now() + (resp.expires_in - 60) * 1000 }
         tokenRef.current = token
-        try { sessionStorage.setItem(STORE_KEY, JSON.stringify(token)) } catch { /* ignore */ }
         resolve(token.accessToken)
       }
       try { client.requestAccessToken({ prompt }) } catch (e) { reject(e) }
@@ -83,7 +66,6 @@ export function useAuth() {
     const at = tokenRef.current?.accessToken
     if (at && window.google?.accounts?.oauth2) window.google.accounts.oauth2.revoke(at, () => {})
     tokenRef.current = null
-    try { sessionStorage.removeItem(STORE_KEY) } catch { /* ignore */ }
     setAccount(null)
   }, [])
 

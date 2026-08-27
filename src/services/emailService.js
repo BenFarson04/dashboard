@@ -1,5 +1,6 @@
-// LIVE email service — Gmail API (read-only).
-import { GMAIL_BASE } from '../auth/googleConfig'
+// Gmail provider adapter — read-only metadata and snippets.
+import { GMAIL_BASE } from '../auth/googleConfig.js'
+import { normalizeEmail } from './emailModel.js'
 
 export const meta = { key: 'email', name: 'Email', source: 'google' }
 
@@ -46,7 +47,7 @@ function decodeSnippet(s) {
     .replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, ' ')
 }
 
-export async function getRelevantEmails({ getToken } = {}) {
+export async function getMessages({ getToken } = {}) {
   const token = await getToken()
   const auth = { headers: { Authorization: `Bearer ${token}` } }
 
@@ -66,31 +67,21 @@ export async function getRelevantEmails({ getToken } = {}) {
   }))
 
   // 3) Normalise + score.
-  const scored = msgs.filter(Boolean).map(msg => {
-    const subject = header(msg, 'Subject') || '(no subject)'
-    const from = parseFrom(header(msg, 'From'))
-    const isUnread = (msg.labelIds || []).includes('UNREAD')
-    const important = (msg.labelIds || []).includes('IMPORTANT')
-    const s = score(msg, isUnread, subject)
-    return {
-      id: msg.id,
-      sender: from.name,
-      senderEmail: from.email,
-      subject,
-      preview: decodeSnippet(msg.snippet || ''),
-      received: new Date(Number(msg.internalDate)),
-      importance: important || s >= 6 ? 'high' : s >= 3 ? 'medium' : 'low',
-      category: categorise(subject, from.email),
-      unread: isUnread,
-      reason: reasonFor(isUnread, subject, important),
-      webLink: `https://mail.google.com/mail/u/0/#inbox/${msg.id}`,
-      _score: s,
-    }
-  })
-
-  // 4) Top-8 shortlist by score, then newest-first for display.
-  return scored
-    .sort((a, b) => b._score - a._score)
-    .slice(0, 8)
-    .sort((a, b) => new Date(b.received) - new Date(a.received))
+  const scored = msgs.filter(Boolean).map(msg => normalizeGmailMessage(msg))
+  return scored.sort((a, b) => b.relevanceScore - a.relevanceScore || b.receivedAt - a.receivedAt)
 }
+
+export function normalizeGmailMessage(msg) {
+  const subject = header(msg, 'Subject') || '(no subject)'
+  const from = parseFrom(header(msg, 'From'))
+  const isUnread = (msg.labelIds || []).includes('UNREAD')
+  const important = (msg.labelIds || []).includes('IMPORTANT')
+  const relevanceScore = score(msg, isUnread, subject)
+  return normalizeEmail({ provider: 'gmail', accountId: 'google', accountLabel: 'Gmail', providerMessageId: msg.id,
+    senderName: from.name, senderAddress: from.email, subject, preview: decodeSnippet(msg.snippet || ''),
+    receivedAt: new Date(Number(msg.internalDate)), isRead: !isUnread, isImportant: important,
+    categories: [categorise(subject, from.email)], relevanceScore,
+    relevanceReasons: [reasonFor(isUnread, subject, important)], webUrl: `https://mail.google.com/mail/u/0/#inbox/${msg.id}` })
+}
+
+export const getRelevantEmails = getMessages
