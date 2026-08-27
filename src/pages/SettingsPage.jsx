@@ -59,7 +59,7 @@ function MailboxConnection({ label, email, connected, ready, configured = true, 
 
 
 export function SettingsPage() {
-  const { settings, setSettings, connectionStatus, emailAccounts, spotify, failRates, setFailRates, toggleTheme } = useApp()
+  const { settings, setSettings, connectionStatus, emailAccounts, oneDrive, oneDriveEnabled, enableOneDrive, disconnectOneDrive, spotify, failRates, setFailRates, toggleTheme } = useApp()
   const interests = settings.interests || RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true }))
   const [interestDraft, setInterestDraft] = useState('')
   const [interestSearch, setInterestSearch] = useState('')
@@ -260,6 +260,17 @@ export function SettingsPage() {
               permission="Read-only Microsoft Graph mailbox access."
             />
             <MailboxConnection
+              label="QUB OneDrive"
+              email={emailAccounts.qub.accountEmail}
+              connected={oneDriveEnabled}
+              ready={emailAccounts.qub.ready}
+              configured={emailAccounts.qub.configurationReady}
+              error={oneDrive.error ? { message: oneDrive.error, code: oneDrive.errorCode } : null}
+              onConnect={enableOneDrive}
+              onDisconnect={disconnectOneDrive}
+              permission="Read-only Files.Read access; separate from Mail.Read."
+            />
+            <MailboxConnection
               label="Spotify"
               email={spotify.account?.display_name || spotify.account?.email}
               connected={spotify.connected}
@@ -289,7 +300,7 @@ export function SettingsPage() {
         {/* Data & privacy */}
         <Card title="Data & privacy" icon="Info">
           <ul className="mb-3 space-y-1.5 text-xs text-slate-500 dark:text-slate-400">
-            <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> Live Gmail and QUB message metadata is held in memory for this session; task, settings and feedback preferences remain local.</li>
+            <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> Live Gmail, QUB message and OneDrive file metadata is held in memory for this session; task, settings and feedback preferences remain local.</li>
             <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> No email or calendar content is sent to any AI service.</li>
             <li className="flex gap-2"><Icon name="Check" size={14} className="mt-0.5 text-emerald-500" /> OAuth tokens are handled by the provider libraries; this app never reads or stores refresh tokens.</li>
           </ul>

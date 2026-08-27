@@ -7,6 +7,7 @@ import { EmailPage } from './pages/EmailPage'
 import { TasksPage } from './pages/TasksPage'
 import { NewsPage } from './pages/NewsPage'
 import { SettingsPage } from './pages/SettingsPage'
+import { OneDrivePage } from './pages/OneDrivePage'
 
 const PAGES = {
   dashboard: DashboardPage,
@@ -14,6 +15,7 @@ const PAGES = {
   email: EmailPage,
   tasks: TasksPage,
   news: NewsPage,
+  onedrive: OneDrivePage,
   settings: SettingsPage,
 }
 

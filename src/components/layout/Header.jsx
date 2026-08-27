@@ -20,6 +20,7 @@ function CommandBar() {
       { type: 'page', id: 'email', label: 'Email', icon: 'Mail' },
       { type: 'page', id: 'tasks', label: 'Tasks', icon: 'CheckSquare' },
       { type: 'page', id: 'news', label: 'News', icon: 'Newspaper' },
+      { type: 'page', id: 'onedrive', label: 'OneDrive', icon: 'Cloud' },
       { type: 'page', id: 'settings', label: 'Settings', icon: 'Settings' },
     ]
     if (!term) return pages

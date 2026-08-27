@@ -11,14 +11,14 @@ function accountEmail(account) {
   return (account?.username || account?.idTokenClaims?.preferred_username || '').toLowerCase()
 }
 
-function publicError(error) {
+function publicError(error, resource = 'mailbox') {
   const code = error?.errorCode || error?.code || 'unknown_error'
   const message = String(error?.message || '').toLowerCase()
   if (code === 'user_cancelled' || code === 'user_canceled' || message.includes('cancel')) {
     return { code, message: 'Microsoft sign-in was cancelled.' }
   }
-  if (/consent|admin_consent|interaction_required|access_denied/.test(`${code} ${message}`)) {
-    return { code, message: 'QUB approval is required before this dashboard can read the mailbox.' }
+  if (/consent|admin_consent|access_denied/.test(`${code} ${message}`)) {
+    return { code, message: `QUB approval is required before this dashboard can read the ${resource}.` }
   }
   if (/conditional_access|mfa|interaction/.test(`${code} ${message}`)) {
     return { code, message: 'Microsoft requires an interactive sign-in or MFA check. Reconnect QUB to continue.' }
@@ -43,6 +43,29 @@ export function useMicrosoftAuth() {
       })
       .catch(errorValue => { if (!cancelled) { setError(publicError(errorValue)); setReady(true) } })
     return () => { cancelled = true }
+  }, [])
+
+  const connectWithScopes = useCallback(async (additionalScopes = []) => {
+    if (!msalInstance) { setError({ code: 'missing_client_id', message: 'Microsoft QUB access is not configured yet. Add the public client ID in the build environment.' }); return false }
+    setError(null)
+    try {
+      const result = await msalInstance.loginPopup({
+        scopes: [...new Set(additionalScopes)],
+        prompt: 'select_account',
+        loginHint: MICROSOFT_EXPECTED_EMAIL,
+        redirectUri: MICROSOFT_REDIRECT_URI,
+      })
+      const signedInEmail = accountEmail(result.account)
+      if (!signedInEmail.endsWith(`@${MICROSOFT_EXPECTED_DOMAIN}`) || signedInEmail !== MICROSOFT_EXPECTED_EMAIL) {
+        setError({ code: 'wrong_account', message: 'Choose the QUB account bfarson01@qub.ac.uk to connect this service.' })
+        return false
+      }
+      setAccount(result.account)
+      return true
+    } catch (errorValue) {
+      setError(publicError(errorValue, 'OneDrive files'))
+      return false
+    }
   }, [])
 
   const connect = useCallback(async () => {
@@ -74,13 +97,13 @@ export function useMicrosoftAuth() {
     setError(null)
   }, [])
 
-  const acquireAccess = useCallback(async () => {
+  const acquireAccess = useCallback(async (scopes = MICROSOFT_SCOPES) => {
     if (!msalInstance || !account) throw Object.assign(new Error('QUB is disconnected'), { code: 'disconnected' })
     try {
-      const result = await msalInstance.acquireTokenSilent({ account, scopes: MICROSOFT_SCOPES })
+      const result = await msalInstance.acquireTokenSilent({ account, scopes })
       return result.accessToken
     } catch (errorValue) {
-      const details = publicError(errorValue)
+      const details = publicError(errorValue, scopes.includes('Files.Read') ? 'OneDrive files' : 'mailbox')
       if (details.code === 'interaction_required' || /interaction/i.test(details.code)) {
         throw Object.assign(new Error('QUB needs you to reconnect.'), { code: 'interaction_required' })
       }
@@ -94,6 +117,7 @@ export function useMicrosoftAuth() {
     accountEmail: accountEmail(account),
     error,
     connect,
+    connectWithScopes,
     disconnect,
     acquireAccess,
     isConnected: !!account,

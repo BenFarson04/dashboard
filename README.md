@@ -223,6 +223,54 @@ normalize into the shared model, register it in the unified aggregator, and add 
 connection state and marker to Settings. Keep tokens in that provider's maintained
 browser auth library and add synthetic tests before enabling it.
 
+### QUB OneDrive
+
+The OneDrive page is a separate, read-only capability on the existing QUB Microsoft
+account. It requests only delegated `Files.Read`; this is intentionally separate from
+the email connection's `User.Read` and `Mail.Read`. No client secret is required for
+this SPA: the public client ID is enough, and MSAL owns its browser token cache.
+
+#### Entra setup and incremental consent
+
+1. Open the existing multitenant Entra app registration used by QUB email.
+2. Add delegated Microsoft Graph permission `Files.Read`, then save. Do not add
+  `Files.ReadWrite`, `Files.ReadWrite.All`, `Files.Read.All`, `Sites.Read.All`, or
+  application permissions. If an existing QUB approval request is pending, update
+  that request to include the named delegated `Files.Read` permission rather than
+  creating a broader replacement.
+3. Keep the existing SPA redirect URIs and `VITE_MICROSOFT_CLIENT_ID` configuration.
+  For local testing, put the public ID in `.env.local`; no secret is needed.
+4. Run `npm run dev`, open OneDrive, and choose **Allow OneDrive access**. This is a
+  user-triggered incremental consent flow; opening the page does not open a popup.
+5. Verify that Recent Files loads for the selected `bfarson01@qub.ac.uk` account,
+  submit a non-empty search, clear it, and use an item's Graph-provided Open link.
+
+The app does not claim that QUB will approve the permission. `AADSTS65001`,
+`admin_consent_required`, a 403, or an application-blocked message means QUB
+administrator approval is required. Ask the QUB service desk or tenant administrator
+to review/approve the existing app and its delegated `Files.Read` request; never use
+password or IMAP workarounds. A 401 means reconnect, while a 404 indicates that the
+account may not have a provisioned OneDrive. Network and throttling errors can be
+retried. Consent can be revoked from the Microsoft account's My Apps/consent page;
+browser site-data clearing removes the MSAL browser cache, and is separate from the
+dashboard's capability disconnect control.
+
+Recent and search responses request bounded metadata only: names, IDs, file type,
+size, dates, modified-by display name, folder information, and Microsoft's HTTPS
+`webUrl`. Normalized metadata is held in memory for the current session only. File
+contents, previews, download URLs, tokens, refresh tokens, and filenames are not
+stored in localStorage. Disconnecting OneDrive clears its in-memory results without
+disconnecting QUB email, Gmail, tasks, or news. Files open in a new browser tab using
+the genuine Graph `webUrl`; the dashboard does not launch File Explorer, Word,
+Bluebeam, or other desktop applications.
+
+Automated fixtures cover normalization, malformed items, unknown/missing extensions,
+unsafe links, pagination, duplicate IDs, and encoded search terms. A real QUB sign-in
+and delegated `Files.Read` consent are required to verify live access. After deployment,
+also confirm the exact GitHub Pages redirect URI, the OneDrive page navigation, Recent
+Files, search/clear, safe external links, and approval-required states in the deployed
+`/dashboard/` path.
+
 ### Spotify podcast updates
 
 The Podcast Updates card uses Spotify's browser Authorization Code with PKCE flow.

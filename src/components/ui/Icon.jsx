@@ -8,7 +8,8 @@ import {
   GripVertical, Check, Circle, CircleCheck, Flag, Sparkles, HelpCircle, Link2,
   Filter, ThumbsUp, ThumbsDown, ArrowRight, Bookmark, BookmarkCheck, Briefcase,
   GraduationCap, Plane, PiggyBank, Dumbbell, Globe, Home, Eye, Radio, Clock3,
-  MessageCircle, Bot, Github,
+  MessageCircle, Bot, Github, FileText, FileSpreadsheet, Presentation, Image, Folder, FolderOpen,
+  ShieldCheck, SearchX,
 } from 'lucide-react'
 
 const MAP = {
@@ -19,7 +20,8 @@ const MAP = {
   GripVertical, Check, Circle, CircleCheck, Flag, Sparkles, HelpCircle, Link2,
   Filter, ThumbsUp, ThumbsDown, ArrowRight, Bookmark, BookmarkCheck, Briefcase,
   GraduationCap, Plane, PiggyBank, Dumbbell, Globe, Home, Eye, Radio, Clock3,
-  MessageCircle, Bot, Github,
+  MessageCircle, Bot, Github, FileText, FileSpreadsheet, Presentation, Image, Folder, FolderOpen,
+  ShieldCheck, SearchX,
 }
 
 export function Icon({ name, size = 18, className = '', ...rest }) {

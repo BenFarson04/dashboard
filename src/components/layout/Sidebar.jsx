@@ -8,6 +8,7 @@ const NAV = [
   { id: 'email',     label: 'Email',     icon: 'Mail' },
   { id: 'tasks',     label: 'Tasks',     icon: 'CheckSquare' },
   { id: 'news',      label: 'News',      icon: 'Newspaper' },
+  { id: 'onedrive',  label: 'OneDrive',  icon: 'Cloud' },
   { id: 'settings',  label: 'Settings',  icon: 'Settings' },
 ]
 

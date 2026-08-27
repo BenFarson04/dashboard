@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import * as services from '../services'
 import { generateBriefing } from '../services'
@@ -11,6 +11,7 @@ import { TASK_STORAGE_KEY, createTask, migrateTasks, setTaskCompleted, updateTas
 import { useAuth } from '../auth/useAuth'
 import { useMicrosoftAuth } from '../auth/useMicrosoftAuth'
 import { useSpotifyAuth } from '../auth/useSpotifyAuth'
+import { ONEDRIVE_SCOPES } from '../auth/microsoftConfig'
 
 
 const AppContext = createContext(null)
@@ -60,6 +61,9 @@ export function AppProvider({ children }) {
   const [news, setNews] = useState(() => ({ ...idle(), sourceStatus: 'no-data', metadata: null }))
   const [weather, setWeather] = useState(idle)
   const [spotify, setSpotify] = useState(() => ({ ...idle(), loading: false, now: Date.now(), refreshedAt: null }))
+  const [oneDrive, setOneDrive] = useState(() => ({ ...idle(), loading: false }))
+  const [oneDriveEnabled, setOneDriveEnabled] = useState(false)
+  const oneDriveRequest = useRef(0)
   const [spotifyMeta, setSpotifyMeta] = useLocalStorage('pd.spotifyMeta', { lastRefresh: null })
 
   useEffect(() => {
@@ -141,15 +145,63 @@ export function AppProvider({ children }) {
     } catch (error) { setSpotify(s => ({ ...s, loading: false, error: error.message })) }
   }, [spotifyAuth.isConnected, spotifyAuth.getToken, setSpotifyMeta])
 
+  const loadOneDrive = useCallback(async () => {
+    if (!oneDriveEnabled || !qubAuth.isConnected) {
+      setOneDrive({ data: null, loading: false, error: null })
+      return
+    }
+    const requestId = ++oneDriveRequest.current
+    setOneDrive(s => ({ ...s, loading: true, error: null }))
+    try {
+      const accountId = qubAuth.account?.homeAccountId || qubAuth.account?.localAccountId || qubAuth.account?.username
+      const accountLabel = qubAuth.accountEmail || 'QUB'
+      const [driveUrl, items] = await Promise.all([
+        services.oneDrive.getDrive({ acquireAccess: qubAuth.acquireAccess }),
+        services.oneDrive.getRecentFiles({ acquireAccess: qubAuth.acquireAccess, accountId, accountLabel }),
+      ])
+      if (requestId === oneDriveRequest.current) setOneDrive({ data: { items, driveUrl }, loading: false, error: null })
+    } catch (error) {
+      if (requestId === oneDriveRequest.current) setOneDrive({ data: null, loading: false, error: error.message, errorCode: error.code })
+    }
+  }, [oneDriveEnabled, qubAuth.isConnected, qubAuth.account, qubAuth.accountEmail, qubAuth.acquireAccess])
+
+  const searchOneDrive = useCallback(async query => {
+    const requestId = ++oneDriveRequest.current
+    setOneDrive(s => ({ ...s, loading: true, error: null }))
+    try {
+      const accountId = qubAuth.account?.homeAccountId || qubAuth.account?.localAccountId || qubAuth.account?.username
+      const items = await services.oneDrive.searchFiles({ acquireAccess: qubAuth.acquireAccess, query, accountId, accountLabel: qubAuth.accountEmail || 'QUB' })
+      if (requestId === oneDriveRequest.current) setOneDrive(s => ({ ...s, data: { ...(s.data || {}), items }, loading: false, error: null }))
+    } catch (error) {
+      if (requestId === oneDriveRequest.current) setOneDrive(s => ({ ...s, loading: false, error: error.message, errorCode: error.code }))
+    }
+  }, [qubAuth.account, qubAuth.accountEmail, qubAuth.acquireAccess])
+
+  const enableOneDrive = useCallback(async () => {
+    const connected = await qubAuth.connectWithScopes(ONEDRIVE_SCOPES)
+    if (connected) setOneDriveEnabled(true)
+    return connected
+  }, [qubAuth.connectWithScopes])
+
+  const disconnectOneDrive = useCallback(() => {
+    oneDriveRequest.current += 1
+    setOneDriveEnabled(false)
+    setOneDrive({ data: null, loading: false, error: null })
+  }, [])
+
   useEffect(() => { loadCalendar() }, [loadCalendar])
   useEffect(() => { loadEmails() }, [loadEmails])
   useEffect(() => { loadNews() }, [loadNews])
   useEffect(() => { loadWeather() }, [loadWeather])
   useEffect(() => { loadPodcasts() }, [loadPodcasts])
+  useEffect(() => { loadOneDrive() }, [loadOneDrive])
+  useEffect(() => {
+    if (!qubAuth.isConnected) disconnectOneDrive()
+  }, [qubAuth.isConnected, disconnectOneDrive])
 
   const refreshAll = useCallback(() => {
-    loadCalendar(); loadEmails(); loadNews(); loadWeather(); loadPodcasts()
-  }, [loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts])
+    loadCalendar(); loadEmails(); loadNews(); loadWeather(); loadPodcasts(); loadOneDrive()
+  }, [loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts, loadOneDrive])
 
   // ---- Task actions --------------------------------------------------------
   const addTask = useCallback((t) => setTasks(list => [createTask(t), ...list]), [setTasks])
@@ -258,7 +310,8 @@ export function AppProvider({ children }) {
     // theme + nav
     toggleTheme, setSidebarOpen, setMobileNavOpen, goTo, setPage,
     // refresh
-    refreshAll, loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts,
+    refreshAll, loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts, loadOneDrive,
+    oneDrive, oneDriveEnabled, enableOneDrive, disconnectOneDrive, searchOneDrive,
     // tasks
     addTask, updateTask, toggleTask, deleteTask,
     // links

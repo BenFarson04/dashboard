@@ -8,6 +8,7 @@ import * as news from './newsService'
 import * as weather from './weatherService'
 import * as task from './taskService'
 import * as podcast from './podcastService'
+import * as oneDrive from './oneDriveService'
 import { generateBriefing } from './briefingService'
 
-export { calendar, email, unifiedEmail, news, weather, task, podcast, generateBriefing }
+export { calendar, email, unifiedEmail, news, weather, task, podcast, oneDrive, generateBriefing }
