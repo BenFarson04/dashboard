@@ -9,6 +9,8 @@ const GROUP_ICON = {
 }
 const GROUPS = ['University', 'Email', 'Calendar', 'Finance', 'Travel planning', 'Fitness', 'Personal projects', 'Other']
 
+const linkIcon = link => link.icon || GROUP_ICON[link.group] || 'Link2'
+
 function LinkEditor({ open, onClose, link }) {
   const { addLink, updateLink } = useApp()
   const editing = !!link
@@ -54,8 +56,8 @@ export function QuickLinks() {
           {quickLinks.map(l => (
             <a key={l.id} href={l.url} target="_blank" rel="noopener noreferrer"
               title={l.label}
-              className="interactive-row interactive-button flex min-h-11 items-center gap-2 rounded-xl border border-slate-100 px-3 py-2.5 text-sm text-slate-700 hover:border-indigo-200 hover:bg-indigo-50/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800">
-              <Icon name={GROUP_ICON[l.group] || 'Link2'} size={16} className="shrink-0 text-indigo-500" />
+              className="interactive-row interactive-button flex min-h-11 items-center gap-2 rounded-xl border border-slate-100 px-3 py-2.5 text-sm text-slate-700 hover:-translate-y-0.5 hover:border-indigo-200 hover:bg-indigo-50/50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800">
+              <Icon name={linkIcon(l)} size={16} className="shrink-0 text-indigo-500" />
               <span className="min-w-0 line-clamp-2 leading-5">{l.label}</span>
             </a>
           ))}
@@ -64,7 +66,7 @@ export function QuickLinks() {
         <ul className="space-y-1.5">
           {quickLinks.map((l, i) => (
             <li key={l.id} className="flex items-center gap-2 rounded-lg border border-slate-100 px-2 py-1.5 dark:border-slate-800">
-              <Icon name={GROUP_ICON[l.group] || 'Link2'} size={15} className="shrink-0 text-slate-400" />
+              <Icon name={linkIcon(l)} size={15} className="shrink-0 text-slate-400" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm text-slate-700 dark:text-slate-200">{l.label}</p>
                 <p className="truncate text-[11px] text-slate-400">{l.group}</p>

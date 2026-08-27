@@ -15,7 +15,16 @@ import { useSpotifyAuth } from '../auth/useSpotifyAuth'
 
 const AppContext = createContext(null)
 
-const RETIRED_DEFAULT_QUICK_LINK_IDS = new Set(['q2', 'q3', 'q5', 'q6'])
+const LEGACY_DEFAULT_QUICK_LINK_IDS = new Set(['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7'])
+
+const migrateQuickLinks = links => {
+  if (!Array.isArray(links)) return defaultQuickLinks
+  const currentDefaultIds = new Set(defaultQuickLinks.map(link => link.id))
+  const storedById = new Map(links.map(link => [link.id, link]))
+  const builtIns = defaultQuickLinks.map(defaultLink => storedById.get(defaultLink.id) || defaultLink)
+  const userLinks = links.filter(link => !LEGACY_DEFAULT_QUICK_LINK_IDS.has(link.id) && !currentDefaultIds.has(link.id))
+  return [...builtIns, ...userLinks]
+}
 
 // Small factory for the {data, loading, error} shape shared by every remote-ish service.
 const idle = () => ({ data: null, loading: true, error: null })
@@ -30,7 +39,7 @@ export function AppProvider({ children }) {
   const [quickLinks, setQuickLinks] = useLocalStorage(
     'pd.quicklinks',
     defaultQuickLinks,
-    links => Array.isArray(links) ? links.filter(link => !RETIRED_DEFAULT_QUICK_LINK_IDS.has(link.id)) : defaultQuickLinks,
+    migrateQuickLinks,
   )
   const [emailFeedback, setEmailFeedback] = useLocalStorage('pd.emailFeedback', {}) // id -> 'useful'|'not_relevant'|'dealt'
   const [emailRead, setEmailRead] = useLocalStorage('pd.emailRead', {})              // id -> true

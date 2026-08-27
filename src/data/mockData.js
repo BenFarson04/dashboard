@@ -168,9 +168,12 @@ export const mockWeather = {
 
 // --- Quick links (seed data; persisted to localStorage) ---------------------
 export const defaultQuickLinks = [
-  { id: 'q1', label: 'Queen’s University Belfast', url: 'https://www.qub.ac.uk', group: 'University' },
+  { id: 'q8', label: 'ChatGPT', url: 'https://chatgpt.com/', group: 'Other', icon: 'MessageCircle' },
+  { id: 'q9', label: 'Claude', url: 'https://claude.ai/', group: 'Other', icon: 'Bot' },
+  { id: 'q10', label: 'Queen’s Online', url: 'https://qsis.qub.ac.uk/', group: 'University', icon: 'GraduationCap' },
+  { id: 'q11', label: 'Canvas', url: 'https://canvas.qub.ac.uk/', group: 'University', icon: 'LayoutDashboard' },
   { id: 'q4', label: 'AJ Bell', url: 'https://www.ajbell.co.uk', group: 'Finance' },
-  { id: 'q7', label: 'Section Studio', url: 'https://github.com', group: 'Personal projects' },
+  { id: 'q12', label: 'GitHub Home', url: 'https://github.com/BenFarson04', group: 'Personal projects', icon: 'Github' },
 ]
 
 export const defaultSettings = {
