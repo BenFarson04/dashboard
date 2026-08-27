@@ -15,6 +15,8 @@ import { useSpotifyAuth } from '../auth/useSpotifyAuth'
 
 const AppContext = createContext(null)
 
+const RETIRED_DEFAULT_QUICK_LINK_IDS = new Set(['q2', 'q3', 'q5', 'q6'])
+
 // Small factory for the {data, loading, error} shape shared by every remote-ish service.
 const idle = () => ({ data: null, loading: true, error: null })
 
@@ -25,7 +27,11 @@ export function AppProvider({ children }) {
   const spotifyAuth = useSpotifyAuth()
   const [settings, setSettings] = useLocalStorage('pd.settings', defaultSettings)
   const [tasks, setTasks] = useLocalStorage(TASK_STORAGE_KEY, [], migrateTasks)
-  const [quickLinks, setQuickLinks] = useLocalStorage('pd.quicklinks', defaultQuickLinks)
+  const [quickLinks, setQuickLinks] = useLocalStorage(
+    'pd.quicklinks',
+    defaultQuickLinks,
+    links => Array.isArray(links) ? links.filter(link => !RETIRED_DEFAULT_QUICK_LINK_IDS.has(link.id)) : defaultQuickLinks,
+  )
   const [emailFeedback, setEmailFeedback] = useLocalStorage('pd.emailFeedback', {}) // id -> 'useful'|'not_relevant'|'dealt'
   const [emailRead, setEmailRead] = useLocalStorage('pd.emailRead', {})              // id -> true
   const [savedNews, setSavedNews] = useLocalStorage('pd.savedNews', [])

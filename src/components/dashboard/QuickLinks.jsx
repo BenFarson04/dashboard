@@ -50,12 +50,13 @@ export function QuickLinks() {
       {quickLinks.length === 0 ? (
         <p className="py-4 text-center text-sm text-slate-500">No links yet — add your first one.</p>
       ) : !manage ? (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {quickLinks.map(l => (
             <a key={l.id} href={l.url} target="_blank" rel="noopener noreferrer"
-              className="interactive-row flex items-center gap-2 rounded-xl border border-slate-100 px-3 py-2.5 text-sm text-slate-700 hover:border-indigo-200 hover:bg-indigo-50/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800">
+              title={l.label}
+              className="interactive-row interactive-button flex min-h-11 items-center gap-2 rounded-xl border border-slate-100 px-3 py-2.5 text-sm text-slate-700 hover:border-indigo-200 hover:bg-indigo-50/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800">
               <Icon name={GROUP_ICON[l.group] || 'Link2'} size={16} className="shrink-0 text-indigo-500" />
-              <span className="truncate">{l.label}</span>
+              <span className="min-w-0 line-clamp-2 leading-5">{l.label}</span>
             </a>
           ))}
         </div>
