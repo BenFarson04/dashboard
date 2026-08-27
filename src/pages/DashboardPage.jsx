@@ -7,6 +7,7 @@ import { NewsFeed } from '../components/dashboard/NewsFeed'
 import { WeatherCard } from '../components/dashboard/WeatherCard'
 import { QuickLinks } from '../components/dashboard/QuickLinks'
 import { PodcastUpdates } from '../components/dashboard/PodcastUpdates'
+import { FundTracker } from '../components/dashboard/FundTracker'
 
 const CARDS = {
   calendar: CalendarCard,
@@ -16,6 +17,7 @@ const CARDS = {
   weather: WeatherCard,
   quicklinks: QuickLinks,
   podcasts: PodcastUpdates,
+  fund: FundTracker,
 }
 
 export function DashboardPage() {

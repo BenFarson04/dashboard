@@ -64,6 +64,7 @@ export function AppProvider({ children }) {
   const [weather, setWeather] = useState(idle)
   const [spotify, setSpotify] = useState(() => ({ ...idle(), loading: false, now: Date.now(), refreshedAt: null }))
   const [oneDrive, setOneDrive] = useState(() => ({ ...idle(), loading: false }))
+  const [fund, setFund] = useState(idle)
   const [oneDriveEnabled, setOneDriveEnabled] = useState(false)
   const oneDriveRequest = useRef(0)
   const [spotifyMeta, setSpotifyMeta] = useLocalStorage('pd.spotifyMeta', { lastRefresh: null })
@@ -82,12 +83,14 @@ export function AppProvider({ children }) {
   }, [settings.interests, settings.newsTopics, setSettings])
 
   useEffect(() => {
-    if (!settings.cards?.order?.includes('podcasts')) {
+    if (!settings.cards?.order?.includes('podcasts') || !settings.cards?.order?.includes('fund')) {
       setSettings(s => {
         const quickLinksIndex = s.cards.order.indexOf('quicklinks')
         const order = [...s.cards.order]
-        order.splice(quickLinksIndex < 0 ? order.length : quickLinksIndex, 0, 'podcasts')
-        return { ...s, cards: { ...s.cards, order, visible: { ...s.cards.visible, podcasts: true } } }
+        const insertAt = quickLinksIndex < 0 ? order.length : order.indexOf('podcasts') >= 0 ? quickLinksIndex : quickLinksIndex
+        if (!order.includes('podcasts')) order.splice(insertAt, 0, 'podcasts')
+        if (!order.includes('fund')) order.splice(order.indexOf('quicklinks') < 0 ? order.length : order.indexOf('quicklinks'), 0, 'fund')
+        return { ...s, cards: { ...s.cards, order, visible: { ...s.cards.visible, podcasts: true, fund: true } } }
       })
     }
   }, [settings.cards, setSettings])
@@ -142,6 +145,12 @@ export function AppProvider({ children }) {
     try { setWeather({ data: await services.weather.getWeather({ location: settings.location, failRate: failRates.weather }), loading: false, error: null }) }
     catch (e) { setWeather({ data: null, loading: false, error: e.message }) }
   }, [settings.location, failRates.weather])
+
+  const loadFund = useCallback(async () => {
+    setFund(s => ({ ...s, loading: true, error: null }))
+    try { setFund({ data: await services.fund.getFundData(), loading: false, error: null }) }
+    catch (error) { setFund({ data: null, loading: false, error: error.message }) }
+  }, [])
 
   const loadPodcasts = useCallback(async () => {
     if (!spotifyAuth.isConnected) return
@@ -201,6 +210,7 @@ export function AppProvider({ children }) {
   useEffect(() => { loadEmails() }, [loadEmails])
   useEffect(() => { loadNews() }, [loadNews])
   useEffect(() => { loadWeather() }, [loadWeather])
+  useEffect(() => { loadFund() }, [loadFund])
   useEffect(() => { loadPodcasts() }, [loadPodcasts])
   useEffect(() => { loadOneDrive() }, [loadOneDrive])
   useEffect(() => {
@@ -208,8 +218,8 @@ export function AppProvider({ children }) {
   }, [qubAuth.isConnected, disconnectOneDrive])
 
   const refreshAll = useCallback(() => {
-    loadCalendar(); loadEmails(); loadNews(); loadWeather(); loadPodcasts(); loadOneDrive()
-  }, [loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts, loadOneDrive])
+    loadCalendar(); loadEmails(); loadNews(); loadWeather(); loadFund(); loadPodcasts(); loadOneDrive()
+  }, [loadCalendar, loadEmails, loadNews, loadWeather, loadFund, loadPodcasts, loadOneDrive])
 
   // ---- Task actions --------------------------------------------------------
   const addTask = useCallback((t) => setTasks(list => [createTask(t), ...list]), [setTasks])
@@ -323,11 +333,11 @@ export function AppProvider({ children }) {
     },
     spotify: { ...spotify, ...spotifyMeta, ...spotifyAuth, error: spotifyAuth.error || spotify.error, connected: spotifyAuth.isConnected },
     // data
-    calendar, emails: { ...emails, data: enrichedEmails }, news: { ...news, data: personalizedNews }, weather, briefing,
+    calendar, emails: { ...emails, data: enrichedEmails }, news: { ...news, data: personalizedNews }, weather, fund, briefing,
     // theme + nav
     toggleTheme, setSidebarOpen, setMobileNavOpen, goTo, setPage,
     // refresh
-    refreshAll, loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts, loadOneDrive,
+    refreshAll, loadCalendar, loadEmails, loadNews, loadWeather, loadFund, loadPodcasts, loadOneDrive,
     oneDrive, oneDriveEnabled, enableOneDrive, disconnectOneDrive, searchOneDrive,
     // tasks
     addTask, updateTask, toggleTask, deleteTask,
