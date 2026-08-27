@@ -10,6 +10,7 @@
     "news:refresh": "node scripts/fetch-news.mjs",
     "test:news": "node scripts/news-tests.mjs",
     "test:email": "node scripts/email-tests.mjs",
+    "test:briefing": "node scripts/briefing-tests.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -33,7 +33,7 @@ export function DailyBriefing() {
           </div>
         </div>
         <div className="flex items-center gap-1.5">
-          <Badge tone="amber" icon="Info">Mock data</Badge>
+          <Badge tone="green" icon="Sparkles">Local rules</Badge>
           <Button variant="ghost" size="sm" icon="RefreshCw" onClick={refreshAll} aria-label="Regenerate briefing">Regenerate</Button>
         </div>
       </div>
