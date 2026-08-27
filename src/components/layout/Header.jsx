@@ -75,7 +75,7 @@ function CommandBar() {
               <button
                 onMouseDown={(e) => { e.preventDefault(); choose(r) }}
                 onMouseEnter={() => setActive(i)}
-                className={cn('flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm', i === active ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-200' : 'text-slate-600 dark:text-slate-300')}
+                className={cn('interactive-button flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50', i === active ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-200' : 'text-slate-600 dark:text-slate-300')}
               >
                 <Icon name={r.icon} size={15} className="shrink-0 text-slate-400" />
                 <span className="truncate">{r.label}</span>
@@ -98,7 +98,7 @@ function AuthButton() {
     <button
       onClick={signOut}
       title={`Signed in as ${account?.username} — click to sign out`}
-      className="hidden items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 sm:inline-flex dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+      className="interactive-button hidden items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 sm:inline-flex dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
     >
       <Icon name="User" size={14} />
       Sign out
@@ -106,7 +106,7 @@ function AuthButton() {
   ) : (
     <button
       onClick={signIn}
-      className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-500"
+      className="interactive-button inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
     >
       <Icon name="User" size={14} />
       <span className="hidden sm:inline">Sign in with Google</span>
@@ -147,7 +147,7 @@ export function Header() {
           <button
             onClick={() => goTo('settings')}
             aria-label="Profile and settings"
-            className="ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white"
+            className="interactive-button ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
           >
             {settings.name?.[0]?.toUpperCase() || 'U'}
           </button>

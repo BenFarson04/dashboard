@@ -3,7 +3,60 @@
 /* Enable class-based dark mode (toggled by adding `dark` to <html>). */
 @custom-variant dark (&:where(.dark, .dark *));
 
-:root { color-scheme: light dark; }
+:root {
+  color-scheme: light dark;
+  --motion-fast: 120ms;
+  --motion-medium: 180ms;
+  --motion-slow: 240ms;
+  --surface-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.04);
+  --surface-shadow-hover: 0 8px 20px rgb(15 23 42 / 0.08), 0 2px 5px rgb(15 23 42 / 0.05);
+}
+
+html {
+  transition: background-color var(--motion-slow) ease, color var(--motion-slow) ease;
+}
+
+button:not(:disabled),
+a[href] {
+  cursor: pointer;
+}
+
+.interactive-card {
+  box-shadow: var(--surface-shadow);
+  transition: border-color var(--motion-medium) ease, box-shadow var(--motion-medium) ease, transform var(--motion-medium) ease, background-color var(--motion-medium) ease;
+}
+
+.interactive-card:hover {
+  border-color: rgb(148 163 184 / 0.55);
+  box-shadow: var(--surface-shadow-hover);
+}
+
+.interactive-row {
+  transition: border-color var(--motion-fast) ease, box-shadow var(--motion-fast) ease, background-color var(--motion-fast) ease, transform var(--motion-fast) ease;
+}
+
+.interactive-row:hover {
+  border-color: rgb(148 163 184 / 0.5);
+  box-shadow: 0 2px 8px rgb(15 23 42 / 0.05);
+}
+
+.interactive-button {
+  cursor: pointer;
+  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease, color var(--motion-fast) ease, box-shadow var(--motion-fast) ease, transform var(--motion-fast) ease;
+}
+
+.interactive-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.interactive-button:disabled {
+  cursor: not-allowed;
+}
+
+.dark {
+  --surface-shadow: 0 1px 2px rgb(0 0 0 / 0.18), 0 1px 3px rgb(0 0 0 / 0.16);
+  --surface-shadow-hover: 0 8px 20px rgb(0 0 0 / 0.24), 0 2px 5px rgb(0 0 0 / 0.2);
+}
 
 html, body, #root { height: 100%; }
 body { margin: 0; }
@@ -16,5 +69,5 @@ body { margin: 0; }
 
 /* Respect reduced-motion preferences. */
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; animation: none !important; }
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }

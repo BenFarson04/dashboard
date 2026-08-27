@@ -8,7 +8,7 @@ import { RECOMMENDED_INTERESTS } from '../../data/newsConfig'
 function NewsItem({ item, saved, feedback, onSave, onDismiss, onFeedback }) {
   const [showWhy, setShowWhy] = useState(false)
   return (
-    <li className="rounded-xl border border-slate-100 p-3 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/40">
+    <li className="interactive-row rounded-xl border border-slate-100 p-3 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/40">
       <div className="flex items-center gap-2 text-[11px] text-slate-400">
         <span className="font-medium text-slate-500 dark:text-slate-400">{item.source}</span>
         <span>·</span>
@@ -23,28 +23,28 @@ function NewsItem({ item, saved, feedback, onSave, onDismiss, onFeedback }) {
 
       <div className="mt-2 flex items-center gap-1.5">
         <button onClick={() => setShowWhy(v => !v)} aria-expanded={showWhy}
-          className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          className="interactive-button inline-flex items-center gap-1 rounded px-1 text-[11px] font-medium text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:hover:text-slate-200">
           <Icon name="HelpCircle" size={12} /> Why this?
         </button>
         <div className="ml-auto flex gap-0.5">
           <button onClick={() => onFeedback(item.id, 'useful')} aria-pressed={feedback === 'useful'} aria-label="Mark article useful" title="Useful"
-            className={cn('inline-flex h-7 w-7 items-center justify-center rounded-md', feedback === 'useful' ? 'text-emerald-600' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800')}>
+            className={cn('interactive-button inline-flex h-7 w-7 items-center justify-center rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50', feedback === 'useful' ? 'text-emerald-600' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800')}>
             <Icon name="ThumbsUp" size={14} />
           </button>
           <button onClick={() => onFeedback(item.id, 'not_relevant')} aria-pressed={feedback === 'not_relevant'} aria-label="Mark article not relevant" title="Not relevant"
-            className={cn('inline-flex h-7 w-7 items-center justify-center rounded-md', feedback === 'not_relevant' ? 'text-red-600' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800')}>
+            className={cn('interactive-button inline-flex h-7 w-7 items-center justify-center rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50', feedback === 'not_relevant' ? 'text-red-600' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800')}>
             <Icon name="ThumbsDown" size={14} />
           </button>
           <button onClick={() => onSave(item.id)} aria-pressed={saved} aria-label={saved ? 'Unsave article' : 'Save article'} title="Save"
-            className={cn('inline-flex h-7 w-7 items-center justify-center rounded-md', saved ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800')}>
+            className={cn('interactive-button inline-flex h-7 w-7 items-center justify-center rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50', saved ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800')}>
             <Icon name={saved ? 'BookmarkCheck' : 'Bookmark'} size={15} />
           </button>
           <button onClick={() => onDismiss(item.id)} aria-label="Dismiss article" title="Dismiss"
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+            className="interactive-button inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:hover:bg-slate-800">
             <Icon name="X" size={15} />
           </button>
           <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label="Open article" title="Open"
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+            className="interactive-button inline-flex h-7 w-7 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:hover:bg-slate-800">
             <Icon name="ExternalLink" size={15} />
           </a>
         </div>

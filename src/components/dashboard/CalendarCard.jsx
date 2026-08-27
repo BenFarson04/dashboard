@@ -13,7 +13,7 @@ function EventRow({ ev, focused, onOpen }) {
   return (
     <li
       className={cn(
-        'group flex gap-3 rounded-xl border border-transparent p-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60',
+        'interactive-row group flex gap-3 rounded-xl border border-transparent p-2 hover:bg-slate-50 dark:hover:bg-slate-800/60',
         focused && 'ring-2 ring-indigo-500',
         past && 'opacity-60',
       )}
@@ -38,7 +38,7 @@ function EventRow({ ev, focused, onOpen }) {
       </div>
       <button
         onClick={() => onOpen(ev)}
-        className="self-center rounded-md px-2 py-1 text-xs font-medium text-indigo-600 opacity-0 hover:bg-indigo-50 focus:opacity-100 group-hover:opacity-100 dark:text-indigo-300 dark:hover:bg-indigo-950/40"
+        className="interactive-button self-center rounded-md px-2 py-1 text-xs font-medium text-indigo-600 opacity-0 hover:bg-indigo-50 focus:opacity-100 focus-visible:ring-2 focus-visible:ring-indigo-500/50 group-hover:opacity-100 dark:text-indigo-300 dark:hover:bg-indigo-950/40"
       >
         Details
       </button>
@@ -88,12 +88,12 @@ export function CalendarCard({ full = false }) {
               <p className="mb-1 px-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Upcoming</p>
               <ul className="space-y-1">
                 {(full ? upcoming : upcoming.slice(0, 2)).map(ev => (
-                  <li key={ev.id} className="flex items-center gap-3 rounded-xl p-2 hover:bg-slate-50 dark:hover:bg-slate-800/60">
+                  <li key={ev.id} className="interactive-row flex items-center gap-3 rounded-xl p-2 hover:bg-slate-50 dark:hover:bg-slate-800/60">
                     <span className="w-12 shrink-0 text-center text-[11px] font-medium text-slate-500">{fmtDayShort(ev.start)}</span>
                     <span className="w-10 shrink-0 text-xs text-slate-500">{fmtTime(ev.start)}</span>
                     <span className="min-w-0 flex-1 truncate text-sm text-slate-700 dark:text-slate-200">{ev.title}</span>
                     {ev.prep && <Badge tone="amber" icon="Flag">Prep</Badge>}
-                    <button onClick={() => setDetail(ev)} className="rounded-md px-2 py-1 text-xs text-indigo-600 hover:bg-indigo-50 dark:text-indigo-300 dark:hover:bg-indigo-950/40">Details</button>
+                    <button onClick={() => setDetail(ev)} className="interactive-button rounded-md px-2 py-1 text-xs text-indigo-600 hover:bg-indigo-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:text-indigo-300 dark:hover:bg-indigo-950/40">Details</button>
                   </li>
                 ))}
               </ul>

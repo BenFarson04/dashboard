@@ -25,7 +25,7 @@ function EmailItem({ email, focused }) {
 
   return (
     <li className={cn(
-      'rounded-xl border p-3 transition-colors',
+      'interactive-row rounded-xl border p-3',
       focused ? 'border-indigo-400 ring-2 ring-indigo-500' : 'border-slate-100 dark:border-slate-800',
       email.unread ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/60 dark:bg-slate-900/40',
       email.feedback === 'not_relevant' && 'opacity-60',
@@ -49,7 +49,7 @@ function EmailItem({ email, focused }) {
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
             <Badge tone="indigo" icon="Filter">{EMAIL_CATEGORIES.find(c => c.id === email.category)?.label || email.category}</Badge>
             <button onClick={() => setShowWhy(v => !v)} aria-expanded={showWhy}
-              className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              className="interactive-button inline-flex items-center gap-1 rounded px-1 text-[11px] font-medium text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:hover:text-slate-200">
               <Icon name="HelpCircle" size={12} /> Why selected
             </button>
             <a href={email.webUrl || '#'} target={email.webUrl ? '_blank' : undefined} rel={email.webUrl ? 'noreferrer' : undefined} onClick={(e) => { if (!email.webUrl) e.preventDefault(); markEmailRead(email) }}
@@ -73,7 +73,7 @@ function EmailItem({ email, focused }) {
                 aria-pressed={email.feedback === f.key}
                 aria-label={f.label}
                 title={f.label}
-                className={cn('inline-flex h-7 items-center gap-1 rounded-md px-2 text-[11px] font-medium',
+                className={cn('interactive-button inline-flex h-7 items-center gap-1 rounded-md px-2 text-[11px] font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50',
                   email.feedback === f.key
                     ? 'bg-indigo-600 text-white'
                     : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800')}

@@ -22,7 +22,7 @@ const CONN_LABEL = {
 
 function SettingRow({ title, hint, children }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-2.5">
+    <div className="interactive-row -mx-2 flex items-center justify-between gap-4 rounded-lg px-2 py-2.5">
       <div className="min-w-0">
         <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{title}</p>
         {hint && <p className="text-xs text-slate-500 dark:text-slate-400">{hint}</p>}
@@ -174,7 +174,7 @@ export function SettingsPage() {
           />
           <div className="mt-3 space-y-1.5">
             {visibleInterests.map(interest => (
-              <div key={interest.id} className="flex items-center gap-2 rounded-lg border border-slate-100 px-2.5 py-2 dark:border-slate-800">
+              <div key={interest.id} className="interactive-row flex items-center gap-2 rounded-lg border border-slate-100 px-2.5 py-2 dark:border-slate-800">
                 <Toggle checked={interest.active} onChange={active => updateInterest(interest.id, { active })} label={`Use ${interest.label}`} />
                 <span className="flex-1 text-sm text-slate-700 dark:text-slate-200">{interest.label}</span>
                 <IconButton label={`Edit ${interest.label}`} icon="Pencil" onClick={() => { setEditingInterest(interest.id); setInterestDraft(interest.label) }} />
@@ -223,7 +223,7 @@ export function SettingsPage() {
           <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">Toggle visibility and reorder your dashboard.</p>
           <ul className="space-y-1.5">
             {settings.cards.order.map((id, i) => (
-              <li key={id} className="flex items-center gap-2 rounded-lg border border-slate-100 px-2 py-1.5 dark:border-slate-800">
+              <li key={id} className="interactive-row flex items-center gap-2 rounded-lg border border-slate-100 px-2 py-1.5 dark:border-slate-800">
                 <Icon name="GripVertical" size={15} className="text-slate-300" />
                 <span className="flex-1 text-sm text-slate-700 dark:text-slate-200">{CARD_LABELS[id]}</span>
                 <IconButton label="Move up" icon="ChevronUp" className="h-7 w-7" disabled={i === 0} onClick={() => moveCard(id, 'up')} />

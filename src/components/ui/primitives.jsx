@@ -12,7 +12,7 @@ export function Card({ title, icon, action, children, className, bodyClassName, 
     <Tag
       aria-labelledby={labelledBy}
       className={cn(
-        'rounded-2xl border border-slate-200 bg-white shadow-sm',
+        'interactive-card rounded-2xl border border-slate-200 bg-white shadow-sm',
         'dark:border-slate-800 dark:bg-slate-900',
         className,
       )}
@@ -43,8 +43,8 @@ export function Button({ variant = 'subtle', size = 'md', icon, iconRight, child
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors',
-        'focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50',
+        'interactive-button inline-flex items-center justify-center gap-1.5 rounded-lg font-medium',
+        'focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
         sizes, BTN[variant], className,
       )}
       {...props}
@@ -62,7 +62,7 @@ export function IconButton({ label, icon, active, className, ...props }) {
       aria-label={label}
       title={label}
       className={cn(
-        'inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors',
+        'interactive-button inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500',
         'hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
         'dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200',
         active && 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
@@ -98,7 +98,7 @@ export function Chip({ active, children, className, ...props }) {
     <button
       aria-pressed={active}
       className={cn(
-        'rounded-full border px-3 py-1 text-xs font-medium transition-colors focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
+        'interactive-button rounded-full border px-3 py-1 text-xs font-medium focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
         active
           ? 'border-indigo-600 bg-indigo-600 text-white'
           : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
@@ -120,11 +120,11 @@ export function Toggle({ checked, onChange, label, id }) {
       aria-label={label}
       onClick={() => onChange(!checked)}
       className={cn(
-        'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
+        'interactive-button relative inline-flex h-6 w-11 shrink-0 items-center rounded-full focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
         checked ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700',
       )}
     >
-      <span className={cn('inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform', checked ? 'translate-x-5' : 'translate-x-0.5')} />
+      <span className={cn('inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-150', checked ? 'translate-x-5' : 'translate-x-0.5')} />
     </button>
   )
 }
@@ -139,7 +139,7 @@ export function Skeleton({ className }) {
 
 export function EmptyState({ icon = 'Inbox', title, message, action }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
+    <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 py-8 text-center dark:border-slate-800">
       <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-800">
         <Icon name={icon} size={20} />
       </div>
@@ -191,7 +191,7 @@ export function Modal({ open, onClose, title, children, footer, labelledBy = 'mo
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className="relative z-10 w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-xl outline-none dark:border-slate-800 dark:bg-slate-900"
+        className="interactive-card relative z-10 w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-xl outline-none dark:border-slate-800 dark:bg-slate-900"
       >
         <header className="flex items-center justify-between border-b border-slate-100 px-5 py-3 dark:border-slate-800">
           <h2 id={labelledBy} className="text-sm font-semibold text-slate-800 dark:text-slate-100">{title}</h2>
@@ -216,7 +216,7 @@ export function Field({ label, children, hint, htmlFor }) {
 }
 
 export const inputClass = cn(
-  'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400',
+  'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 transition-colors duration-150',
   'focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20',
   'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100',
 )

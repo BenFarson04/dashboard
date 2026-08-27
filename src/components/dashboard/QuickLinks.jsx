@@ -53,7 +53,7 @@ export function QuickLinks() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {quickLinks.map(l => (
             <a key={l.id} href={l.url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-xl border border-slate-100 px-3 py-2.5 text-sm text-slate-700 transition-colors hover:border-indigo-200 hover:bg-indigo-50/50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800">
+              className="interactive-row flex items-center gap-2 rounded-xl border border-slate-100 px-3 py-2.5 text-sm text-slate-700 hover:border-indigo-200 hover:bg-indigo-50/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800">
               <Icon name={GROUP_ICON[l.group] || 'Link2'} size={16} className="shrink-0 text-indigo-500" />
               <span className="truncate">{l.label}</span>
             </a>

@@ -18,13 +18,13 @@ function TaskRow({ task, onEdit }) {
   const completed = task.status === TASK_STATUS.COMPLETED
   const overdue = getTaskCategory(task) === TASK_STATUS.OVERDUE
   return (
-    <li className="group flex items-start gap-3 rounded-xl border border-slate-100 p-2.5 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/60">
+    <li className="interactive-row group flex items-start gap-3 rounded-xl border border-slate-100 p-2.5 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/60">
       <button
         onClick={() => toggleTask(task.id)}
         role="checkbox"
         aria-checked={completed}
         aria-label={completed ? 'Mark task incomplete' : 'Mark task complete'}
-        className={cn('mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border',
+        className={cn('interactive-button mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50',
           completed ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-300 text-transparent hover:border-indigo-500 dark:border-slate-600')}
       >
         <Icon name="Check" size={13} />
@@ -121,7 +121,7 @@ export function TasksPanel({ full = false }) {
       <div className="mb-3 flex flex-wrap gap-1" role="tablist" aria-label="Task groups">
         {TABS.map(t => (
           <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => setTab(t.id)}
-            className={cn('inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium',
+            className={cn('interactive-button inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50',
               tab === t.id ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/60')}>
             {t.label}
             <span className={cn('rounded-full px-1.5 text-[10px]', t.id === 'overdue' && t.count > 0 ? 'bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300')}>{t.count}</span>
@@ -147,7 +147,7 @@ export function TasksPanel({ full = false }) {
       )}
 
       {!full && list.length > 5 && (
-        <button onClick={() => goTo('tasks')} className="mt-2 text-xs font-medium text-indigo-600 hover:underline dark:text-indigo-300">
+        <button onClick={() => goTo('tasks')} className="interactive-button mt-2 rounded px-1 text-xs font-medium text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:text-indigo-300">
           View all {list.length} →
         </button>
       )}
