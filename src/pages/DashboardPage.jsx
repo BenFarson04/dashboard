@@ -6,6 +6,7 @@ import { TasksPanel } from '../components/dashboard/TasksPanel'
 import { NewsFeed } from '../components/dashboard/NewsFeed'
 import { WeatherCard } from '../components/dashboard/WeatherCard'
 import { QuickLinks } from '../components/dashboard/QuickLinks'
+import { PodcastUpdates } from '../components/dashboard/PodcastUpdates'
 
 const CARDS = {
   calendar: CalendarCard,
@@ -14,6 +15,7 @@ const CARDS = {
   news: NewsFeed,
   weather: WeatherCard,
   quicklinks: QuickLinks,
+  podcasts: PodcastUpdates,
 }
 
 export function DashboardPage() {

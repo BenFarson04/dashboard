@@ -223,6 +223,26 @@ normalize into the shared model, register it in the unified aggregator, and add 
 connection state and marker to Settings. Keep tokens in that provider's maintained
 browser auth library and add synthetic tests before enabling it.
 
+### Spotify podcast updates
+
+The Podcast Updates card uses Spotify's browser Authorization Code with PKCE flow.
+It requests only `user-follow-read` for followed shows and `user-library-read` for
+saved shows. The card fetches recent episodes through the official Spotify Web API,
+keeps releases from the previous 72 hours, and opens an episode on Spotify. It does
+not play audio, request passwords, scrape pages, or send content to an AI service.
+Access tokens remain in memory; only the last successful refresh timestamp is stored.
+
+#### Spotify app setup
+
+1. Create an app in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) and copy its Client ID. Do not create or use a client secret.
+2. Add these Redirect URIs to the app: `http://localhost:5173/dashboard/` and `https://<github-owner>.github.io/dashboard/`.
+3. For local development, add `VITE_SPOTIFY_CLIENT_ID=<client-id>` to `.env.local`.
+4. For GitHub Pages, add a repository variable named `VITE_SPOTIFY_CLIENT_ID` under Settings → Secrets and variables → Actions → Variables. The client ID is public configuration; never add a client secret.
+5. Run `npm run dev`, open Settings → Connected services, connect Spotify, and verify the card appears between Weather and Quick links.
+
+If the client ID is absent, the app remains usable and the card shows its disconnected
+setup state. Spotify controls API availability and account access.
+
 ## Existing calendar and future service integrations
 
 The UI won’t change — only the service files and an auth layer. Start **read‑only**.
@@ -291,6 +311,7 @@ case where consent is refused (show the service as *Not configured* / *Connectio
 - `node scripts/build-preview.mjs` — regenerate the standalone `preview.html`.
 - `node scripts/validate.mjs` — syntax‑check every source file + the preview bundle.
 - `npm run test:email` — synthetic multi-provider normalization, ranking, and partial-failure tests.
+- `npm run test:podcasts` — synthetic Spotify filtering, sorting, formatting, and failure tests.
 
 Run `npm run test:news` for deterministic relevance, false-positive, normalization,
 and unsafe-link checks. GitHub Actions refreshes on pushes to `main`, manual dispatch,

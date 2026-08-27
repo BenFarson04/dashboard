@@ -189,8 +189,8 @@ export const defaultSettings = {
   theme: 'light', // 'light' | 'dark'
   cards: {
     // visibility + order for the main dashboard grid
-    order: ['calendar', 'email', 'tasks', 'news', 'weather', 'quicklinks'],
-    visible: { calendar: true, email: true, tasks: true, news: true, weather: true, quicklinks: true },
+    order: ['calendar', 'email', 'tasks', 'news', 'weather', 'podcasts', 'quicklinks'],
+    visible: { calendar: true, email: true, tasks: true, news: true, weather: true, podcasts: true, quicklinks: true },
   },
 }
 

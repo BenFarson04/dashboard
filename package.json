@@ -12,6 +12,7 @@
     "test:email": "node scripts/email-tests.mjs",
     "test:briefing": "node scripts/briefing-tests.mjs",
     "test:tasks": "node scripts/task-tests.mjs",
+    "test:podcasts": "node scripts/podcast-tests.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -9,7 +9,7 @@ import { cn } from '../utils'
 
 const CARD_LABELS = {
   calendar: 'Calendar', email: 'Relevant emails', tasks: 'Tasks',
-  news: 'News', weather: 'Weather', quicklinks: 'Quick links',
+  news: 'News', weather: 'Weather', podcasts: 'Podcast updates', quicklinks: 'Quick links',
 }
 
 const CONN_LABEL = {
@@ -59,7 +59,7 @@ function MailboxConnection({ label, email, connected, ready, configured = true, 
 
 
 export function SettingsPage() {
-  const { settings, setSettings, connectionStatus, emailAccounts, failRates, setFailRates, toggleTheme } = useApp()
+  const { settings, setSettings, connectionStatus, emailAccounts, spotify, failRates, setFailRates, toggleTheme } = useApp()
   const interests = settings.interests || RECOMMENDED_INTERESTS.map(interest => ({ ...interest, active: true }))
   const [interestDraft, setInterestDraft] = useState('')
   const [interestSearch, setInterestSearch] = useState('')
@@ -108,7 +108,7 @@ export function SettingsPage() {
 
   const resetAll = () => {
     if (!confirm('Reset all settings, tasks and quick links to defaults? This clears saved data on this device.')) return
-    ['pd.settings', 'pd.tasks', 'pd.quicklinks', 'pd.emailFeedback', 'pd.emailRead', 'pd.savedNews', 'pd.dismissedNews', 'pd.newsFeedback'].forEach(k => localStorage.removeItem(k))
+    ['pd.settings', 'pd.tasks', 'pd.quicklinks', 'pd.emailFeedback', 'pd.emailRead', 'pd.savedNews', 'pd.dismissedNews', 'pd.newsFeedback', 'pd.spotifyMeta'].forEach(k => localStorage.removeItem(k))
     location.reload()
   }
 
@@ -259,6 +259,17 @@ export function SettingsPage() {
               onDisconnect={emailAccounts.qub.disconnect}
               permission="Read-only Microsoft Graph mailbox access."
             />
+            <MailboxConnection
+              label="Spotify"
+              email={spotify.account?.display_name || spotify.account?.email}
+              connected={spotify.connected}
+              ready={spotify.ready}
+              configured={spotify.configurationReady}
+              error={spotify.error}
+              onConnect={spotify.connect}
+              onDisconnect={spotify.disconnect}
+              permission="Followed and saved shows only."
+            />
           </div>
           <ul className="space-y-1.5">
             {services.map(key => {
@@ -271,6 +282,7 @@ export function SettingsPage() {
               )
             })}
           </ul>
+          <p className="mt-2 text-[11px] text-slate-400">Spotify last successful refresh: {spotify.lastRefresh ? new Date(spotify.lastRefresh).toLocaleString() : 'Never'}</p>
           <p className="mt-2 text-[11px] text-slate-400">QUB access may require administrator approval from the university. This dashboard is not affiliated with Queen's University Belfast.</p>
         </Card>
 

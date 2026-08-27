@@ -10,6 +10,7 @@ import {
 import { TASK_STORAGE_KEY, createTask, migrateTasks, setTaskCompleted, updateTask as updatePersistedTask } from '../services/taskService'
 import { useAuth } from '../auth/useAuth'
 import { useMicrosoftAuth } from '../auth/useMicrosoftAuth'
+import { useSpotifyAuth } from '../auth/useSpotifyAuth'
 
 
 const AppContext = createContext(null)
@@ -21,6 +22,7 @@ export function AppProvider({ children }) {
   // ---- Persisted, user-editable state -------------------------------------
   const { getToken, isSignedIn: gmailConnected, account: gmailAccount, ready: gmailReady, error: gmailError, signIn: gmailSignIn, signOut: gmailSignOut } = useAuth()
   const qubAuth = useMicrosoftAuth()
+  const spotifyAuth = useSpotifyAuth()
   const [settings, setSettings] = useLocalStorage('pd.settings', defaultSettings)
   const [tasks, setTasks] = useLocalStorage(TASK_STORAGE_KEY, [], migrateTasks)
   const [quickLinks, setQuickLinks] = useLocalStorage('pd.quicklinks', defaultQuickLinks)
@@ -42,6 +44,8 @@ export function AppProvider({ children }) {
   const [emails, setEmails] = useState(() => ({ ...idle(), providers: {} }))
   const [news, setNews] = useState(() => ({ ...idle(), sourceStatus: 'no-data', metadata: null }))
   const [weather, setWeather] = useState(idle)
+  const [spotify, setSpotify] = useState(() => ({ ...idle(), loading: false, now: Date.now(), refreshedAt: null }))
+  const [spotifyMeta, setSpotifyMeta] = useLocalStorage('pd.spotifyMeta', { lastRefresh: null })
 
   useEffect(() => {
     if (!Array.isArray(settings.interests)) {
@@ -55,6 +59,17 @@ export function AppProvider({ children }) {
       }))
     }
   }, [settings.interests, settings.newsTopics, setSettings])
+
+  useEffect(() => {
+    if (!settings.cards?.order?.includes('podcasts')) {
+      setSettings(s => {
+        const quickLinksIndex = s.cards.order.indexOf('quicklinks')
+        const order = [...s.cards.order]
+        order.splice(quickLinksIndex < 0 ? order.length : quickLinksIndex, 0, 'podcasts')
+        return { ...s, cards: { ...s.cards, order, visible: { ...s.cards.visible, podcasts: true } } }
+      })
+    }
+  }, [settings.cards, setSettings])
 
   // ---- Theme ---------------------------------------------------------------
   useEffect(() => {
@@ -101,14 +116,25 @@ export function AppProvider({ children }) {
     catch (e) { setWeather({ data: null, loading: false, error: e.message }) }
   }, [settings.location, failRates.weather])
 
+  const loadPodcasts = useCallback(async () => {
+    if (!spotifyAuth.isConnected) return
+    setSpotify(s => ({ ...s, loading: true, error: null }))
+    try {
+      const result = await services.podcast.getPodcastUpdates({ accessToken: await spotifyAuth.getToken() })
+      setSpotify({ ...result, now: Date.now(), loading: false, error: null })
+      setSpotifyMeta({ lastRefresh: result.refreshedAt })
+    } catch (error) { setSpotify(s => ({ ...s, loading: false, error: error.message })) }
+  }, [spotifyAuth.isConnected, spotifyAuth.getToken, setSpotifyMeta])
+
   useEffect(() => { loadCalendar() }, [loadCalendar])
   useEffect(() => { loadEmails() }, [loadEmails])
   useEffect(() => { loadNews() }, [loadNews])
   useEffect(() => { loadWeather() }, [loadWeather])
+  useEffect(() => { loadPodcasts() }, [loadPodcasts])
 
   const refreshAll = useCallback(() => {
-    loadCalendar(); loadEmails(); loadNews(); loadWeather()
-  }, [loadCalendar, loadEmails, loadNews, loadWeather])
+    loadCalendar(); loadEmails(); loadNews(); loadWeather(); loadPodcasts()
+  }, [loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts])
 
   // ---- Task actions --------------------------------------------------------
   const addTask = useCallback((t) => setTasks(list => [createTask(t), ...list]), [setTasks])
@@ -211,12 +237,13 @@ export function AppProvider({ children }) {
       gmail: { connected: gmailConnected, account: gmailAccount, ready: gmailReady, error: gmailError, connect: gmailSignIn, disconnect: gmailSignOut },
       qub: qubAuth,
     },
+    spotify: { ...spotify, ...spotifyMeta, ...spotifyAuth, error: spotifyAuth.error || spotify.error, connected: spotifyAuth.isConnected },
     // data
     calendar, emails: { ...emails, data: enrichedEmails }, news: { ...news, data: personalizedNews }, weather, briefing,
     // theme + nav
     toggleTheme, setSidebarOpen, setMobileNavOpen, goTo, setPage,
     // refresh
-    refreshAll, loadCalendar, loadEmails, loadNews, loadWeather,
+    refreshAll, loadCalendar, loadEmails, loadNews, loadWeather, loadPodcasts,
     // tasks
     addTask, updateTask, toggleTask, deleteTask,
     // links
