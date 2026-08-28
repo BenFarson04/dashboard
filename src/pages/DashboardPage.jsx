@@ -23,15 +23,13 @@ export function DashboardPage() {
   const order = settings.cards.order.filter(id => settings.cards.visible[id] !== false && CARDS[id])
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <DailyBriefing />
-      <div className="grid items-start gap-5 lg:grid-cols-12">
+      <div className="gap-4 [column-fill:_balance] md:columns-2 xl:columns-3">
         {order.map(id => {
           const Cmp = CARDS[id]
-          const span = id === 'email' || id === 'news' ? 'lg:col-span-7' : id === 'calendar' || id === 'tasks' ? 'lg:col-span-5' : 'lg:col-span-4'
-          const utility = id === 'weather' || id === 'podcasts' || id === 'quicklinks'
           return (
-            <div key={id} className={`${span} ${utility ? 'lg:col-start-9' : ''}`}>
+            <div key={id} className="mb-4 break-inside-avoid">
               <Cmp />
             </div>
           )
