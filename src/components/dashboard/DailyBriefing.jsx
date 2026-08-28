@@ -18,7 +18,7 @@ export function DailyBriefing() {
 
   return (
     <section aria-labelledby="briefing-title" className="overflow-hidden rounded-[var(--radius-card)] border border-indigo-200/70 bg-[var(--surface)] shadow-[var(--shadow-card)] dark:border-indigo-900/70">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-3 px-5 pt-5">
         <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/20">
             <Icon name="Sparkles" size={18} />
@@ -40,7 +40,7 @@ export function DailyBriefing() {
         </div>
       </div>
 
-      <div className="mt-5 rounded-xl bg-indigo-50/70 p-4 dark:bg-indigo-950/30">
+      <div className="mx-5 mt-4 rounded-xl bg-indigo-50/70 p-4 dark:bg-indigo-950/30">
         {loading ? (
           <div className="space-y-2" aria-label="Loading briefing">
             <div className="skeleton-pulse h-4 w-3/4 rounded bg-indigo-100 dark:bg-indigo-900/60" />
@@ -52,7 +52,7 @@ export function DailyBriefing() {
             <div><p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Nothing urgent right now</p><p className="text-xs text-slate-500 dark:text-slate-400">Your dashboard is in a calm place.</p></div>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             <p className="max-w-3xl text-base font-medium leading-relaxed text-slate-800 dark:text-slate-100">{firstPart.text}</p>
             {firstPart.refs.length > 0 && <RefList refs={firstPart.refs} goTo={goTo} />}
             {supportingParts.length > 0 && <div className="grid gap-2 border-t border-indigo-100 pt-3 sm:grid-cols-2 dark:border-indigo-900/60">
@@ -62,7 +62,7 @@ export function DailyBriefing() {
         )}
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
+      <div className="mx-5 mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pb-5 pt-3 dark:border-slate-800">
         <button
           onClick={() => setShowWhy(v => !v)}
           aria-expanded={showWhy}
