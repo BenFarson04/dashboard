@@ -29,7 +29,41 @@ connection. If anything fails, the page shows the error on screen (never a blank
 npm install
 npm run dev      # start Vite dev server (http://localhost:5173)
 npm run build    # production build
+npm run test:e2e # Playwright health, layout and visual regression tests
 ```
+
+## Playwright regression tests
+
+The Playwright suite builds and serves the production bundle automatically, then
+checks the dashboard at the deployed production shape. It verifies that the page,
+sidebar and core cards load, that critical resources do not fail, and that there are
+no JavaScript errors. The layout test checks available-width usage, three desktop
+columns, card bounds and overlap. Desktop and laptop screenshots are stored in
+`tests/dashboard.spec.js-snapshots/` and compared on every run.
+
+Install the browser once, then run locally:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+To test a deployed GitHub Pages build instead of the local production preview, set
+`PLAYWRIGHT_BASE_URL`:
+
+```bash
+PLAYWRIGHT_BASE_URL=https://benfarson04.github.io/dashboard/ npm run test:e2e
+```
+
+When an intentional UI change is made, review the failure artifacts and update both
+baselines deliberately with `npm run test:e2e:update`. Run the command at the same
+viewport and with the same data/configuration as the test. Failed runs produce a
+Playwright report, traces, screenshots and videos in `playwright-report/` and
+`test-results/`; open the report with `npx playwright show-report` and inspect the
+actual, expected and diff images. For layout failures, first check the card bounds
+reported by the layout test and then inspect recent grid, column, width or breakpoint
+changes. Do not update baselines to hide a missing card, overflow, overlap or console
+error.
 
 ---
 

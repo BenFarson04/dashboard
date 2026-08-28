@@ -25,7 +25,7 @@ export function DashboardPage() {
   return (
     <div className="space-y-4">
       <DailyBriefing />
-      <div className="gap-4 [column-fill:_balance] md:columns-2 xl:columns-3">
+      <div data-testid="dashboard-grid" className="gap-4 [column-fill:_balance] md:columns-2 xl:columns-3">
         {order.map(id => {
           const Cmp = CARDS[id]
           return (
